@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "start-all": "npm-run-all --parallel start-frontend start-backend start-sd",
+    "start-frontend": "cd ./frontend && npm start",
+    "start-backend": "cd ./backend && npm start",
+    "start-sd": "cd ./stable-diffusion-webui && start webui-user.bat",
+    "start": "node run.js"
+  },
+  "dependencies": {
+    "cross-spawn": "^7.0.3"
+  }
+}
