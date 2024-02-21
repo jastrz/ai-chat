@@ -1,9 +1,7 @@
 import io from "socket.io-client";
 import env from "react-dotenv";
-import { addMessage, clearHistory } from "./app/store";
-import { store } from "./app/store";
-
-const URL = process.env.REACT_APP_SERVER_ADDRESS;
+import { addMessage, clearHistory } from "./store/chatSlice";
+import { store } from "./store/store";
 
 let socket = null;
 
@@ -16,7 +14,7 @@ export const connectWithSocketServer = () => {
   socket.on("message", handleMessageReceived);
 };
 
-export const sendMessageThroughSocket = (data) => {
+export const sendPromptThroughSocket = (data) => {
   console.log(`Sending data... ${socket.id}: ${data.message}`);
   socket.emit("sendMessage", data);
 };
