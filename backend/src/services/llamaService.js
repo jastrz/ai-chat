@@ -46,6 +46,7 @@ class LlamaService {
       this.setModel(this.contextSettings.modelName);
       const context = new LlamaContext(this.contextSettings);
       this.sessions.push(new LlamaChatSession({ context }));
+      this.initialized = true;
     }
     console.log("user: " + input);
     const answer = await this.getSession().prompt(input);

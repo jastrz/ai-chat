@@ -38,14 +38,31 @@ const handleMessageReceived = async (socketId, data) => {
       response.content.push({ data: answer, type: "text" });
       break;
     case "image":
-      const imagePrompt = {
+      const defaultImagePrompt = {
         prompt: data.message,
         height: 512,
         width: 512,
+        batch_size: 1,
       };
+
+      const { numImages, negativePrompt, ...settings } = data.settings;
+      const imagePrompt = {
+        ...defaultImagePrompt,
+        ...settings,
+        batch_size: numImages,
+        negative_prompt: negativePrompt,
+      };
+      console.log(imagePrompt);
+
       answer = await getImage(imagePrompt);
-      response.content.push({ data: "here's generated image: ", type: "text" });
-      response.content.push({ data: answer, type: "image" });
+      response.content.push({
+        data: "here's generated content: ",
+        type: "text",
+      });
+      answer.forEach((image) => {
+        response.content.push({ data: image, type: "image" });
+      });
+
       break;
     default:
       break;

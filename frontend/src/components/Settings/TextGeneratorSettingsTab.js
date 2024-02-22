@@ -9,6 +9,7 @@ import {
   getCurrentLlamaSettings,
 } from "../../api";
 import { useForm } from "react-hook-form";
+import SettingsTabControls from "./SettingsTabControls";
 
 const TextGeneratorSettingsTab = () => {
   const { register, getValues, reset, setValue } = useForm();
@@ -16,6 +17,7 @@ const TextGeneratorSettingsTab = () => {
   const dispatch = useDispatch();
   let settings = useSelector((state) => state.llama);
 
+  // Getting llama settings and models data from api
   useEffect(() => {
     const fetchLlamaModelList = async () => {
       const models = await getLlamaModelList();
@@ -34,6 +36,7 @@ const TextGeneratorSettingsTab = () => {
     setValue("modelName", value);
   };
 
+  // Updating llama settings from form to store and sends settings to backend
   const applyChanges = async () => {
     const values = getValues();
     dispatch(
@@ -46,11 +49,11 @@ const TextGeneratorSettingsTab = () => {
 
     const response = await updateLlamaSettings(values);
     if (response.status === 200) {
-      console.log("updated settings");
+      // console.log("updated settings");
     }
   };
 
-  const resetDefault = () => {
+  const resetToDefault = () => {
     let defaultValues = {
       modelName: settings.modelName,
       contextSize: settings.contextSize,
@@ -85,14 +88,10 @@ const TextGeneratorSettingsTab = () => {
               {...register("contextSize")}
             />
             <Input label="Batch size" size="md" {...register("batchSize")} />
-            <div className="space-x-4 self-end">
-              <Button size="sm" onClick={resetDefault}>
-                Reset
-              </Button>
-              <Button size="sm" onClick={applyChanges}>
-                Apply
-              </Button>
-            </div>
+            <SettingsTabControls
+              onApply={applyChanges}
+              onReset={resetToDefault}
+            />
           </div>
         </form>
       )}

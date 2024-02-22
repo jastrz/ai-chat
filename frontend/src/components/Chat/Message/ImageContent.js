@@ -35,7 +35,7 @@ const ImageContent = ({ index, data }) => {
           alt=""
         />
         {showHiddenItem && (
-          <div className="absolute right-0 bottom-2 ">
+          <div data-testid="hidden" className="absolute right-0 bottom-2 ">
             <SaveButton imageSrc={data} imageName={new Date().toUTCString()} />
           </div>
         )}

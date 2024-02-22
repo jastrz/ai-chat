@@ -1,6 +1,6 @@
 import { Textarea, Progress } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setMessageToSend } from "../../../store/chatSlice";
 import { sendPromptThroughSocket } from "../../../socketConnection";
 import { reset } from "../../../socketConnection";
@@ -14,8 +14,10 @@ const MessageInput = () => {
     content: [],
   });
   const [progress, setProgress] = useState(0);
-  const [isGettingImage, setIsGettingImage] = useState(false);
+  const [isImage, setIsImage] = useState(false);
   const [promptType, setPromptType] = useState("text");
+
+  const sdData = useSelector((state) => state.sd);
 
   useEffect(() => {
     const fetchImageGenProgress = async () => {
@@ -24,11 +26,11 @@ const MessageInput = () => {
     };
 
     const interval = setInterval(() => {
-      if (isGettingImage) fetchImageGenProgress();
+      if (isImage) fetchImageGenProgress();
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isGettingImage, progress]);
+  }, [isImage, progress]);
 
   const onClickSend = () => {
     if (currentMessage.content.length === 0) return;
@@ -40,7 +42,11 @@ const MessageInput = () => {
       message: currentMessage.content[0].data,
     };
 
-    setIsGettingImage(promptType === "image");
+    const isImage = promptType === "image";
+    setIsImage(isImage);
+    if (isImage) {
+      prompt.settings = sdData.promptSettings;
+    }
 
     sendPromptThroughSocket(prompt);
     setCurrentMessage({ username: "me", content: [] });
@@ -82,7 +88,7 @@ const MessageInput = () => {
         onChange={onTextChanged}
         style={{ width: "100%" }}
       />
-      {isGettingImage && <Progress value={progress} />}
+      {isImage && <Progress value={progress} />}
       <MessageInputControls
         promptType={promptType === "image"}
         handleImagePromptCheckbox={handleImagePromptCheckbox}

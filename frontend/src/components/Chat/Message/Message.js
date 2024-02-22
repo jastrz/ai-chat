@@ -8,25 +8,22 @@ const Message = ({ username, content }) => {
   const isUser = username === "me";
   const backgroundColor = isUser ? "bg-blue-50" : "bg-blue-200";
 
-  const MessageContents = content.map(({ data, type }, index) => {
-    const isImage = type === "image";
+  const TextContents = content
+    .filter(({ type }) => type !== "image")
+    .map(({ data, type }, index) => <TextContent key={index} data={data} />);
 
-    return isImage ? (
-      <ImageContent index={index} data={data} />
-    ) : (
-      <TextContent index={index} data={data} />
-    );
-  });
+  const ImageContents = content
+    .filter(({ type }) => type === "image")
+    .map(({ data, type }, index) => <ImageContent key={index} data={data} />);
 
   return (
-    <div className={`flex items-center  ${isUser ? "justify-end" : ""}`}>
+    <div className={`flex items-center ${isUser ? "justify-end" : ""}`}>
       <span className="shadow-md uppercase text-xs font-bold mr-3">
-        <Typography key={username} variant="small">
-          {username}
-        </Typography>
+        <Typography variant="small">{username}</Typography>
       </span>
       <div className={`${backgroundColor} shadow-lg rounded-lg px-4 py-2`}>
-        {MessageContents}
+        <div className="">{TextContents}</div>
+        <div className="flex flex-wrap gap-2">{ImageContents}</div>
       </div>
     </div>
   );
