@@ -33,7 +33,6 @@ const handleMessageReceived = async (socketId, data) => {
   let response = { username: "AI", content: [] };
   switch (data.type) {
     case "text":
-      llamaService.start();
       answer = await llamaService.prompt(data.message);
       console.log(answer);
       response.content.push({ data: answer, type: "text" });
@@ -56,7 +55,7 @@ const handleMessageReceived = async (socketId, data) => {
 };
 
 const handleReset = async (socketId) => {
-  console.log("reset goin on");
+  llamaService.reset();
 };
 
 export { initSocketServer };

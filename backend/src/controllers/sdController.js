@@ -1,4 +1,4 @@
-import { getImage } from "../services/sdService.js";
+import { getImage, getProgress, getModelList } from "../services/sdService.js";
 
 // sends back the images as an array of base64 encoded strings
 const handleImagePrompt = async (req, res) => {
@@ -18,4 +18,27 @@ const handleImagePrompt = async (req, res) => {
   }
 };
 
-export { handleImagePrompt };
+const handleGetImageGenProgress = async (req, res) => {
+  try {
+    const result = await getProgress();
+    res.json({ progress: result });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const handleGetSDModels = async (req, res) => {
+  try {
+    const result = await getModelList();
+
+    const models = result.data.map((model) => model.model_name);
+    // console.log(models);
+    res.send(models);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export { handleImagePrompt, handleGetImageGenProgress, handleGetSDModels };

@@ -2,20 +2,35 @@ import axios from "axios";
 import path from "path";
 import fsp from "fs/promises";
 
-const sdUrl = "http://127.0.0.1:7861/sdapi/v1/txt2img";
+// const sdAddress = process.env.SD_SERVER_ADDRESS;
+const sdAddress = "http://127.0.0.1:7861/sdapi/v1";
 const apiClient = axios.create({
-  baseURL: sdUrl,
+  baseURL: sdAddress,
   timeout: 0,
 });
 
 const getImage = async (prompt) => {
-  const result = await apiClient.post(sdUrl, prompt);
+  const result = await apiClient.post(sdAddress + "/txt2img", prompt);
 
   if (process.env.CACHE_GENERATED_IMAGES.toLowerCase() === "true") {
     saveImages(result.data.images);
   }
 
   return result.data.images;
+};
+
+const getProgress = async () => {
+  const result = await apiClient.get(sdAddress + "/progress");
+
+  // possibly send currently generated image to client instead of plain progress
+  // console.log(result.data);
+
+  return result.data.progress;
+};
+
+const getModelList = async () => {
+  const result = await apiClient.get(sdAddress + "/sd-models");
+  return result;
 };
 
 const saveImageToFile = async (imageData, filename, finalPath) => {
@@ -44,8 +59,7 @@ const saveImages = async (imageData) => {
     }
   });
 
-  // Use Promise.all without await to run them in parallel
   await Promise.all(promises);
 };
 
-export { getImage };
+export { getImage, getProgress, getModelList };

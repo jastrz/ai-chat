@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogHeader,
   DialogBody,
-  DialogFooter,
   IconButton,
 } from "@material-tailwind/react";
 import SaveButton from "./SaveButton";
@@ -39,9 +38,9 @@ export const ImageDialog = ({ data, open, toggle }) => {
           <img
             className="w-[48rem] h-full rounded-lg object-cover object-center"
             src={`data:image/png;base64, ${data}`}
+            alt=""
           />
         </DialogBody>
-        <DialogFooter></DialogFooter>
       </Dialog>
     </>
   );

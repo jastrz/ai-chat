@@ -21,7 +21,9 @@ const Message = ({ username, content }) => {
   return (
     <div className={`flex items-center  ${isUser ? "justify-end" : ""}`}>
       <span className="shadow-md uppercase text-xs font-bold mr-3">
-        <Typography variant="small">{username}</Typography>
+        <Typography key={username} variant="small">
+          {username}
+        </Typography>
       </span>
       <div className={`${backgroundColor} shadow-lg rounded-lg px-4 py-2`}>
         {MessageContents}

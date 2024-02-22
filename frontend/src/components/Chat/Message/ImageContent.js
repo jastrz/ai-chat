@@ -32,6 +32,7 @@ const ImageContent = ({ index, data }) => {
         <img
           className={"max-h-64 py-2 "}
           src={`data:image/png;base64, ${data}`}
+          alt=""
         />
         {showHiddenItem && (
           <div className="absolute right-0 bottom-2 ">

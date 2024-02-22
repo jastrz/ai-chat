@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import SaveButton from "./SaveButton";
+import SaveButton from "./Chat/Message/SaveButton";
 import { Button, Card, CardBody } from "@material-tailwind/react";
 import { Textarea } from "@material-tailwind/react";
 import { askForImage } from "../api";

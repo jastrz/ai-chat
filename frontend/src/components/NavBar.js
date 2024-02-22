@@ -1,5 +1,5 @@
 import React from "react";
-import SettingsDialog from "./SettingsDialog";
+import SettingsDialog from "./Settings/SettingsDialog";
 
 import { Navbar, Typography } from "@material-tailwind/react";
 

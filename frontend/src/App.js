@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
-import { connectWithSocketServer } from "./socketConnection";
 import NavBar from "./components/NavBar";
 import Chat from "./components/Chat/Chat";
+
+import { connectWithSocketServer } from "./socketConnection";
 
 function App() {
   useEffect(() => {
