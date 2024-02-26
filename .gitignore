@@ -132,3 +132,5 @@ dist
 stable-diffusion-webui/
 backend/models
 backend/public
+
+.vscode
