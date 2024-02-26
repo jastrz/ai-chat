@@ -15,7 +15,7 @@ const initSocketServer = (server) => {
     console.log(`user connected: ${socket.id}`);
 
     socket.on("sendPrompt", (data) => {
-      console.log(`prompt sent from ${socket.id}, ${data}`);
+      console.log(`prompt sent from ${socket.id}, ${JSON.stringify(data)}`);
       handleMessageReceived(socket.id, data);
     });
 

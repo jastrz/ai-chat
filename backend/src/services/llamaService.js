@@ -20,6 +20,10 @@ class LlamaService {
     threads: 12,
   };
 
+  defaultPromptSettings = {
+    temperature: 0.3,
+  };
+
   gpuSettings = {
     gpuLayers: 24,
   };
@@ -39,7 +43,12 @@ class LlamaService {
     }
   }
 
-  async prompt(input, streamedAnswer = true, onChunkReceived) {
+  async prompt(
+    input,
+    streamedAnswer = true,
+    onChunkReceived,
+    abortSignal = null
+  ) {
     // initialization is temporarily here to prevent model loading on settings change
     if (!this.initialized) {
       this.sessions = [];
@@ -55,10 +64,10 @@ class LlamaService {
     if (streamedAnswer) {
       const session = this.getSession();
       answer = await session.prompt(input, {
+        ...this.getPromptSettings(abortSignal),
         onToken(chunk) {
           const decodedChunk = session.context.decode(chunk);
           onChunkReceived(decodedChunk);
-          console.log(decodedChunk);
         },
       });
     } else {
@@ -67,6 +76,10 @@ class LlamaService {
 
     return answer;
   }
+
+  getPromptSettings = (abortSignal = null) => {
+    return { ...this.defaultPromptSettings, abortSignal };
+  };
 
   updateContextSettings(newSettings) {
     this.contextSettings.batchSize = parseInt(newSettings.batchSize);

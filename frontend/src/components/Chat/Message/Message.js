@@ -10,20 +10,20 @@ const Message = ({ username, content }) => {
 
   const TextContents = content
     .filter(({ type }) => type !== "image")
-    .map(({ data, type }, index) => <TextContent key={index} data={data} />);
+    .map(({ data }, index) => <TextContent key={index} data={data} />);
 
   const ImageContents = content
     .filter(({ type }) => type === "image")
-    .map(({ data, type }, index) => <ImageContent key={index} data={data} />);
+    .map(({ data }, index) => <ImageContent key={index} data={data} />);
 
   return (
     <div className={`flex items-center ${isUser ? "justify-end" : ""}`}>
       <span className="shadow-md uppercase text-xs font-bold mr-3">
         <Typography variant="small">{username}</Typography>
       </span>
-      <div className={`${backgroundColor} shadow-lg rounded-lg px-4 py-2`}>
+      <div className={`${backgroundColor} shadow-xl rounded-2xl px-4 py-2`}>
         <div className="">{TextContents}</div>
-        <div className="flex flex-wrap gap-2">{ImageContents}</div>
+        <div className="flex flex-wrap gap-x-4">{ImageContents}</div>
       </div>
     </div>
   );

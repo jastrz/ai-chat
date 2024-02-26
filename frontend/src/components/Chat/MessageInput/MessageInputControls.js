@@ -9,13 +9,13 @@ const MessageInputControls = ({
   imageCheckboxToggled,
 }) => {
   return (
-    <div className="columns-2 mt-2">
-      <div className="column flex justify-start items-center">
+    <div className="flex flex-row mt-2">
+      <div className="basis-1/4 flex justify-start items-center">
         <IconButton onClick={onClickReset}>
           <i className="fas fa-trash-alt" />
         </IconButton>
       </div>
-      <div className="column flex justify-end items-center space-x-4">
+      <div className="basis-3/4 flex justify-end items-center space-x-4">
         <Checkbox
           height="40px"
           checked={imageCheckboxToggled}
