@@ -1,30 +1,41 @@
 import io from "socket.io-client";
 import env from "react-dotenv";
-import { addMessage, clearHistory } from "./store/chatSlice";
+import {
+  addMessage,
+  clearHistory,
+  updateMessageContent,
+} from "./store/chatSlice";
 import { store } from "./store/store";
 
 let socket = null;
 
-export const connectWithSocketServer = () => {
+const connectWithSocketServer = () => {
   socket = io(env.SERVER_ADDRESS);
   socket.on("connect", () => {
     console.log(`successfully connected using socket: ${socket.id}`);
   });
 
   socket.on("message", handleMessageReceived);
+  socket.on("messageFragment", handleMessageFragment);
 };
 
-export const sendPromptThroughSocket = (data) => {
+const sendPrompt = (data) => {
   console.log(`Sending data... ${socket.id}: ${data.message}`);
-  socket.emit("sendMessage", data);
+  socket.emit("sendPrompt", data);
 };
 
-export const reset = () => {
+const reset = () => {
   store.dispatch(clearHistory());
   socket.emit("reset");
 };
 
 const handleMessageReceived = (data) => {
-  console.log(`response: ${data.content}`);
+  console.log(`Received data: ${data}`);
   store.dispatch(addMessage(data));
 };
+
+const handleMessageFragment = (data) => {
+  store.dispatch(updateMessageContent(data));
+};
+
+export { connectWithSocketServer, sendPrompt, reset };

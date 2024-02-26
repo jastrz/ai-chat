@@ -9,7 +9,16 @@ const apiClient = axios.create({
   timeout: 0,
 });
 
+const defaultImagePrompt = {
+  prompt: "",
+  height: 512,
+  width: 512,
+  batch_size: 1,
+};
+
 const getImage = async (prompt) => {
+  prompt = { ...defaultImagePrompt, ...prompt };
+  console.log(prompt);
   const result = await apiClient.post(sdAddress + "/txt2img", prompt);
 
   if (process.env.CACHE_GENERATED_IMAGES.toLowerCase() === "true") {

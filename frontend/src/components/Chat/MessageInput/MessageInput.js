@@ -1,11 +1,12 @@
 import { Textarea, Progress } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setMessageToSend } from "../../../store/chatSlice";
-import { sendPromptThroughSocket } from "../../../socketConnection";
+import { useDispatch } from "react-redux";
+import { setUserMessage } from "../../../store/chatSlice";
+import { sendPrompt } from "../../../socketConnection";
 import { reset } from "../../../socketConnection";
 import MessageInputControls from "./MessageInputControls";
 import { getImageGenProgress } from "../../../api";
+import { getPrompt } from "../../../promptFactory";
 
 const MessageInput = () => {
   const dispatch = useDispatch();
@@ -17,8 +18,6 @@ const MessageInput = () => {
   const [isImage, setIsImage] = useState(false);
   const [promptType, setPromptType] = useState("text");
 
-  const sdData = useSelector((state) => state.sd);
-
   useEffect(() => {
     const fetchImageGenProgress = async () => {
       const progress = await getImageGenProgress();
@@ -26,7 +25,7 @@ const MessageInput = () => {
     };
 
     const interval = setInterval(() => {
-      if (isImage) fetchImageGenProgress();
+      if (isImage || progress !== 0) fetchImageGenProgress();
     }, 1000);
 
     return () => clearInterval(interval);
@@ -34,21 +33,10 @@ const MessageInput = () => {
 
   const onClickSend = () => {
     if (currentMessage.content.length === 0) return;
-    dispatch(setMessageToSend(currentMessage));
-
-    const prompt = {
-      type: promptType,
-      username: currentMessage.username,
-      message: currentMessage.content[0].data,
-    };
-
-    const isImage = promptType === "image";
-    setIsImage(isImage);
-    if (isImage) {
-      prompt.settings = sdData.promptSettings;
-    }
-
-    sendPromptThroughSocket(prompt);
+    dispatch(setUserMessage(currentMessage));
+    const prompt = getPrompt(promptType, currentMessage.content[0].data);
+    setIsImage(promptType === "image");
+    sendPrompt(prompt);
     setCurrentMessage({ username: "me", content: [] });
   };
 
@@ -86,9 +74,8 @@ const MessageInput = () => {
         } // todo: add input that can handle images
         onKeyDown={handleKeyDown}
         onChange={onTextChanged}
-        style={{ width: "100%" }}
       />
-      {isImage && <Progress value={progress} />}
+      {progress !== 0 && <Progress value={progress} />}
       <MessageInputControls
         promptType={promptType === "image"}
         handleImagePromptCheckbox={handleImagePromptCheckbox}

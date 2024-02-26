@@ -1,6 +1,5 @@
 import { Server } from "socket.io";
-import { llamaService } from "./services/llamaService.js";
-import { getImage } from "./services/sdService.js";
+import { handleMessageReceived, handleReset } from "./requestHandler.js";
 
 let io = null;
 
@@ -15,10 +14,8 @@ const initSocketServer = (server) => {
   io.on("connection", (socket) => {
     console.log(`user connected: ${socket.id}`);
 
-    socket.on("sendMessage", (data) => {
-      console.log(
-        `prompt sent from ${socket.id}, type: ${data.type}, message: ${data.message}`
-      );
+    socket.on("sendPrompt", (data) => {
+      console.log(`prompt sent from ${socket.id}, ${data}`);
       handleMessageReceived(socket.id, data);
     });
 
@@ -28,51 +25,4 @@ const initSocketServer = (server) => {
   });
 };
 
-const handleMessageReceived = async (socketId, data) => {
-  let answer;
-  let response = { username: "AI", content: [] };
-  switch (data.type) {
-    case "text":
-      answer = await llamaService.prompt(data.message);
-      console.log(answer);
-      response.content.push({ data: answer, type: "text" });
-      break;
-    case "image":
-      const defaultImagePrompt = {
-        prompt: data.message,
-        height: 512,
-        width: 512,
-        batch_size: 1,
-      };
-
-      const { numImages, negativePrompt, ...settings } = data.settings;
-      const imagePrompt = {
-        ...defaultImagePrompt,
-        ...settings,
-        batch_size: numImages,
-        negative_prompt: negativePrompt,
-      };
-      console.log(imagePrompt);
-
-      answer = await getImage(imagePrompt);
-      response.content.push({
-        data: "here's generated content: ",
-        type: "text",
-      });
-      answer.forEach((image) => {
-        response.content.push({ data: image, type: "image" });
-      });
-
-      break;
-    default:
-      break;
-  }
-
-  io.to(socketId).emit("message", response);
-};
-
-const handleReset = async (socketId) => {
-  llamaService.reset();
-};
-
-export { initSocketServer };
+export { io, initSocketServer };

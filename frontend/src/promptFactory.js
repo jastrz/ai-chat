@@ -1,0 +1,14 @@
+import { store } from "./store/store";
+
+export function getPrompt(type, message) {
+  let prompt = {
+    type: type,
+    message: message,
+  };
+
+  if (type === "image") {
+    prompt.settings = store.getState().sd.promptSettings;
+  }
+
+  return prompt;
+}

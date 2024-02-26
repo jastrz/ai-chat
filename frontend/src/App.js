@@ -11,8 +11,8 @@ function App() {
 
   return (
     <>
-      <NavBar />
-      <div className="absolute inset-x-0 bottom-0 w-full 2xl:inset-x-1/4 2xl:w-1/2">
+      <div className="flex flex-col">
+        <NavBar />
         <Chat />
       </div>
     </>

@@ -21,7 +21,7 @@ class LlamaService {
   };
 
   gpuSettings = {
-    gpuLayers: 32,
+    gpuLayers: 24,
   };
 
   constructor() {
@@ -30,7 +30,7 @@ class LlamaService {
 
   async init() {
     try {
-      await this.getAvailableModels();
+      this.availableModels = await this.getAvailableModels();
       const index = Math.floor(Math.random() * this.availableModels.length);
       this.contextSettings.modelName = this.availableModels[index];
       console.log(`Selected model: ${this.contextSettings.modelName}`);
@@ -39,17 +39,31 @@ class LlamaService {
     }
   }
 
-  async prompt(input) {
+  async prompt(input, streamedAnswer = true, onChunkReceived) {
     // initialization is temporarily here to prevent model loading on settings change
     if (!this.initialized) {
       this.sessions = [];
       this.setModel(this.contextSettings.modelName);
       const context = new LlamaContext(this.contextSettings);
+
       this.sessions.push(new LlamaChatSession({ context }));
       this.initialized = true;
     }
     console.log("user: " + input);
-    const answer = await this.getSession().prompt(input);
+
+    let answer;
+    if (streamedAnswer) {
+      const session = this.getSession();
+      answer = await session.prompt(input, {
+        onToken(chunk) {
+          const decodedChunk = session.context.decode(chunk);
+          onChunkReceived(decodedChunk);
+          console.log(decodedChunk);
+        },
+      });
+    } else {
+      answer = await this.getSession().prompt(input);
+    }
 
     return answer;
   }
@@ -80,10 +94,8 @@ class LlamaService {
         })
       );
 
-      this.availableModels = availableModels.filter((model) => model !== null);
-
       // Filter out any null values (non-file items)
-      return this.availableModels;
+      return availableModels;
     } catch (error) {
       console.error("Error while reading directory:", error);
       return [];
@@ -92,7 +104,12 @@ class LlamaService {
 
   setModel = (modelName, gpuLayers = this.gpuSettings.gpuLayers) => {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    delete this.contextSettings.model;
+    if (this.model !== null) {
+      console.log("deleting model");
+      this.contextSettings.model = null;
+      delete this.contextSettings.model;
+    }
+
     this.contextSettings.model = new LlamaModel({
       modelPath: path.join(__dirname, "../../models", modelName),
       gpuLayers: gpuLayers,
@@ -102,13 +119,12 @@ class LlamaService {
 
   // session per user not implemented yet
   getSession = () => {
-    return this.sessions[this.sessions.length - 1];
+    return this.sessions[0];
   };
 
   reset = async () => {
     console.log("resetting");
     this.initialized = false;
-    this.sessions = [];
   };
 }
 

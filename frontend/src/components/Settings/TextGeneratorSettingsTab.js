@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Select, Input, Option, Button } from "@material-tailwind/react";
+import { Select, Input, Option } from "@material-tailwind/react";
 import { useDispatch } from "react-redux";
 import { llamaSlice } from "../../store/llamaSlice";
 import { useSelector } from "react-redux/es/hooks/useSelector";
