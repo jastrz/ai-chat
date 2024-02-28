@@ -36,7 +36,7 @@ const TextGeneratorSettingsTab = () => {
     setValue("modelName", value);
   };
 
-  // Updating llama settings from form to store and sends settings to backend
+  // Updating llama settings from form to store and sending settings to backend
   const applyChanges = async () => {
     const values = getValues();
     dispatch(
@@ -67,7 +67,7 @@ const TextGeneratorSettingsTab = () => {
     <>
       {dataLoaded && (
         <form>
-          <div className="flex flex-col gap-4 overflow-y-auto">
+          <div className="flex flex-col gap-4 overflow-y-auto pt-2">
             <Select
               label="Model"
               {...register("modelName")}

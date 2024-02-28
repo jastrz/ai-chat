@@ -13,7 +13,9 @@ function App() {
     <>
       <div className="flex flex-col">
         <NavBar />
-        <Chat />
+        <div className="2xl:w-1/2 w-full mx-auto">
+          <Chat />
+        </div>
       </div>
     </>
   );

@@ -53,7 +53,7 @@ const ImageGeneratorSettingsTab = () => {
   return (
     <>
       <form>
-        <div className="flex flex-col gap-4 overflow-y-auto">
+        <div className="flex flex-col gap-4 overflow-y-auto pt-2">
           <Select
             label="Model"
             {...register("model")}

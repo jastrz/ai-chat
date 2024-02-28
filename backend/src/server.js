@@ -28,5 +28,3 @@ const ipAddress = process.env.IP_ADDRESS || "0.0.0.0";
 server.listen(port, ipAddress, () => {
   console.log(`Server running at http://${ipAddress}:${port}/`);
 });
-
-// "start": "nodemon ./src/server.js"

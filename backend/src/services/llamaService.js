@@ -16,12 +16,12 @@ class LlamaService {
     modelName: "",
     model: null,
     contextSize: 2048,
-    batchSize: 256,
+    batchSize: 512,
     threads: 12,
   };
 
   defaultPromptSettings = {
-    temperature: 0.3,
+    temperature: 0.5,
   };
 
   gpuSettings = {
