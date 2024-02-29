@@ -37,11 +37,37 @@ const getProgress = async () => {
   return result.data.progress;
 };
 
-const getModelList = async () => {
-  const result = await apiClient.get(sdAddress + "/sd-models");
-  return result;
+const postOptions = async (options) => {
+  try {
+    const mappedOptions = {
+      sd_model_checkpoint: options.modelName,
+    };
+    const result = await apiClient.post(sdAddress + "/options", mappedOptions);
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
 };
 
+const getModelList = async () => {
+  try {
+    const result = await apiClient.get(sdAddress + "/sd-models");
+    return result;
+  } catch (error) {
+    console.error("Error getting models:", error);
+    return null;
+  }
+};
+
+const getOptions = async () => {
+  try {
+    const result = await apiClient.get(sdAddress + "/options");
+    return result.data;
+  } catch (error) {
+    console.error("Error getting options:", error);
+    return null;
+  }
+};
 const saveImageToFile = async (imageData, filename, finalPath) => {
   try {
     const base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
@@ -71,4 +97,4 @@ const saveImages = async (imageData) => {
   await Promise.all(promises);
 };
 
-export { getImage, getProgress, getModelList };
+export { getImage, getProgress, getModelList, postOptions, getOptions };

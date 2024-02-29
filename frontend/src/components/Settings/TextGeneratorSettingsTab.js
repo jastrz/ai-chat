@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Select, Input, Option } from "@material-tailwind/react";
+import { Select, Input, Option, Typography } from "@material-tailwind/react";
 import { useDispatch } from "react-redux";
 import { llamaSlice } from "../../store/llamaSlice";
 import { useSelector } from "react-redux/es/hooks/useSelector";
@@ -15,7 +15,9 @@ const TextGeneratorSettingsTab = () => {
   const { register, getValues, reset, setValue } = useForm();
   const [dataLoaded, setDataLoaded] = useState(false);
   const dispatch = useDispatch();
-  let settings = useSelector((state) => state.llama);
+  const { availableModels, contextSettings, promptSettings } = useSelector(
+    (state) => state.llama
+  );
 
   // Getting llama settings and models data from api
   useEffect(() => {
@@ -24,40 +26,47 @@ const TextGeneratorSettingsTab = () => {
       dispatch(llamaSlice.actions.setAvailableModels(models));
 
       const settings = await getCurrentLlamaSettings();
-      dispatch(llamaSlice.actions.setLlamaSettings(settings));
+      dispatch(llamaSlice.actions.setContextSettings(settings));
       setDataLoaded(true);
-      reset({ ...settings });
+      reset({ ...settings, ...promptSettings });
     };
 
     fetchLlamaModelList();
-  }, [dispatch, reset]);
+  }, [dispatch, reset, promptSettings]);
 
   const handleLlamaModelSelect = (value) => {
     setValue("modelName", value);
   };
 
-  // Updating llama settings from form to store and sending settings to backend
+  // Updating llama context settings from form to store and sending settings to backend
   const applyChanges = async () => {
     const values = getValues();
+
     dispatch(
-      llamaSlice.actions.setLlamaSettings({
+      llamaSlice.actions.setContextSettings({
         modelName: values.modelName,
         contextSize: values.contextSize,
         batchSize: values.batchSize,
       })
     );
 
+    dispatch(
+      llamaSlice.actions.setPromptSettings({
+        temperature: values.temperature,
+        topP: values.topP,
+        topK: values.topK,
+      })
+    );
+
     const response = await updateLlamaSettings(values);
     if (response.status === 200) {
-      // console.log("updated settings");
     }
   };
 
   const resetToDefault = () => {
     let defaultValues = {
-      modelName: settings.modelName,
-      contextSize: settings.contextSize,
-      batchSize: settings.batchSize,
+      ...contextSettings,
+      ...promptSettings,
     };
     setValue("modelName", defaultValues.modelName);
     reset({ ...defaultValues });
@@ -68,13 +77,14 @@ const TextGeneratorSettingsTab = () => {
       {dataLoaded && (
         <form>
           <div className="flex flex-col gap-4 overflow-y-auto pt-2">
+            <Typography variant="small">Context settings</Typography>
             <Select
               label="Model"
               {...register("modelName")}
               onChange={handleLlamaModelSelect}
-              value={settings.modelName}
+              value={contextSettings.modelName}
             >
-              {settings.availableModels.map((model, index) => {
+              {availableModels.map((model, index) => {
                 return (
                   <Option key={index} value={model}>
                     {model}
@@ -88,6 +98,14 @@ const TextGeneratorSettingsTab = () => {
               {...register("contextSize")}
             />
             <Input label="Batch size" size="md" {...register("batchSize")} />
+
+            <Typography className="mt-2" variant="small">
+              Prompt settings
+            </Typography>
+            <Input label="Temperature" size="md" {...register("temperature")} />
+            <Input label="TopP" size="md" {...register("topP")} />
+            <Input label="TopK" size="md" {...register("topK")} />
+
             <SettingsTabControls
               onApply={applyChanges}
               onReset={resetToDefault}

@@ -11,6 +11,8 @@ import {
   handleImagePrompt,
   handleGetImageGenProgress,
   handleGetSDModels,
+  handlePostOptions,
+  handleGetOptions,
 } from "./controllers/sdController.js";
 
 const router = express.Router();
@@ -25,5 +27,7 @@ router.post("/ask", handleChatPrompt);
 router.get("/sdModelList", handleGetSDModels);
 router.get("/imageGenProgress", handleGetImageGenProgress);
 router.post("/getImage", handleImagePrompt);
+router.post("/sdOptions", handlePostOptions);
+router.get("/sdOptions", handleGetOptions);
 
 export { router };

@@ -1,4 +1,11 @@
-import { getImage, getProgress, getModelList } from "../services/sdService.js";
+import {
+  getImage,
+  getProgress,
+  getModelList,
+  postOptions,
+  getOptions,
+} from "../services/sdService.js";
+import { removeFileExtension } from "../utils/utils.js";
 
 // sends back the images as an array of base64 encoded strings
 const handleImagePrompt = async (req, res) => {
@@ -31,7 +38,6 @@ const handleGetImageGenProgress = async (req, res) => {
 const handleGetSDModels = async (req, res) => {
   try {
     const result = await getModelList();
-
     const models = result.data.map((model) => model.model_name);
     // console.log(models);
     res.send(models);
@@ -41,4 +47,34 @@ const handleGetSDModels = async (req, res) => {
   }
 };
 
-export { handleImagePrompt, handleGetImageGenProgress, handleGetSDModels };
+const handlePostOptions = async (req, res) => {
+  try {
+    const options = req.body.data;
+    await postOptions(options);
+    console.log(req.body);
+    res.status(200);
+  } catch (err) {
+    console.log(error);
+    res.status(err.status);
+  }
+};
+
+const handleGetOptions = async (req, res) => {
+  try {
+    const options = await getOptions();
+    const modelName = removeFileExtension(options.sd_model_checkpoint);
+    console.log(modelName);
+    res.send({ modelName: modelName });
+  } catch (err) {
+    console.log(err);
+    res.status(err.status);
+  }
+};
+
+export {
+  handleImagePrompt,
+  handleGetImageGenProgress,
+  handleGetSDModels,
+  handlePostOptions,
+  handleGetOptions,
+};

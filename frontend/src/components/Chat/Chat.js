@@ -6,7 +6,7 @@ import MessageInput from "./MessageInput/MessageInput";
 const Chat = () => (
   <>
     <Card>
-      <CardBody>
+      <CardBody className="bg-gray-50">
         <MessagesContainer />
         <MessageInput />
       </CardBody>

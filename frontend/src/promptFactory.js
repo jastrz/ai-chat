@@ -10,5 +10,9 @@ export function getPrompt(type, message) {
     prompt.settings = store.getState().sd.promptSettings;
   }
 
+  if (type === "text") {
+    prompt.settings = store.getState().llama.promptSettings;
+  }
+
   return prompt;
 }

@@ -14,20 +14,20 @@ const ImageContent = ({ index, data }) => {
     setShowHiddenItem(false);
   };
 
-  const toggleFullscreen = () => {
+  const toggle = () => {
     setOpen(!open);
   };
 
   return (
     <>
-      <ImageDialog data={data} open={open} toggle={toggleFullscreen} />
+      <ImageDialog data={data} open={open} toggle={toggle} />
       <div
         key={index}
         className="relative py-2"
         onFocus={showHidden}
         onMouseOver={showHidden}
         onMouseOut={hide}
-        onClick={toggleFullscreen}
+        onClick={toggle}
       >
         <img
           className={"max-h-64 shadow-lg rounded-md"}

@@ -21,7 +21,9 @@ class LlamaService {
   };
 
   defaultPromptSettings = {
-    temperature: 0.5,
+    temperature: 0.8,
+    topP: 0.01,
+    topK: 30,
   };
 
   gpuSettings = {
@@ -44,7 +46,7 @@ class LlamaService {
   }
 
   async prompt(
-    input,
+    userPrompt,
     streamedAnswer = true,
     onChunkReceived,
     abortSignal = null
@@ -58,13 +60,15 @@ class LlamaService {
       this.sessions.push(new LlamaChatSession({ context }));
       this.initialized = true;
     }
-    console.log("user: " + input);
+
+    const { message, settings } = userPrompt;
+    console.log("user: " + message);
 
     let answer;
     if (streamedAnswer) {
       const session = this.getSession();
-      answer = await session.prompt(input, {
-        ...this.getPromptSettings(abortSignal),
+      answer = await session.prompt(message, {
+        ...this.getPromptSettings(settings, abortSignal),
         onToken(chunk) {
           const decodedChunk = session.context.decode(chunk);
           onChunkReceived(decodedChunk);
@@ -77,8 +81,13 @@ class LlamaService {
     return answer;
   }
 
-  getPromptSettings = (abortSignal = null) => {
-    return { ...this.defaultPromptSettings, abortSignal };
+  getPromptSettings = (userPromptSettings, abortSignal = null) => {
+    console.log(userPromptSettings);
+    return {
+      ...this.defaultPromptSettings,
+      ...userPromptSettings,
+      abortSignal,
+    };
   };
 
   updateContextSettings(newSettings) {
@@ -117,7 +126,7 @@ class LlamaService {
 
   setModel = (modelName, gpuLayers = this.gpuSettings.gpuLayers) => {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    if (this.model !== null) {
+    if (this.contextSettings.model !== null) {
       console.log("deleting model");
       this.contextSettings.model = null;
       delete this.contextSettings.model;

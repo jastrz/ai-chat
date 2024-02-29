@@ -10,7 +10,7 @@ const NavBar = () => {
       variant="gradient"
       color="blue-gray"
       className="mx-auto from-blue-gray-900 to-blue-gray-500 px-4 py-3"
-      fullWidth="100%"
+      fullWidth
     >
       <div className="flex flex-wrap items-center justify-between gap-y-4 text-white">
         <Typography

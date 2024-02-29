@@ -7,7 +7,7 @@ import { io } from "./socketServer.js";
 const handleMessageReceived = async (socketId, data) => {
   switch (data.type) {
     case "text":
-      addRequest(() => getLlamaResponse(data.message, socketId));
+      addRequest(() => getLlamaResponse(data, socketId));
       break;
     case "image":
       addRequest(() => getImageResponse(data, socketId));
@@ -22,7 +22,7 @@ const handleReset = async () => {
 };
 
 // Function to retrieve response from llamaService and send it to the specified socket
-const getLlamaResponse = async (message, socketId) => {
+const getLlamaResponse = async (userPrompt, socketId) => {
   const responseGuid = generateGUID();
   let response = { username: "AI", content: [], guid: responseGuid };
   response.content.push({ data: "", type: "text" });
@@ -35,7 +35,7 @@ const getLlamaResponse = async (message, socketId) => {
     });
   };
 
-  return await llamaService.prompt(message, true, onChunkReceived);
+  return await llamaService.prompt(userPrompt, true, onChunkReceived);
 };
 
 // Function to generate images based on the provided settings and send them to the specified socket

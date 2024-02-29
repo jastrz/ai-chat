@@ -74,8 +74,27 @@ const updateLlamaSettings = async (settings) => {
     const response = await api.post("/updateLlamaSettings", { data: settings });
     return response;
   } catch (error) {
-    console.error("Error setting llama model");
+    console.error("Error posting llama settings");
     throw error;
+  }
+};
+
+const updateSdSettings = async (settings) => {
+  try {
+    const response = await api.post("/sdOptions", { data: settings });
+    console.log(settings);
+    return response;
+  } catch {
+    console.error("Error posting SD Settings");
+  }
+};
+
+const getSDSettings = async () => {
+  try {
+    const response = await api.get("/sdOptions");
+    return response.data;
+  } catch {
+    console.log("Error getting SD options");
   }
 };
 
@@ -84,7 +103,9 @@ export {
   askForImage,
   getImageGenProgress,
   getSDModelList,
+  getSDSettings,
   getLlamaModelList,
   updateLlamaSettings,
   getCurrentLlamaSettings,
+  updateSdSettings,
 };

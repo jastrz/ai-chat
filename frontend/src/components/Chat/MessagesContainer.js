@@ -11,7 +11,10 @@ const MessagesContainer = () => {
   }, [history]);
 
   return (
-    <div className="overflow-y-auto mb-4" ref={containerRef}>
+    <div
+      className="overflow-y-auto mb-4 bg-white rounded-md"
+      ref={containerRef}
+    >
       <ChatMessages messages={history} />
     </div>
   );

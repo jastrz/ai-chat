@@ -3,37 +3,42 @@ import { createSlice } from "@reduxjs/toolkit";
 export const llamaSlice = createSlice({
   name: "llama",
   initialState: {
-    modelName: "",
-    batchSize: 256,
-    contextSize: 2048,
     availableModels: [],
+    contextSettings: {
+      modelName: "",
+      batchSize: 256,
+      contextSize: 2048,
+    },
+    promptSettings: {
+      temperature: 0.8,
+      topP: 0.03,
+      topK: 30,
+    },
   },
   reducers: {
-    setLlamaSettings: (state, action) => {
-      state.modelName = action.payload.modelName || state.modelName;
-      state.batchSize = action.payload.batchSize || state.batchSize;
-      state.contextSize = action.payload.contextSize || state.contextSize;
+    setContextSettings: (state, action) => {
+      state.contextSettings = {
+        ...state.contextSettings,
+        ...action.payload,
+      };
     },
+    setPromptSettings: (state, action) => {
+      state.promptSettings = {
+        ...state.promptSettings,
+        ...Object.fromEntries(
+          Object.entries(action.payload).map(([key, value]) => [
+            key,
+            parseFloat(value),
+          ])
+        ),
+      };
+    },
+
     setAvailableModels: (state, action) => {
       state.availableModels = action.payload;
-    },
-    setBatchSize: (state, action) => {
-      console.log(action.payload);
-      state.batchSize = action.payload;
-    },
-    setContextSize: (state, action) => {
-      state.contextSize = action.payload;
-    },
-    setModelName: (state, action) => {
-      state.modelName = action.payload;
     },
   },
 });
 
-export const {
-  setLlamaSettings,
-  setAvailableModels,
-  setBatchSize,
-  setContextSize,
-  setModelName,
-} = llamaSlice.actions;
+export const { setContextSettings, setAvailableModels, setPromptSettings } =
+  llamaSlice.actions;

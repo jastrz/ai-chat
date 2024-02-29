@@ -22,7 +22,7 @@ const SettingsDialog = () => {
 
   const handleOpen = () => setOpen(!open);
 
-  const getTabs = () => [
+  const tabs = [
     {
       label: "Image",
       value: "image",
@@ -59,14 +59,14 @@ const SettingsDialog = () => {
 
             <Tabs value="image">
               <TabsHeader>
-                {getTabs().map(({ label, value }) => (
+                {tabs.map(({ label, value }) => (
                   <Tab key={value} value={value}>
                     {label}
                   </Tab>
                 ))}
               </TabsHeader>
               <TabsBody>
-                {getTabs().map(({ value, content }) => (
+                {tabs.map(({ value, content }) => (
                   <TabPanel key={value} value={value}>
                     {content}
                   </TabPanel>
