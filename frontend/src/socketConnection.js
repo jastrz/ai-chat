@@ -7,6 +7,7 @@ import {
   updatePromptStatus,
 } from "./store/chatSlice";
 import { store } from "./store/store";
+import { Message } from "./data";
 
 let socket = null;
 
@@ -23,9 +24,18 @@ const connectWithSocketServer = () => {
   socket.on("promptStateChanged", handlePromptCompleted);
 };
 
+// Possible statuses: completed, pending, processed
 const handlePromptCompleted = (data) => {
   console.log(data);
   store.dispatch(updatePromptStatus(data));
+
+  // temporarily not creating new messages for image prompts
+  const state = store.getState().chat;
+  const prompt = state.prompts.find((prompt) => prompt.guid === data.guid);
+  if (data.status === "processed" && prompt && prompt.type !== "image") {
+    const msg = new Message("AI", null, data.guid);
+    store.dispatch(addMessage(msg.toJSON()));
+  }
 };
 
 const sendPrompt = (data) => {

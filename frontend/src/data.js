@@ -4,10 +4,10 @@ import { generateGUID } from "./utils";
 export class Message {
   promptGuid;
 
-  constructor(username, content = null) {
+  constructor(username, content = null, guid = null) {
     this.username = username;
     this.content = content === null ? this.createContent() : content;
-    this.guid = generateGUID();
+    this.guid = guid === null ? generateGUID() : guid;
   }
 
   createContent() {
@@ -29,7 +29,7 @@ export class Prompt {
     this.message = message;
     this.type = type;
     this.guid = generateGUID();
-    this.targetGuid = targetGuid === null ? generateGUID() : targetGuid;
+    this.targetGuid = targetGuid === null ? this.guid : targetGuid;
     this.status = "pending";
   }
 
@@ -39,7 +39,7 @@ export class Prompt {
       type: this.type,
       guid: this.guid,
       targetGuid: this.targetGuid,
-      status: this.status
+      status: this.status,
     };
   }
 }

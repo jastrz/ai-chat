@@ -6,7 +6,7 @@
 
 .typing .dot {
   animation: mercuryTypingAnimation 1.2s infinite ease-in-out;
-  background-color: #6b6b6bce;
+  background-color: #ffffffce;
   border-radius: 50%;
   height: 5px;
   margin-right: 4px;

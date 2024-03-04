@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Select, Input, Option, Typography } from "@material-tailwind/react";
 import { useDispatch } from "react-redux";
-import { llamaSlice } from "../../store/llamaSlice";
+import { llamaSlice } from "store/llamaSlice";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import {
   getLlamaModelList,
   updateLlamaSettings,
   getCurrentLlamaSettings,
-} from "../../api";
+} from "api";
 import { useForm } from "react-hook-form";
 import SettingsTabControls from "./SettingsTabControls";
-import { sendTextGenSettings } from "../../socketConnection";
+import { sendTextGenSettings } from "socketConnection";
 
 const TextGeneratorSettingsTab = () => {
   const { register, getValues, reset, setValue } = useForm();

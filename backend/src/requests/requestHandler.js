@@ -1,7 +1,7 @@
-import { llamaService } from "./services/llamaService.js";
-import { getImage } from "./services/sdService.js";
+import { llamaService } from "../services/llamaService.js";
+import { getImage } from "../services/sdService.js";
 import { Request, addRequest, eventEmitter } from "./requestProcessor.js";
-import { getSessionById } from "./sessionManager.js";
+import { getSessionById } from "../session/sessionManager.js";
 
 eventEmitter.on("onRequestStateChange", (request) => {
   console.log(`Request: ${request.id} state changed: ${request.status}`);
@@ -27,13 +27,14 @@ const processPrompt = async (session, data) => {
       request = new Request(data.guid, session.id, async () =>
         getLlamaResponse(data, session)
       );
-
       break;
+
     case "image":
       request = new Request(data.guid, session.id, async () =>
         getImageResponse(data, session)
       );
       break;
+
     default:
       break;
   }

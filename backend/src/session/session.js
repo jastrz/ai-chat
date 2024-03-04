@@ -1,7 +1,7 @@
-import { generateGUID } from "./utils/utils.js";
-import { llamaService } from "./services/llamaService.js";
-import * as sdService from "./services/sdService.js";
-import { io } from "./socketServer.js";
+import { generateGUID } from "../utils/utils.js";
+import { llamaService } from "../services/llamaService.js";
+import * as sdService from "../services/sdService.js";
+import { io } from "../socketServer.js";
 
 class Session {
   textPromptSettings = Object.assign({}, llamaService.defaultPromptSettings);

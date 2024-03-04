@@ -41,6 +41,8 @@ export const chatSlice = createSlice({
         state.history.push(messageToUpdate);
       }
 
+      console.log(messageToUpdate, action.payload);
+
       messageToUpdate.content[0].data += action.payload.data;
     },
     clearHistory: (state) => {

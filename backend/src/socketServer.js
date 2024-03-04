@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
-import { processPrompt } from "./requestHandler.js";
-import * as sessionManager from "./sessionManager.js";
-import { cancelRequest } from "./requestProcessor.js";
+import { processPrompt } from "./requests/requestHandler.js";
+import * as sessionManager from "./session/sessionManager.js";
+import { cancelRequest } from "./requests/requestProcessor.js";
 
 let io = null;
 
@@ -61,7 +61,6 @@ function handlePromptReceived(socketId, data) {
   };
 
   // send message to other sockets associated with current user
-  // broadcastToSession(session, "message", userMessage, [socketId]);
   session.broadcast("message", userMessage, [socketId]);
   processPrompt(session, data);
 }

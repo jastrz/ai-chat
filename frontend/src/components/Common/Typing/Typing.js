@@ -3,7 +3,7 @@ import "./Typing.css";
 
 const Typing = () => {
   return (
-    <div className="typing">
+    <div className="typing ">
       <div className="dot"></div>
       <div className="dot"></div>
       <div className="dot"></div>

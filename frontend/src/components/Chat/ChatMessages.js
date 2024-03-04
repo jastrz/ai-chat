@@ -13,7 +13,7 @@ const ChatMessages = ({ messages }) => {
         }}
       >
         {messages.map((message, index) => (
-          <div key={index} className="mb-4 text-sm">
+          <div key={index}>
             <Message message={message} />
           </div>
         ))}
