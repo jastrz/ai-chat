@@ -15,7 +15,7 @@ class LlamaService {
   contextSettings = {
     modelName: "",
     model: null,
-    contextSize: 2048,
+    contextSize: 1024,
     batchSize: 512,
     threads: 12,
   };
@@ -67,13 +67,19 @@ class LlamaService {
     let answer;
     if (streamedAnswer) {
       const session = this.getSession();
-      answer = await session.prompt(message, {
-        ...this.getPromptSettings(settings, abortSignal),
-        onToken(chunk) {
-          const decodedChunk = session.context.decode(chunk);
-          onChunkReceived(decodedChunk);
-        },
-      });
+      try {
+        answer = await session.prompt(message, {
+          ...this.getPromptSettings(settings, abortSignal),
+          onToken(chunk) {
+            const decodedChunk = session.context.decode(chunk);
+            onChunkReceived(decodedChunk);
+          },
+        });
+      } catch (error) {
+        console.log(error);
+        console.log("Error getting answer");
+        this.initialized = false;
+      }
     } else {
       answer = await this.getSession().prompt(input);
     }
@@ -86,7 +92,7 @@ class LlamaService {
     return {
       ...this.defaultPromptSettings,
       ...userPromptSettings,
-      abortSignal,
+      signal: abortSignal,
     };
   };
 

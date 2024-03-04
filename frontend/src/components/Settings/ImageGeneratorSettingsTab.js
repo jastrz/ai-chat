@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import SettingsTabControls from "./SettingsTabControls";
 import { useSelector, useDispatch } from "react-redux";
 import { sdSlice } from "../../store/sdSlice";
+import { sendImageGenSettings } from "../../socketConnection";
 
 const ImageGeneratorSettingsTab = () => {
   const dispatch = useDispatch();
@@ -42,14 +43,17 @@ const ImageGeneratorSettingsTab = () => {
 
   const applyChanges = async () => {
     const values = getValues();
-    dispatch(
-      sdSlice.actions.setPromptSettings({
-        height: parseInt(values.height),
-        width: parseInt(values.width),
-        numImages: parseInt(values.numImages),
-        negativePrompt: values.negativePrompt,
-      })
-    );
+
+    const imageGenPromptSettings = {
+      height: parseInt(values.height),
+      width: parseInt(values.width),
+      numImages: parseInt(values.numImages),
+      negativePrompt: values.negativePrompt,
+    };
+
+    sendImageGenSettings(imageGenPromptSettings);
+    dispatch(sdSlice.actions.setPromptSettings(imageGenPromptSettings));
+
     if (values.modelName !== settings.modelName) {
       const response = await updateSdSettings({ modelName: values.modelName });
       if (response.status === 200) {

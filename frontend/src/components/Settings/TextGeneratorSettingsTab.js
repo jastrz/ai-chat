@@ -10,6 +10,7 @@ import {
 } from "../../api";
 import { useForm } from "react-hook-form";
 import SettingsTabControls from "./SettingsTabControls";
+import { sendTextGenSettings } from "../../socketConnection";
 
 const TextGeneratorSettingsTab = () => {
   const { register, getValues, reset, setValue } = useForm();
@@ -42,22 +43,25 @@ const TextGeneratorSettingsTab = () => {
   const applyChanges = async () => {
     const values = getValues();
 
-    dispatch(
-      llamaSlice.actions.setContextSettings({
-        modelName: values.modelName,
-        contextSize: values.contextSize,
-        batchSize: values.batchSize,
-      })
-    );
+    // prompt settings
+    const textPromptSettings = {
+      temperature: parseFloat(values.temperature),
+      topP: parseFloat(values.topP),
+      topK: parseFloat(values.topK),
+    };
 
-    dispatch(
-      llamaSlice.actions.setPromptSettings({
-        temperature: values.temperature,
-        topP: values.topP,
-        topK: values.topK,
-      })
-    );
+    sendTextGenSettings(textPromptSettings);
+    dispatch(llamaSlice.actions.setPromptSettings(textPromptSettings));
 
+    // llama context settings
+    const llamaContextSettings = {
+      modelName: values.modelName,
+      contextSize: values.contextSize,
+      batchSize: values.batchSize,
+    };
+    dispatch(llamaSlice.actions.setContextSettings(llamaContextSettings));
+
+    // should be available only for superuser and sent only when changed
     const response = await updateLlamaSettings(values);
     if (response.status === 200) {
     }

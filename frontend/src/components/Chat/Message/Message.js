@@ -1,8 +1,11 @@
-import { Typography } from "@material-tailwind/react";
+import { IconButton, Typography } from "@material-tailwind/react";
 import React from "react";
 
 import ImageContent from "./ImageContent";
 import TextContent from "./TextContent";
+import { cancelPrompt } from "../../../socketConnection";
+import { useDispatch, useSelector } from "react-redux";
+import { removeMessage } from "../../../store/chatSlice";
 
 const UsernameIndicator = ({ username }) => {
   return (
@@ -29,15 +32,37 @@ const Contents = ({ content, backgroundColor }) => {
   );
 };
 
-const Message = ({ username, content }) => {
-  const isUser = username === "me";
+const Message = ({ message }) => {
+  const dispatch = useDispatch();
+  const { prompts } = useSelector((state) => state.chat);
+  const isUser = message.username === "User";
   const backgroundColor = isUser ? "bg-blue-50" : "bg-blue-200";
 
+  const getPromptStatus = () => {
+    const prompt = prompts.find((prompt) => prompt.guid === message.promptGuid);
+    if (prompt) {
+      console.log(prompt.status);
+      return prompt.status;
+    }
+  };
+
+  const handleInterrupt = () => {
+    cancelPrompt(message.promptGuid);
+    dispatch(removeMessage(message.guid));
+  };
+
   return (
-    <div className={`flex items-center ${isUser ? "justify-end" : ""}`}>
-      <UsernameIndicator username={username} />
-      <Contents content={content} backgroundColor={backgroundColor} />
-    </div>
+    <>
+      <div className={`flex items-center ${isUser ? "justify-end" : ""}`}>
+        <UsernameIndicator username={message.username} />
+        <Contents content={message.content} backgroundColor={backgroundColor} />
+        {isUser && getPromptStatus() !== "completed" && (
+          <IconButton onClick={handleInterrupt} size="sm">
+            <i className="fas fa-xmark" />
+          </IconButton>
+        )}
+      </div>
+    </>
   );
 };
 

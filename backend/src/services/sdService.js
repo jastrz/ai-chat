@@ -10,14 +10,12 @@ const apiClient = axios.create({
 });
 
 const defaultImagePrompt = {
-  prompt: "",
   height: 512,
   width: 512,
   batch_size: 1,
 };
 
 const getImage = async (prompt) => {
-  prompt = { ...defaultImagePrompt, ...prompt };
   console.log(prompt);
   const result = await apiClient.post(sdAddress + "/txt2img", prompt);
 
@@ -68,6 +66,7 @@ const getOptions = async () => {
     return null;
   }
 };
+
 const saveImageToFile = async (imageData, filename, finalPath) => {
   try {
     const base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
@@ -97,4 +96,11 @@ const saveImages = async (imageData) => {
   await Promise.all(promises);
 };
 
-export { getImage, getProgress, getModelList, postOptions, getOptions };
+export {
+  getImage,
+  getProgress,
+  getModelList,
+  postOptions,
+  getOptions,
+  defaultImagePrompt,
+};

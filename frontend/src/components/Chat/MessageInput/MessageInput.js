@@ -1,12 +1,12 @@
 import { Textarea, Progress } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setUserMessage } from "../../../store/chatSlice";
+import { addMessage, addPrompt } from "../../../store/chatSlice";
 import { sendPrompt } from "../../../socketConnection";
 import { reset } from "../../../socketConnection";
 import MessageInputControls from "./MessageInputControls";
 import { getImageGenProgress } from "../../../api";
-import { getPrompt } from "../../../promptFactory";
+import { Message, Prompt } from "../../../data";
 
 const MessageInput = () => {
   const dispatch = useDispatch();
@@ -33,10 +33,19 @@ const MessageInput = () => {
 
   const onClickSend = () => {
     if (currentMessage.content.length === 0) return;
-    dispatch(setUserMessage(currentMessage));
-    const prompt = getPrompt(promptType, currentMessage.content[0].data);
     setIsImage(promptType === "image");
+
+    const userMessage = new Message(
+      currentMessage.username,
+      currentMessage.content
+    );
+    const prompt = new Prompt(userMessage.content[0].data, promptType);
+    userMessage.promptGuid = prompt.guid;
+
     sendPrompt(prompt);
+
+    dispatch(addMessage(userMessage.toJSON()));
+    dispatch(addPrompt(prompt.toJSON()));
     setCurrentMessage({ username: "me", content: [] });
   };
 
@@ -49,7 +58,7 @@ const MessageInput = () => {
 
   const onTextChanged = (event) => {
     setCurrentMessage({
-      username: "me",
+      username: "User",
       content: [{ data: event.target.value, type: "text" }],
     });
   };

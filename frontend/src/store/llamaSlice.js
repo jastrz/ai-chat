@@ -25,12 +25,7 @@ export const llamaSlice = createSlice({
     setPromptSettings: (state, action) => {
       state.promptSettings = {
         ...state.promptSettings,
-        ...Object.fromEntries(
-          Object.entries(action.payload).map(([key, value]) => [
-            key,
-            parseFloat(value),
-          ])
-        ),
+        ...action.payload,
       };
     },
 

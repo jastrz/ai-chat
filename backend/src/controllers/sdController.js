@@ -39,7 +39,6 @@ const handleGetSDModels = async (req, res) => {
   try {
     const result = await getModelList();
     const models = result.data.map((model) => model.model_name);
-    // console.log(models);
     res.send(models);
   } catch (error) {
     console.error(error);

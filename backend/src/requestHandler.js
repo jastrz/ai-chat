@@ -1,54 +1,75 @@
 import { llamaService } from "./services/llamaService.js";
 import { getImage } from "./services/sdService.js";
-import { generateGUID } from "./utils/utils.js";
-import { addRequest } from "./requestProcessor.js";
-import { io } from "./socketServer.js";
+import { Request, addRequest, eventEmitter } from "./requestProcessor.js";
+import { getSessionById } from "./sessionManager.js";
 
-const handleMessageReceived = async (socketId, data) => {
+eventEmitter.on("onRequestStateChange", (request) => {
+  console.log(`Request: ${request.id} state changed: ${request.status}`);
+
+  if (request.status === "processed" || request.status === "completed") {
+    try {
+      const session = getSessionById(request.sessionId);
+      session.broadcast("promptStateChanged", {
+        guid: request.id,
+        status: request.status,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+});
+
+const processPrompt = async (session, data) => {
+  let request;
+
   switch (data.type) {
     case "text":
-      addRequest(() => getLlamaResponse(data, socketId));
+      request = new Request(data.guid, session.id, async () =>
+        getLlamaResponse(data, session)
+      );
+
       break;
     case "image":
-      addRequest(() => getImageResponse(data, socketId));
+      request = new Request(data.guid, session.id, async () =>
+        getImageResponse(data, session)
+      );
       break;
     default:
       break;
   }
-};
 
-const handleReset = async () => {
-  llamaService.reset();
+  addRequest(request);
 };
 
 // Function to retrieve response from llamaService and send it to the specified socket
-const getLlamaResponse = async (userPrompt, socketId) => {
-  const responseGuid = generateGUID();
-  let response = { username: "AI", content: [], guid: responseGuid };
-  response.content.push({ data: "", type: "text" });
-  io.to(socketId).emit("message", response);
-
+const getLlamaResponse = async (userPrompt, session) => {
   const onChunkReceived = (decodedChunk) => {
-    io.to(socketId).emit("messageFragment", {
+    const responseFragment = {
+      promptGuid: userPrompt.guid,
+      targetGuid: userPrompt.targetGuid,
       data: decodedChunk,
-      targetGuid: responseGuid,
-    });
+    };
+
+    session.broadcast("messageFragment", responseFragment);
   };
 
-  return await llamaService.prompt(userPrompt, true, onChunkReceived);
+  const prompt = {
+    message: userPrompt.message,
+    settings: session.textPromptSettings,
+  };
+
+  return await llamaService.prompt(prompt, true, onChunkReceived);
 };
 
 // Function to generate images based on the provided settings and send them to the specified socket
-const getImageResponse = async (data, socketId) => {
+const getImageResponse = async (userPrompt, session) => {
   let response = { username: "AI", content: [] };
 
-  // Match the names of variables in the settings with the names in the SD API
-  const { numImages, negativePrompt, ...settings } = data.settings;
+  console.log(userPrompt);
+
   const imagePrompt = {
-    prompt: data.message,
-    ...settings,
-    batch_size: numImages,
-    negative_prompt: negativePrompt,
+    prompt: userPrompt.message,
+    ...session.imagePromptSettings,
   };
 
   const images = await getImage(imagePrompt);
@@ -62,7 +83,7 @@ const getImageResponse = async (data, socketId) => {
     response.content.push({ data: image, type: "image" });
   });
 
-  io.to(socketId).emit("message", response);
+  session.broadcast("message", response);
 };
 
-export { handleMessageReceived, handleReset };
+export { processPrompt };

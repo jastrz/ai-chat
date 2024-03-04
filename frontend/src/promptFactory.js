@@ -1,18 +1,12 @@
-import { store } from "./store/store";
+import { generateGUID } from "./utils";
 
 export function getPrompt(type, message) {
   let prompt = {
+    username: message.username,
+    message: message.content[0].data,
     type: type,
-    message: message,
+    guid: generateGUID(),
   };
-
-  if (type === "image") {
-    prompt.settings = store.getState().sd.promptSettings;
-  }
-
-  if (type === "text") {
-    prompt.settings = store.getState().llama.promptSettings;
-  }
 
   return prompt;
 }

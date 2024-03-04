@@ -25,7 +25,7 @@ const MessageInputControls = ({
               variant="small"
               color="blue-gray"
               textGradient
-              className="flex "
+              className="flex"
             >
               Image prompt
             </Typography>
