@@ -5,12 +5,7 @@ const backend = spawn("npm", ["start"], {
   stdio: "inherit",
 });
 
-// const sd = spawn("./webui-user.bat", {
-//   cwd: "./stable-diffusion-webui",
-//   stdio: "inherit",
-// });
-
-const sd = spawnSync("cmd.exe", ["/c", "webui-user.bat"], {
+const sd = spawn("./webui-user.bat", {
   cwd: "./stable-diffusion-webui",
   stdio: "inherit",
 });

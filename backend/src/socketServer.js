@@ -5,7 +5,46 @@ import { cancelRequest } from "./requests/requestProcessor.js";
 
 let io = null;
 
-const initSocketServer = (server) => {
+const ReceiveActions = {
+  Initialize: {
+    name: "initialize",
+    handler: handleUserConnected,
+  },
+  Prompt: {
+    name: "sendPrompt",
+    handler: handlePromptReceived,
+  },
+  CancelPrompt: {
+    name: "cancelPrompt",
+    handler: handleCancelPrompt,
+  },
+  ImageGenSettings: {
+    name: "imageGenSettings",
+    handler: handleImageGenerationSettings,
+  },
+  TextGenSettings: {
+    name: "textGenSettings",
+    handler: handleTextGenerationSettings,
+  },
+  Reset: {
+    name: "reset",
+    handler: handleReset,
+  },
+};
+
+export const SendActions = {
+  Message: "message",
+  MessageFragment: "messageFragment",
+  UpdatePromptState: "promptStateChanged",
+};
+
+export const RequestStatus = {
+  Pending: "pending",
+  Processed: "processed",
+  Completed: "completed",
+};
+
+function initSocketServer(server) {
   io = new Server(server, {
     cors: {
       origin: "*",
@@ -16,30 +55,10 @@ const initSocketServer = (server) => {
   io.on("connection", (socket) => {
     console.log(`user connected: ${socket.id}`);
 
-    socket.on("initialize", (data) => {
-      console.log(data);
-      sessionManager.handleUserConnected(socket.id, data);
-    });
-
-    socket.on("sendPrompt", (data) => {
-      console.log(`prompt sent from ${socket.id}, ${JSON.stringify(data)}`);
-      handlePromptReceived(socket.id, data);
-    });
-
-    socket.on("cancelPrompt", (data) => {
-      handleCancelPrompt(socket.id, data);
-    });
-
-    socket.on("imageGenSettings", (data) => {
-      handleImageGenerationSettings(socket.id, data);
-    });
-
-    socket.on("textGenSettings", (data) => {
-      handleTextGenerationSettings(socket.id, data);
-    });
-
-    socket.on("reset", () => {
-      handleReset();
+    // subscribe all receive actions
+    const receiveActions = Object.values(ReceiveActions);
+    receiveActions.forEach((action) => {
+      socket.on(action.name, (data) => action.handler(socket.id, data));
     });
 
     socket.on("disconnect", () => {
@@ -47,13 +66,14 @@ const initSocketServer = (server) => {
       sessionManager.handleUserDisconnected(socket.id);
     });
   });
-};
+}
 
-function handleCancelPrompt(socketId, data) {
-  cancelRequest(data);
+function handleUserConnected(socketId, data) {
+  sessionManager.handleUserConnected(socketId, data);
 }
 
 function handlePromptReceived(socketId, data) {
+  console.log(data);
   const session = sessionManager.getSessionBySocketId(socketId);
   const userMessage = {
     username: session.username,
@@ -63,6 +83,10 @@ function handlePromptReceived(socketId, data) {
   // send message to other sockets associated with current user
   session.broadcast("message", userMessage, [socketId]);
   processPrompt(session, data);
+}
+
+function handleCancelPrompt(socketId, data) {
+  cancelRequest(data);
 }
 
 function handleTextGenerationSettings(socketId, data) {

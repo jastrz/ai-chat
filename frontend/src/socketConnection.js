@@ -11,22 +11,51 @@ import { Message } from "./data";
 
 let socket = null;
 
-const connectWithSocketServer = () => {
+const SendActions = {
+  Initialize: "initialize",
+  Prompt: "sendPrompt",
+  CancelPrompt: "cancelPrompt",
+  ImageGenSettings: "imageGenSettings",
+  TextGenSettings: "textGenSettings",
+  Reset: "reset",
+};
+
+const ReceiveActions = {
+  Message: {
+    name: "message",
+    handler: handleMessageReceived,
+  },
+  MessageFragment: {
+    name: "messageFragment",
+    handler: handleMessageFragment,
+  },
+  PromptStateChanged: {
+    name: "promptStateChanged",
+    handler: handlePromptStateChanged,
+  },
+};
+
+function connectWithSocketServer() {
   socket = io(env.SERVER_ADDRESS);
   socket.on("connect", () => {
     console.log(`successfully connected using socket: ${socket.id}`);
     const data = { username: "User" };
-    socket.emit("initialize", data);
+    socket.emit(SendActions.Initialize, data);
   });
 
-  socket.on("message", handleMessageReceived);
-  socket.on("messageFragment", handleMessageFragment);
-  socket.on("promptStateChanged", handlePromptCompleted);
-};
+  // subscribe all receive actions
+  const receiveActions = Object.values(ReceiveActions);
+  receiveActions.forEach((action) => {
+    socket.on(action.name, action.handler);
+  });
+}
+
+//
+// Receive Actions
+//
 
 // Possible statuses: completed, pending, processed
-const handlePromptCompleted = (data) => {
-  console.log(data);
+function handlePromptStateChanged(data) {
   store.dispatch(updatePromptStatus(data));
 
   // temporarily not creating new messages for image prompts
@@ -36,40 +65,44 @@ const handlePromptCompleted = (data) => {
     const msg = new Message("AI", null, data.guid);
     store.dispatch(addMessage(msg.toJSON()));
   }
-};
+}
 
-const sendPrompt = (data) => {
-  console.log(`Sending data... ${socket.id}: ${data.message}`);
-  socket.emit("sendPrompt", data);
-};
-
-const sendTextGenSettings = (data) => {
-  console.log(`Sending text prompt settings... ${socket.id}: ${data}`);
-  socket.emit("textGenSettings", data);
-};
-
-const sendImageGenSettings = (data) => {
-  console.log(`Sending image prompt settings... ${socket.id}: ${data}`);
-  socket.emit("imageGenSettings", data);
-};
-
-const cancelPrompt = (data) => {
-  socket.emit("cancelPrompt", data);
-};
-
-const reset = () => {
-  store.dispatch(clearHistory());
-  socket.emit("reset");
-};
-
-const handleMessageReceived = (data) => {
+function handleMessageReceived(data) {
   console.log(`Received data: ${data}`);
-  store.dispatch(addMessage(data));
-};
+  const msg = new Message("AI", data.content);
+  store.dispatch(addMessage(msg.toJSON()));
+}
 
-const handleMessageFragment = (data) => {
+function handleMessageFragment(data) {
   store.dispatch(updateMessageContent(data));
-};
+}
+
+//
+// Send Actions
+//
+function sendPrompt(data) {
+  console.log(`Sending data... ${socket.id}: ${data.message}`);
+  socket.emit(SendActions.Prompt, data);
+}
+
+function sendTextGenSettings(data) {
+  console.log(`Sending text prompt settings... ${socket.id}: ${data}`);
+  socket.emit(SendActions.TextGenSettings, data);
+}
+
+function sendImageGenSettings(data) {
+  console.log(`Sending image prompt settings... ${socket.id}: ${data}`);
+  socket.emit(SendActions.ImageGenSettings, data);
+}
+
+function cancelPrompt(data) {
+  socket.emit(SendActions.CancelPrompt, data);
+}
+
+function reset() {
+  store.dispatch(clearHistory());
+  socket.emit(SendActions.Reset);
+}
 
 export {
   connectWithSocketServer,

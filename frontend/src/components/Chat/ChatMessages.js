@@ -13,10 +13,13 @@ const ChatMessages = ({ messages }) => {
         }}
       >
         {messages.map((message, index) => (
-          <div key={index}>
-            <Message message={message} />
-          </div>
+          <>
+            <div key={index}>
+              <Message message={message} />
+            </div>
+          </>
         ))}
+        <div style={{ height: "40px" }}></div>
       </div>
     </div>
   );

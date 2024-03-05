@@ -1,4 +1,3 @@
-import { propTypesMax } from "@material-tailwind/react/types/components/slider";
 import { generateGUID } from "./utils";
 
 export class Message {
@@ -8,10 +7,16 @@ export class Message {
     this.username = username;
     this.content = content === null ? this.createContent() : content;
     this.guid = guid === null ? generateGUID() : guid;
+    this.timestamp = this.getTimestamp();
   }
 
   createContent() {
     return [{ type: "text", data: "" }];
+  }
+
+  getTimestamp() {
+    const now = new Date();
+    return now.toISOString().slice(0, 19).replace("T", " ");
   }
 
   toJSON() {
@@ -20,6 +25,7 @@ export class Message {
       content: this.content,
       guid: this.guid,
       promptGuid: this.promptGuid,
+      timestamp: this.timestamp,
     };
   }
 }
@@ -43,3 +49,9 @@ export class Prompt {
     };
   }
 }
+
+export const PromptStatus = {
+  Pending: "pending",
+  Processed: "processed",
+  Completed: "completed",
+};

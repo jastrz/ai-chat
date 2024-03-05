@@ -12,7 +12,7 @@ const MessagesContainer = () => {
 
   return (
     <div
-      className="overflow-y-auto mb-4 bg-white rounded-md no-scrollbar"
+      className="overflow-y-auto mb-4 rounded-md no-scrollbar"
       ref={containerRef}
     >
       <ChatMessages messages={history} />

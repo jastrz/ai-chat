@@ -9,7 +9,7 @@ const api = axios.create({
   },
 });
 
-const prompt = async (prompt) => {
+async function prompt(prompt) {
   try {
     const response = await api.post("/ask", { prompt });
     return response.data.answer;
@@ -17,9 +17,9 @@ const prompt = async (prompt) => {
     console.error("Error asking question:", error);
     throw error;
   }
-};
+}
 
-const askForImage = async (requestData) => {
+async function askForImage(requestData) {
   try {
     const response = await api.post("/getImage", requestData);
     return response.data;
@@ -27,9 +27,9 @@ const askForImage = async (requestData) => {
     console.error("Error asking for image: ", error);
     throw error;
   }
-};
+}
 
-const getImageGenProgress = async () => {
+async function getImageGenProgress() {
   try {
     const response = await api.get("/imageGenProgress");
     return response.data.progress * 100;
@@ -37,9 +37,9 @@ const getImageGenProgress = async () => {
     console.error("Error getting progress: ", error);
     throw error;
   }
-};
+}
 
-const getSDModelList = async () => {
+async function getSDModelList() {
   try {
     const response = await api.get("/sdModelList");
     return response.data;
@@ -47,9 +47,9 @@ const getSDModelList = async () => {
     console.error("Error getting sd model list: ", error);
     throw error;
   }
-};
+}
 
-const getLlamaModelList = async () => {
+async function getLlamaModelList() {
   try {
     const response = await api.get("/llamaModelList");
     return response.data;
@@ -57,9 +57,9 @@ const getLlamaModelList = async () => {
     console.error("Error getting llama model list: ", error);
     throw error;
   }
-};
+}
 
-const getCurrentLlamaSettings = async () => {
+async function getCurrentLlamaSettings() {
   try {
     const response = await api.get("/llamaSettings");
     return response.data;
@@ -67,9 +67,9 @@ const getCurrentLlamaSettings = async () => {
     console.error("Error getting llama model list: ", error);
     throw error;
   }
-};
+}
 
-const updateLlamaSettings = async (settings) => {
+async function updateLlamaSettings(settings) {
   try {
     const response = await api.post("/updateLlamaSettings", { data: settings });
     return response;
@@ -77,9 +77,9 @@ const updateLlamaSettings = async (settings) => {
     console.error("Error posting llama settings");
     throw error;
   }
-};
+}
 
-const updateSdSettings = async (settings) => {
+async function updateSdSettings(settings) {
   try {
     const response = await api.post("/sdOptions", { data: settings });
     console.log(settings);
@@ -87,16 +87,16 @@ const updateSdSettings = async (settings) => {
   } catch {
     console.error("Error posting SD Settings");
   }
-};
+}
 
-const getSDSettings = async () => {
+async function getSDSettings() {
   try {
     const response = await api.get("/sdOptions");
     return response.data;
   } catch {
     console.log("Error getting SD options");
   }
-};
+}
 
 export {
   prompt,

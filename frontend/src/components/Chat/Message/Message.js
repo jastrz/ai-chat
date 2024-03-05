@@ -7,12 +7,16 @@ import { cancelPrompt } from "socketConnection";
 import { useDispatch, useSelector } from "react-redux";
 import { removeMessage } from "store/chatSlice";
 import Animation from "components/Common/Animation";
+import { PromptStatus } from "data";
 
-const UsernameIndicator = ({ username }) => {
+const UsernameIndicator = ({ username, timestamp }) => {
   return (
     <div className="shadow-xl rounded-xl mb-2">
       <Typography color="white" style={{ fontSize: "0.7rem" }}>
         {username}
+      </Typography>
+      <Typography color="white" style={{ fontSize: "0.6rem" }}>
+        {timestamp.slice(11)}
       </Typography>
     </div>
   );
@@ -32,7 +36,10 @@ const Contents = ({ message, backgroundColor, sameUserAsPrevious }) => {
       <div className={`${backgroundColor} shadow-xl rounded-2xl px-4 py-2`}>
         <div className="flex items-center">
           {!sameUserAsPrevious && (
-            <UsernameIndicator username={message.username} />
+            <UsernameIndicator
+              username={message.username}
+              timestamp={message.timestamp}
+            />
           )}
         </div>
         <div>{TextContents}</div>
@@ -45,6 +52,18 @@ const Contents = ({ message, backgroundColor, sameUserAsPrevious }) => {
 const Message = ({ message }) => {
   const { history } = useSelector((state) => state.chat);
   const [sameUserAsPrevious, setSameUserAsPrevious] = useState(false);
+  const dispatch = useDispatch();
+  const { prompts } = useSelector((state) => state.chat);
+
+  const animationConfig = {
+    to: { opacity: 1, x: 0 },
+    from: { opacity: 0, x: -50 },
+  };
+
+  const isUser = message.username === "User";
+  const backgroundColor = isUser
+    ? "bg-gradient-to-r from-red-900 to-red-700"
+    : "bg-gradient-to-r from-blue-gray-900 to-blue-gray-600";
 
   useEffect(() => {
     const msgIndex = history.findIndex((msg) => msg === message);
@@ -55,22 +74,9 @@ const Message = ({ message }) => {
     }
   }, []);
 
-  const animationConfig = {
-    to: { opacity: 1, x: 0 },
-    from: { opacity: 0, x: -50 },
-  };
-
-  const dispatch = useDispatch();
-  const { prompts } = useSelector((state) => state.chat);
-  const isUser = message.username === "User";
-  const backgroundColor = isUser
-    ? "bg-gradient-to-r from-red-900 to-red-700"
-    : "bg-gradient-to-r from-blue-gray-900 to-blue-gray-500";
-
   const getPromptStatus = () => {
     const prompt = prompts.find((prompt) => prompt.guid === message.promptGuid);
     if (prompt) {
-      console.log(prompt.status);
       return prompt.status;
     }
   };
@@ -84,7 +90,7 @@ const Message = ({ message }) => {
     <Animation animationConfig={animationConfig}>
       <div
         className={`flex items-center ${isUser ? "justify-end" : ""} ${
-          sameUserAsPrevious ? "mt-2" : "mt-4"
+          sameUserAsPrevious ? "mt-1" : "mt-4"
         }`}
       >
         <Contents
@@ -92,15 +98,22 @@ const Message = ({ message }) => {
           backgroundColor={backgroundColor}
           sameUserAsPrevious={sameUserAsPrevious}
         />
-        {isUser && getPromptStatus() !== "completed" && (
-          <IconButton onClick={handleInterrupt} size="sm" variant="outlined">
-            {getPromptStatus() === "pending" ? (
-              <i className="fas fa-xmark" />
-            ) : (
-              <i className="fas fa-square" />
-            )}
-          </IconButton>
-        )}
+        {isUser &&
+          message.promptGuid &&
+          getPromptStatus() !== PromptStatus.Completed && (
+            <IconButton
+              onClick={handleInterrupt}
+              size="sm"
+              variant="outlined"
+              className="ml-2 rounded-2xl"
+            >
+              {getPromptStatus() === PromptStatus.Pending ? (
+                <i className="fas fa-xmark" />
+              ) : (
+                <i className="fas fa-square" />
+              )}
+            </IconButton>
+          )}
       </div>
     </Animation>
   );

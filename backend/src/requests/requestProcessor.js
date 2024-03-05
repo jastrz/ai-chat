@@ -1,5 +1,6 @@
 import Joi from "joi";
 import EventEmitter from "events";
+import { RequestStatus } from "../socketServer.js";
 
 export const eventEmitter = new EventEmitter();
 
@@ -46,11 +47,11 @@ async function processNextRequest() {
     isProcessing = true;
     console.log(`requests: ${requests.length}`);
     const request = requests.shift();
-    request.status = "processed";
+    request.status = RequestStatus.Processed;
     eventEmitter.emit("onRequestStateChange", request);
     await request.func();
     isProcessing = false;
-    request.status = "completed";
+    request.status = RequestStatus.Completed;
     eventEmitter.emit("onRequestStateChange", request);
     processNextRequest();
   }

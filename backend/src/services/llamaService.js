@@ -87,14 +87,14 @@ class LlamaService {
     return answer;
   }
 
-  getPromptSettings = (userPromptSettings, abortSignal = null) => {
+  getPromptSettings(userPromptSettings, abortSignal = null) {
     console.log(userPromptSettings);
     return {
       ...this.defaultPromptSettings,
       ...userPromptSettings,
       signal: abortSignal,
     };
-  };
+  }
 
   updateContextSettings(newSettings) {
     this.contextSettings.batchSize = parseInt(newSettings.batchSize);
@@ -104,7 +104,7 @@ class LlamaService {
     this.initialized = false;
   }
 
-  getAvailableModels = async () => {
+  async getAvailableModels() {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
     const directoryPath = path.join(__dirname, "../../models");
 
@@ -128,9 +128,9 @@ class LlamaService {
       console.error("Error while reading directory:", error);
       return [];
     }
-  };
+  }
 
-  setModel = (modelName, gpuLayers = this.gpuSettings.gpuLayers) => {
+  setModel(modelName, gpuLayers = this.gpuSettings.gpuLayers) {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
     if (this.contextSettings.model !== null) {
       console.log("deleting model");
@@ -143,17 +143,17 @@ class LlamaService {
       gpuLayers: gpuLayers,
     });
     console.log(`Setting model: ${modelName}`);
-  };
+  }
 
   // session per user not implemented yet
-  getSession = () => {
+  getSession() {
     return this.sessions[0];
-  };
+  }
 
-  reset = async () => {
+  reset() {
     console.log("resetting");
     this.initialized = false;
-  };
+  }
 }
 
 const llamaService = new LlamaService();

@@ -2,14 +2,18 @@ import { llamaService } from "../services/llamaService.js";
 import { getImage } from "../services/sdService.js";
 import { Request, addRequest, eventEmitter } from "./requestProcessor.js";
 import { getSessionById } from "../session/sessionManager.js";
+import { RequestStatus, SendActions } from "../socketServer.js";
 
 eventEmitter.on("onRequestStateChange", (request) => {
   console.log(`Request: ${request.id} state changed: ${request.status}`);
 
-  if (request.status === "processed" || request.status === "completed") {
+  if (
+    request.status === RequestStatus.Processed ||
+    request.status === RequestStatus.Completed
+  ) {
     try {
       const session = getSessionById(request.sessionId);
-      session.broadcast("promptStateChanged", {
+      session.broadcast(SendActions.UpdatePromptState, {
         guid: request.id,
         status: request.status,
       });
@@ -51,7 +55,7 @@ const getLlamaResponse = async (userPrompt, session) => {
       data: decodedChunk,
     };
 
-    session.broadcast("messageFragment", responseFragment);
+    session.broadcast(SendActions.MessageFragment, responseFragment);
   };
 
   const prompt = {
@@ -84,7 +88,7 @@ const getImageResponse = async (userPrompt, session) => {
     response.content.push({ data: image, type: "image" });
   });
 
-  session.broadcast("message", response);
+  session.broadcast(SendActions.Message, response);
 };
 
 export { processPrompt };
