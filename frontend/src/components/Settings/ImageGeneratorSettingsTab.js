@@ -14,6 +14,7 @@ const ImageGeneratorSettingsTab = () => {
 
   const settings = useSelector((state) => state.sd);
 
+  // Get models and sd options
   useEffect(() => {
     const fetchSDData = async () => {
       const models = await getSDModelList();
@@ -51,9 +52,13 @@ const ImageGeneratorSettingsTab = () => {
       negativePrompt: values.negativePrompt,
     };
 
+    // Send SD prompt options to user's session
     sendImageGenSettings(imageGenPromptSettings);
+
+    // ...and cache them in store
     dispatch(sdSlice.actions.setPromptSettings(imageGenPromptSettings));
 
+    // Switch model on the server, should be available only for superusers
     if (values.modelName !== settings.modelName) {
       const response = await updateSdSettings({ modelName: values.modelName });
       if (response.status === 200) {

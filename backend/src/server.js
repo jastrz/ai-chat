@@ -6,6 +6,7 @@ import { createServer } from "http";
 import { initSocketServer } from "./socketServer.js";
 import { router } from "./routes.js";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,6 +26,14 @@ app.use(router);
 const port = process.env.PORT || 3001;
 const ipAddress = process.env.IP_ADDRESS || "0.0.0.0";
 
-server.listen(port, ipAddress, () => {
-  console.log(`Server running at http://${ipAddress}:${port}/`);
-});
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    server.listen(port, ipAddress, () => {
+      console.log(`Server running at http://${ipAddress}:${port}/`);
+    });
+  })
+  .catch((err) => {
+    console.log("MongoDB connection failed.");
+    console.log(err);
+  });

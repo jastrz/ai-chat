@@ -7,16 +7,15 @@ import { reset } from "socketConnection";
 import MessageInputControls from "./MessageInputControls";
 import { getImageGenProgress } from "api";
 import { Message, Prompt } from "data";
+import { useSelector } from "react-redux";
 
 const MessageInput = () => {
   const dispatch = useDispatch();
-  const [currentMessage, setCurrentMessage] = useState({
-    username: "me",
-    content: [],
-  });
+  const [currentMessage, setCurrentMessage] = useState([]);
   const [progress, setProgress] = useState(0);
   const [isImage, setIsImage] = useState(false);
   const [promptType, setPromptType] = useState("text");
+  const { userData } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const fetchImageGenProgress = async () => {
@@ -32,13 +31,10 @@ const MessageInput = () => {
   }, [isImage, progress]);
 
   const onClickSend = () => {
-    if (currentMessage.content.length === 0) return;
+    if (currentMessage.length === 0) return;
     setIsImage(promptType === "image");
-
-    const userMessage = new Message(
-      currentMessage.username,
-      currentMessage.content
-    );
+    const username = userData.username;
+    const userMessage = new Message(username, currentMessage);
     const prompt = new Prompt(userMessage.content[0].data, promptType);
     userMessage.promptGuid = prompt.guid;
 
@@ -46,7 +42,7 @@ const MessageInput = () => {
 
     dispatch(addMessage(userMessage.toJSON()));
     dispatch(addPrompt(prompt.toJSON()));
-    setCurrentMessage({ username: "me", content: [] });
+    setCurrentMessage({ username: userData.username, content: [] });
   };
 
   const handleKeyDown = (event) => {
@@ -57,10 +53,7 @@ const MessageInput = () => {
   };
 
   const onTextChanged = (event) => {
-    setCurrentMessage({
-      username: "User",
-      content: [{ data: event.target.value, type: "text" }],
-    });
+    setCurrentMessage([{ data: event.target.value, type: "text" }]);
   };
 
   const onClickReset = () => {
@@ -76,11 +69,7 @@ const MessageInput = () => {
       <Textarea
         variant="outlined"
         label="Message..."
-        value={
-          currentMessage.content.length > 0
-            ? currentMessage.content[0].data
-            : ""
-        } // todo: add input that can handle images
+        value={currentMessage.length > 0 ? currentMessage[0].data : ""} // todo: add input that can handle images
         onKeyDown={handleKeyDown}
         onChange={onTextChanged}
       />

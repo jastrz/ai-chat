@@ -15,27 +15,32 @@ const defaultImagePrompt = {
   batch_size: 1,
 };
 
-const getImage = async (prompt) => {
-  console.log(prompt);
-  const result = await apiClient.post(sdAddress + "/txt2img", prompt);
+async function getImage(prompt) {
+  try {
+    console.log(prompt);
+    const result = await apiClient.post(sdAddress + "/txt2img", prompt);
 
-  if (process.env.CACHE_GENERATED_IMAGES.toLowerCase() === "true") {
-    saveImages(result.data.images);
+    if (process.env.CACHE_GENERATED_IMAGES.toLowerCase() === "true") {
+      saveImages(result.data.images);
+    }
+    return result.data.images;
+  } catch (error) {
+    console.error("Error getting image:", error);
+    throw error;
   }
+}
 
-  return result.data.images;
-};
+async function getProgress() {
+  try {
+    const result = await apiClient.get(sdAddress + "/progress");
+    return result.data.progress;
+  } catch (error) {
+    console.error("Error getting progress:", error);
+    throw error;
+  }
+}
 
-const getProgress = async () => {
-  const result = await apiClient.get(sdAddress + "/progress");
-
-  // possibly send currently generated image to client instead of plain progress
-  // console.log(result.data);
-
-  return result.data.progress;
-};
-
-const postOptions = async (options) => {
+async function postOptions(options) {
   try {
     const mappedOptions = {
       sd_model_checkpoint: options.modelName,
@@ -44,10 +49,11 @@ const postOptions = async (options) => {
     return result;
   } catch (err) {
     console.log(err);
+    throw err;
   }
-};
+}
 
-const getModelList = async () => {
+async function getModelList() {
   try {
     const result = await apiClient.get(sdAddress + "/sd-models");
     return result;
@@ -55,9 +61,9 @@ const getModelList = async () => {
     console.error("Error getting models:", error);
     return null;
   }
-};
+}
 
-const getOptions = async () => {
+async function getOptions() {
   try {
     const result = await apiClient.get(sdAddress + "/options");
     return result.data;
@@ -65,9 +71,9 @@ const getOptions = async () => {
     console.error("Error getting options:", error);
     return null;
   }
-};
+}
 
-const saveImageToFile = async (imageData, filename, finalPath) => {
+async function saveImageToFile(imageData, filename, finalPath) {
   try {
     const base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
     const buffer = Buffer.from(base64Data, "base64");
@@ -80,9 +86,9 @@ const saveImageToFile = async (imageData, filename, finalPath) => {
     console.error("Error saving image:", err.message);
     throw err;
   }
-};
+}
 
-const saveImages = async (imageData) => {
+async function saveImages(imageData) {
   const promises = imageData.map(async (image) => {
     try {
       const filename = new Date().toISOString().replace(/[:.]/g, "-") + ".png";
@@ -94,7 +100,7 @@ const saveImages = async (imageData) => {
   });
 
   await Promise.all(promises);
-};
+}
 
 export {
   getImage,

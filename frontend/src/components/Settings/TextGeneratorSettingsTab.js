@@ -43,7 +43,6 @@ const TextGeneratorSettingsTab = () => {
   const applyChanges = async () => {
     const values = getValues();
 
-    // prompt settings
     const textPromptSettings = {
       temperature: parseFloat(values.temperature),
       topP: parseFloat(values.topP),
@@ -53,7 +52,6 @@ const TextGeneratorSettingsTab = () => {
     sendTextGenSettings(textPromptSettings);
     dispatch(llamaSlice.actions.setPromptSettings(textPromptSettings));
 
-    // llama context settings
     const llamaContextSettings = {
       modelName: values.modelName,
       contextSize: values.contextSize,
@@ -61,7 +59,7 @@ const TextGeneratorSettingsTab = () => {
     };
     dispatch(llamaSlice.actions.setContextSettings(llamaContextSettings));
 
-    // should be available only for superuser and sent only when changed
+    // Should be available only for superuser and sent only when changed
     const response = await updateLlamaSettings(values);
     if (response.status === 200) {
     }

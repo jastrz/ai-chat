@@ -23,6 +23,7 @@ function handleUserDisconnected(socketId) {
   const session = sessions.find((session) =>
     session.activeConnections.includes(socketId)
   );
+
   if (session) {
     if (session.activeConnections.length === 1) {
       sessions = sessions.filter((s) => s !== session);

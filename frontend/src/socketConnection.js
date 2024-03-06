@@ -39,7 +39,7 @@ function connectWithSocketServer() {
   socket = io(env.SERVER_ADDRESS);
   socket.on("connect", () => {
     console.log(`successfully connected using socket: ${socket.id}`);
-    const data = { username: "User" };
+    const data = { username: store.getState().auth.userData.username };
     socket.emit(SendActions.Initialize, data);
   });
 
@@ -69,7 +69,7 @@ function handlePromptStateChanged(data) {
 
 function handleMessageReceived(data) {
   console.log(`Received data: ${data}`);
-  const msg = new Message("AI", data.content);
+  const msg = new Message(data.username, data.content);
   store.dispatch(addMessage(msg.toJSON()));
 }
 

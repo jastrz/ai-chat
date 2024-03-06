@@ -1,7 +1,7 @@
 import React from "react";
 import SettingsDialog from "./Settings/SettingsDialog";
 
-import { Navbar, Typography } from "@material-tailwind/react";
+import { IconButton, Navbar, Typography } from "@material-tailwind/react";
 
 const NavBar = () => {
   return (
@@ -23,6 +23,9 @@ const NavBar = () => {
         </Typography>
         <div className="ml-auto flex gap-1 md:mr-4">
           <SettingsDialog />
+          <IconButton>
+            <i className="fa-solid fa-id-card"></i>
+          </IconButton>
         </div>
       </div>
     </Navbar>

@@ -28,7 +28,6 @@ export const llamaSlice = createSlice({
         ...action.payload,
       };
     },
-
     setAvailableModels: (state, action) => {
       state.availableModels = action.payload;
     },
