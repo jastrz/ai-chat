@@ -1,6 +1,6 @@
 import { IconButton } from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
-import { cancelPrompt } from "socketConnection";
+import { cancelPrompt } from "socketConnection/sendActions";
 import { useDispatch, useSelector } from "react-redux";
 import { removeMessage } from "store/chatSlice";
 import Animation from "components/Common/Animation";

@@ -1,29 +1,13 @@
-import { llamaService } from "../services/llamaService.js";
-import { getImage } from "../services/sdService.js";
-import { Request, addRequest, eventEmitter } from "./requestProcessor.js";
+import { llamaService } from "../../services/llamaService.js";
+import { getImage } from "../../services/sdService.js";
+import { addRequest, eventEmitter } from "./requestProcessor.js";
+import { Request, RequestStatus } from "./request.js";
 import { getSessionById } from "../session/sessionManager.js";
-import { RequestStatus, SendActions } from "../socketServer.js";
+import { SendActions } from "../actions/sendActions.js";
 
-eventEmitter.on("onRequestStateChange", (request) => {
-  console.log(`Request: ${request.id} state changed: ${request.status}`);
-
-  if (
-    request.status === RequestStatus.Processed ||
-    request.status === RequestStatus.Completed
-  ) {
-    try {
-      const session = getSessionById(request.sessionId);
-      session.broadcast(SendActions.UpdatePromptState, {
-        guid: request.id,
-        status: request.status,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }
-});
-
-const processPrompt = async (session, data) => {
+// Processes a prompt based on its type
+// Probably should process only text prompts
+export async function processPrompt(session, data) {
   let request;
 
   switch (data.type) {
@@ -44,18 +28,38 @@ const processPrompt = async (session, data) => {
   }
 
   addRequest(request);
-};
+}
+
+// Listens for changes in request state and updates the prompt state
+eventEmitter.on("onRequestStateChange", (request) => {
+  console.log(`Request: ${request.id} state changed: ${request.status}`);
+
+  if (
+    request.status === RequestStatus.Processed ||
+    request.status === RequestStatus.Completed
+  ) {
+    try {
+      const session = getSessionById(request.sessionId);
+      session.broadcast(SendActions.UpdatePromptState, {
+        guid: request.id,
+        status: request.status,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+});
 
 // Function to retrieve response from llamaService and send it to the specified socket
 const getLlamaResponse = async (userPrompt, session) => {
   const onChunkReceived = (decodedChunk) => {
-    const responseFragment = {
+    const messageFragment = {
       promptGuid: userPrompt.guid,
       targetGuid: userPrompt.targetGuid,
       data: decodedChunk,
     };
 
-    session.broadcast(SendActions.MessageFragment, responseFragment);
+    session.broadcast(SendActions.MessageFragment, messageFragment);
   };
 
   const prompt = {
@@ -90,5 +94,3 @@ const getImageResponse = async (userPrompt, session) => {
 
   session.broadcast(SendActions.Message, response);
 };
-
-export { processPrompt };

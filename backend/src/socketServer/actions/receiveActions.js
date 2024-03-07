@@ -1,9 +1,8 @@
-import { Server } from "socket.io";
-import { processPrompt } from "./requests/requestHandler.js";
-import * as sessionManager from "./session/sessionManager.js";
-import { cancelRequest } from "./requests/requestProcessor.js";
-
-let io = null;
+import * as sessionManager from "../session/sessionManager.js";
+import { llamaService } from "../../services/llamaService.js";
+import { processPrompt } from "../requests/requestHandler.js";
+import { SendActions } from "./sendActions.js";
+import * as validators from "./receiveActionsValidators.js";
 
 const ReceiveActions = {
   Initialize: {
@@ -30,50 +29,25 @@ const ReceiveActions = {
     name: "reset",
     handler: handleReset,
   },
+  Disconnect: {
+    name: "disconnect",
+    handler: handleUserDisconnected,
+  },
 };
-
-export const SendActions = {
-  Message: "message",
-  MessageFragment: "messageFragment",
-  UpdatePromptState: "promptStateChanged",
-};
-
-export const RequestStatus = {
-  Pending: "pending",
-  Processed: "processed",
-  Completed: "completed",
-};
-
-function initSocketServer(server) {
-  io = new Server(server, {
-    cors: {
-      origin: "*",
-      methods: ["GET", "POST"],
-    },
-  });
-
-  io.on("connection", (socket) => {
-    console.log(`user connected: ${socket.id}`);
-
-    // subscribe all receive actions
-    const receiveActions = Object.values(ReceiveActions);
-    receiveActions.forEach((action) => {
-      socket.on(action.name, (data) => action.handler(socket.id, data));
-    });
-
-    socket.on("disconnect", () => {
-      console.log(`user disconnected: ${socket.id}`);
-      sessionManager.handleUserDisconnected(socket.id);
-    });
-  });
-}
 
 function handleUserConnected(socketId, data) {
   sessionManager.handleUserConnected(socketId, data);
 }
 
+function handleUserDisconnected(socketId, data) {
+  console.log(`user disconnected: ${socketId}`);
+  sessionManager.handleUserDisconnected(socketId);
+}
+
 function handlePromptReceived(socketId, data) {
-  console.log(data);
+  const { error } = validators.promptSchema.validate(data);
+  if (error) throw new Error(error);
+
   const session = sessionManager.getSessionBySocketId(socketId);
   const userMessage = {
     username: session.username,
@@ -81,7 +55,7 @@ function handlePromptReceived(socketId, data) {
   };
 
   // send message to other sockets associated with current user
-  session.broadcast("message", userMessage, [socketId]);
+  session.broadcast(SendActions.Message, userMessage, [socketId]);
   processPrompt(session, data);
 }
 
@@ -90,32 +64,38 @@ function handleCancelPrompt(socketId, data) {
 }
 
 function handleTextGenerationSettings(socketId, data) {
+  const { error } = validators.textPromptSettingsSchema.validate(data);
+  if (error) throw new Error(error);
+
   const session = sessionManager.getSessionBySocketId(socketId);
   session.textPromptSettings = { ...session.textPromptSettings, ...data };
-
-  console.log(session);
 }
 
 function handleImageGenerationSettings(socketId, data) {
-  const session = sessionManager.getSessionBySocketId(socketId);
+  const { error } = validators.imageGenPromptSettingsSchema.validate(data);
+  if (error) throw new Error(error);
 
-  // Match the names of variables in the settings with the names in the SD API
+  const session = sessionManager.getSessionBySocketId(socketId);
+  const imageGenSettings = mapImageGenerationSettings(data);
+
+  session.imagePromptSettings = {
+    ...imageGenSettings,
+    ...session.imagePromptSettings,
+  };
+}
+
+// handle data mapping for image generation settings matching sd api
+function mapImageGenerationSettings(data) {
   const { numImages, negativePrompt, ...settings } = data;
-  const imageGenSettings = {
+  return {
     ...settings,
     batch_size: numImages,
     negative_prompt: negativePrompt,
   };
-  session.imagePromptSettings = {
-    ...imageGenSettings,
-    ...session.imageGenSettings,
-  };
-
-  console.log(session);
 }
 
 function handleReset() {
   llamaService.reset();
 }
 
-export { io, initSocketServer };
+export default ReceiveActions;

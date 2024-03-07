@@ -1,5 +1,6 @@
 import { llamaService } from "../services/llamaService.js";
 
+// shouldn't be accessible to user
 const handleChatPrompt = async (req, res) => {
   try {
     const { prompt } = req.body;

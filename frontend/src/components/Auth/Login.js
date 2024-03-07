@@ -1,7 +1,7 @@
 import { Button, Input } from "@material-tailwind/react";
 import { useForm } from "react-hook-form";
 import AuthHeader from "./AuthHeader";
-import { postLogin } from "authApi";
+import { postLogin } from "api/authApi";
 import { useDispatch } from "react-redux";
 import { setUserData } from "store/authSlice";
 import { useNavigate } from "react-router-dom";

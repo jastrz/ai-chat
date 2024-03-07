@@ -3,10 +3,11 @@ import path from "path";
 import { fileURLToPath } from "url";
 import cors from "cors";
 import { createServer } from "http";
-import { initSocketServer } from "./socketServer.js";
+import { initSocketServer } from "./socketServer/socketServer.js";
 import { router } from "./routes.js";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import * as sdService from "./services/sdService.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,20 +21,29 @@ app.use(express.static(path.join(__dirname, "../public")));
 
 const server = createServer(app);
 initSocketServer(server);
+sdService.initialize();
 
 app.use(router);
 
 const port = process.env.PORT || 3001;
 const ipAddress = process.env.IP_ADDRESS || "0.0.0.0";
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    server.listen(port, ipAddress, () => {
-      console.log(`Server running at http://${ipAddress}:${port}/`);
+const useDb = process.env.USE_DB.toLowerCase() === "true";
+
+if (useDb) {
+  mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      server.listen(port, ipAddress, () => {
+        console.log(`Server running at http://${ipAddress}:${port}/`);
+      });
+    })
+    .catch((err) => {
+      console.log("MongoDB connection failed.");
+      console.log(err);
     });
-  })
-  .catch((err) => {
-    console.log("MongoDB connection failed.");
-    console.log(err);
+} else {
+  server.listen(port, ipAddress, () => {
+    console.log(`Server running at http://${ipAddress}:${port}/`);
   });
+}

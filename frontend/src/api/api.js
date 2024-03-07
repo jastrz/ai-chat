@@ -1,4 +1,4 @@
-import api from "axiosConfig";
+import api from "api/axiosConfig";
 
 async function prompt(prompt) {
   try {
@@ -88,8 +88,6 @@ async function getSDSettings() {
     console.log("Error getting SD options");
   }
 }
-
-
 
 export {
   prompt,

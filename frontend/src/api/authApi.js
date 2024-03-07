@@ -1,4 +1,4 @@
-import api from "axiosConfig";
+import api from "api/axiosConfig";
 
 async function postSignIn(username, password, repeatPassword) {
   try {

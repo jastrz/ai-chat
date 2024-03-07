@@ -1,17 +1,8 @@
 import Joi from "joi";
 import EventEmitter from "events";
-import { RequestStatus } from "../socketServer.js";
+import { RequestStatus } from "./request.js";
 
 export const eventEmitter = new EventEmitter();
-
-export class Request {
-  constructor(id, sessionId, func) {
-    this.sessionId = sessionId;
-    this.status = "pending";
-    this.id = id;
-    this.func = func;
-  }
-}
 
 let isProcessing = false;
 export const requests = [];

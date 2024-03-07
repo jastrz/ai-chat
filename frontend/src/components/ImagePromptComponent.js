@@ -3,7 +3,7 @@ import { useState } from "react";
 import SaveButton from "./Chat/Message/SaveButton";
 import { Button, Card, CardBody } from "@material-tailwind/react";
 import { Textarea } from "@material-tailwind/react";
-import { askForImage } from "api";
+import { askForImage } from "api/api";
 
 export const ImagePromptComponent = () => {
   const [image, setImage] = useState(null);

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Select, Input, Textarea, Option } from "@material-tailwind/react";
-import { getSDModelList, getSDSettings, updateSdSettings } from "api";
+import { getSDModelList, getSDSettings, updateSdSettings } from "api/api";
 import { useForm } from "react-hook-form";
 import SettingsTabControls from "./SettingsTabControls";
 import { useSelector, useDispatch } from "react-redux";
 import { sdSlice } from "store/sdSlice";
-import { sendImageGenSettings } from "socketConnection";
+import { sendImageGenSettings } from "socketConnection/sendActions";
 
 const ImageGeneratorSettingsTab = () => {
   const dispatch = useDispatch();

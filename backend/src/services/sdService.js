@@ -2,23 +2,28 @@ import axios from "axios";
 import path from "path";
 import fsp from "fs/promises";
 
-// const sdAddress = process.env.SD_SERVER_ADDRESS;
-const sdAddress = "http://127.0.0.1:7861/sdapi/v1";
-const apiClient = axios.create({
-  baseURL: sdAddress,
-  timeout: 0,
-});
+// const sdAddress = "http://127.0.0.1:7861/sdapi/v1";
 
+let apiClient;
 const defaultImagePrompt = {
   height: 512,
   width: 512,
   batch_size: 1,
 };
 
+export function initialize() {
+  const sdAddress = process.env.SD_SERVER_ADDRESS;
+
+  apiClient = axios.create({
+    baseURL: sdAddress,
+    timeout: 0,
+  });
+}
+
 async function getImage(prompt) {
   try {
     console.log(prompt);
-    const result = await apiClient.post(sdAddress + "/txt2img", prompt);
+    const result = await apiClient.post("/txt2img", prompt);
 
     if (process.env.CACHE_GENERATED_IMAGES.toLowerCase() === "true") {
       saveImages(result.data.images);
@@ -32,7 +37,7 @@ async function getImage(prompt) {
 
 async function getProgress() {
   try {
-    const result = await apiClient.get(sdAddress + "/progress");
+    const result = await apiClient.get("/progress");
     return result.data.progress;
   } catch (error) {
     console.error("Error getting progress:", error);
@@ -45,7 +50,7 @@ async function postOptions(options) {
     const mappedOptions = {
       sd_model_checkpoint: options.modelName,
     };
-    const result = await apiClient.post(sdAddress + "/options", mappedOptions);
+    const result = await apiClient.post("/options", mappedOptions);
     return result;
   } catch (err) {
     console.log(err);
@@ -55,7 +60,7 @@ async function postOptions(options) {
 
 async function getModelList() {
   try {
-    const result = await apiClient.get(sdAddress + "/sd-models");
+    const result = await apiClient.get("/sd-models");
     return result;
   } catch (error) {
     console.error("Error getting models:", error);
@@ -65,7 +70,7 @@ async function getModelList() {
 
 async function getOptions() {
   try {
-    const result = await apiClient.get(sdAddress + "/options");
+    const result = await apiClient.get("/options");
     return result.data;
   } catch (error) {
     console.error("Error getting options:", error);

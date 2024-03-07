@@ -2,10 +2,9 @@ import { Textarea, Progress } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addMessage, addPrompt } from "store/chatSlice";
-import { sendPrompt } from "socketConnection";
-import { reset } from "socketConnection";
+import { sendPrompt, reset } from "socketConnection/sendActions";
 import MessageInputControls from "./MessageInputControls";
-import { getImageGenProgress } from "api";
+import { getImageGenProgress } from "api/api";
 import { Message, Prompt } from "data";
 import { useSelector } from "react-redux";
 

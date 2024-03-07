@@ -7,10 +7,10 @@ import {
   getLlamaModelList,
   updateLlamaSettings,
   getCurrentLlamaSettings,
-} from "api";
+} from "api/api";
 import { useForm } from "react-hook-form";
 import SettingsTabControls from "./SettingsTabControls";
-import { sendTextGenSettings } from "socketConnection";
+import { sendTextGenSettings } from "socketConnection/sendActions";
 
 const TextGeneratorSettingsTab = () => {
   const { register, getValues, reset, setValue } = useForm();

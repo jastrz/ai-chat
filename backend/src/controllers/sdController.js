@@ -8,6 +8,8 @@ import {
 import { removeFileExtension } from "../utils/utils.js";
 
 // sends back the images as an array of base64 encoded strings
+// doesnt use request handler, not involved in backend's queue
+// sd has it's own queue though... probably shouldn't be accessible to user
 const handleImagePrompt = async (req, res) => {
   try {
     if (!req.body) {
@@ -25,6 +27,8 @@ const handleImagePrompt = async (req, res) => {
   }
 };
 
+// same as above
+// todo: handle progress using socket server or sth else
 const handleGetImageGenProgress = async (req, res) => {
   try {
     const result = await getProgress();

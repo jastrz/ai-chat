@@ -4,7 +4,7 @@ import MessagesContainer from "./MessagesContainer";
 import MessageInput from "./MessageInput/MessageInput";
 import { useAuthGuard } from "common/useAuthGuard";
 import { useEffect } from "react";
-import { connectWithSocketServer } from "socketConnection";
+import { connectWithSocketServer } from "socketConnection/socketConnection";
 
 const Chat = () => {
   useAuthGuard();
