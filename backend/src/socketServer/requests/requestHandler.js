@@ -4,6 +4,7 @@ import { addRequest, eventEmitter } from "./requestProcessor.js";
 import { Request, RequestStatus } from "./request.js";
 import { getSessionById } from "../session/sessionManager.js";
 import { SendActions } from "../actions/sendActions.js";
+import * as dbManager from "../../dbManager.js";
 
 // Processes a prompt based on its type
 // Probably should process only text prompts
@@ -51,7 +52,7 @@ eventEmitter.on("onRequestStateChange", (request) => {
 });
 
 // Function to retrieve response from llamaService and send it to the specified socket
-const getLlamaResponse = async (userPrompt, session) => {
+async function getLlamaResponse(userPrompt, session) {
   const onChunkReceived = (decodedChunk) => {
     const messageFragment = {
       promptGuid: userPrompt.guid,
@@ -67,11 +68,19 @@ const getLlamaResponse = async (userPrompt, session) => {
     settings: session.textPromptSettings,
   };
 
-  return await llamaService.prompt(prompt, true, onChunkReceived);
-};
+  const answer = await llamaService.prompt(prompt, true, onChunkReceived);
+
+  const message = {
+    username: "AI",
+    content: [{ type: "text", data: answer }],
+  };
+  await dbManager.saveMessage(message, session.historyId);
+
+  return answer;
+}
 
 // Function to generate images based on the provided settings and send them to the specified socket
-const getImageResponse = async (userPrompt, session) => {
+async function getImageResponse(userPrompt, session) {
   let response = { username: "AI", content: [] };
 
   console.log(userPrompt);
@@ -93,4 +102,4 @@ const getImageResponse = async (userPrompt, session) => {
   });
 
   session.broadcast(SendActions.Message, response);
-};
+}

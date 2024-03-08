@@ -5,7 +5,7 @@ export const promptSchema = Joi.object({
   type: Joi.string().valid("text", "image").required(),
   guid: Joi.string().required(),
   targetGuid: Joi.string().required(),
-  status: Joi.string().valid("asd"),
+  status: Joi.string().valid("pending"),
 });
 
 export const textPromptSettingsSchema = Joi.object({

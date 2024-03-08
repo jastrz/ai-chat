@@ -35,7 +35,6 @@ function handlePromptStateChanged(data) {
 }
 
 function handleMessageReceived(data) {
-  console.log(`Received data: ${data}`);
   const msg = new Message(data.username, data.content);
   store.dispatch(addMessage(msg.toJSON()));
 }

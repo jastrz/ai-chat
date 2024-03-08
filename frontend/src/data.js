@@ -30,13 +30,19 @@ export class Message {
   }
 }
 
+export const PromptStatus = {
+  Pending: "pending",
+  Processed: "processed",
+  Completed: "completed",
+};
+
 export class Prompt {
   constructor(message, type, targetGuid = null) {
     this.message = message;
     this.type = type;
     this.guid = generateGUID();
     this.targetGuid = targetGuid === null ? this.guid : targetGuid;
-    this.status = "pending";
+    this.status = PromptStatus.Pending;
   }
 
   toJSON() {
@@ -49,9 +55,3 @@ export class Prompt {
     };
   }
 }
-
-export const PromptStatus = {
-  Pending: "pending",
-  Processed: "processed",
-  Completed: "completed",
-};

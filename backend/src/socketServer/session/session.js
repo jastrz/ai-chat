@@ -7,7 +7,7 @@ class Session {
   textPromptSettings = Object.assign({}, llamaService.defaultPromptSettings);
   imagePromptSettings = Object.assign({}, sdService.defaultImagePrompt);
   llamaSessionId;
-  history = [];
+  historyId = undefined;
   activeConnections = [];
   username = "";
 
@@ -26,10 +26,13 @@ class Session {
     );
   }
 
-  broadcast(message, data, excludes = []) {
+  broadcast(action, data, excludes = []) {
+    const { error } = action.validator.validate(data);
+    if (error) throw new Error(error);
+
     this.activeConnections.forEach((socketId) => {
       if (!excludes.includes(socketId)) {
-        io.to(socketId).emit(message, data);
+        io.to(socketId).emit(action.name, data);
       }
     });
   }

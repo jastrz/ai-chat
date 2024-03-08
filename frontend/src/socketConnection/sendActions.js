@@ -11,19 +11,18 @@ const SendActions = {
   Reset: "reset",
 };
 
-//
-// Send Actions
-//
 function sendPrompt(data) {
   console.log(`Sending data... ${socket.id}: ${data.message}`);
   socket.emit(SendActions.Prompt, data);
 }
 
+// sets text gen settings for session
 function sendTextGenSettings(data) {
   console.log(`Sending text prompt settings... ${socket.id}: ${data}`);
   socket.emit(SendActions.TextGenSettings, data);
 }
 
+// sets image gen settings for session
 function sendImageGenSettings(data) {
   console.log(`Sending image prompt settings... ${socket.id}: ${data}`);
   socket.emit(SendActions.ImageGenSettings, data);

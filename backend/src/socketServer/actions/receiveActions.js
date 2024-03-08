@@ -3,6 +3,7 @@ import { llamaService } from "../../services/llamaService.js";
 import { processPrompt } from "../requests/requestHandler.js";
 import { SendActions } from "./sendActions.js";
 import * as validators from "./receiveActionsValidators.js";
+import * as dbManager from "../../dbManager.js";
 
 const ReceiveActions = {
   Initialize: {
@@ -35,8 +36,15 @@ const ReceiveActions = {
   },
 };
 
-function handleUserConnected(socketId, data) {
+async function handleUserConnected(socketId, data) {
   sessionManager.handleUserConnected(socketId, data);
+  const session = sessionManager.getSessionBySocketId(socketId);
+
+  if (session.historyId === undefined) {
+    const id = await dbManager.getNewHistoryId();
+    session.historyId = id;
+    console.log(session.historyId);
+  }
 }
 
 function handleUserDisconnected(socketId, data) {
@@ -44,7 +52,7 @@ function handleUserDisconnected(socketId, data) {
   sessionManager.handleUserDisconnected(socketId);
 }
 
-function handlePromptReceived(socketId, data) {
+async function handlePromptReceived(socketId, data) {
   const { error } = validators.promptSchema.validate(data);
   if (error) throw new Error(error);
 
@@ -54,9 +62,13 @@ function handlePromptReceived(socketId, data) {
     content: [{ data: data.message, type: "text" }],
   };
 
+  console.log(session.historyId);
+
+  await dbManager.saveMessage(userMessage, session.historyId);
+
   // send message to other sockets associated with current user
   session.broadcast(SendActions.Message, userMessage, [socketId]);
-  processPrompt(session, data);
+  await processPrompt(session, data);
 }
 
 function handleCancelPrompt(socketId, data) {
