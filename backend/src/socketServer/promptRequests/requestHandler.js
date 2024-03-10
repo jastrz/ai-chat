@@ -74,7 +74,7 @@ async function getLlamaResponse(userPrompt, session) {
     username: "AI",
     content: [{ type: "text", data: answer }],
   };
-  await dbManager.saveMessage(message, session.historyId);
+  await dbManager.saveMessage(message, session);
 
   return answer;
 }

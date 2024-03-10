@@ -1,20 +1,24 @@
+import * as dbManager from "../../dbManager.js";
 import { Session } from "./session.js";
 
 let sessions = [];
 
-function handleUserConnected(socketId, data) {
+async function handleUserConnected(socketId, data) {
   const { username } = data;
   console.log(username, socketId);
   let session = sessions.find((session) => session.username === username);
   if (!session) {
-    session = addSession(username);
+    session = await addSession(username);
   }
+
   session.addConnection(socketId);
-  console.log(sessions);
+  // console.log(sessions);
 }
 
-function addSession(username) {
-  const session = new Session(username);
+async function addSession(username) {
+  const user = await dbManager.getUser(username);
+  console.log(user);
+  const session = new Session(username, user._id);
   sessions.push(session);
   return session;
 }
@@ -32,7 +36,7 @@ function handleUserDisconnected(socketId) {
     }
   }
 
-  console.log(sessions);
+  // console.log(sessions);
 }
 
 function getSessionBySocketId(socketId) {

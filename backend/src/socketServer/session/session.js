@@ -10,10 +10,12 @@ class Session {
   historyId = undefined;
   activeConnections = [];
   username = "";
+  userId = undefined;
 
-  constructor(username) {
+  constructor(username, userId) {
     this.username = username;
     this.id = generateGUID();
+    this.userId = userId;
   }
 
   addConnection(socketId) {

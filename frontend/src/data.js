@@ -19,7 +19,7 @@ export class Message {
     return now.toISOString().slice(0, 19).replace("T", " ");
   }
 
-  toJSON() {
+  obj() {
     return {
       username: this.username,
       content: this.content,
@@ -45,7 +45,7 @@ export class Prompt {
     this.status = PromptStatus.Pending;
   }
 
-  toJSON() {
+  obj() {
     return {
       message: this.message,
       type: this.type,

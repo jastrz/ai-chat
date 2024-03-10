@@ -10,6 +10,9 @@ export const chatSlice = createSlice({
   reducers: {
     addMessage: (state, action) => {
       let message = action.payload;
+      const length = state.history.length;
+      message.concat =
+        length > 0 && state.history[length - 1].username === message.username;
       state.history.push(message);
     },
     addPrompt: (state, action) => {
@@ -36,9 +39,9 @@ export const chatSlice = createSlice({
       );
 
       if (!messageToUpdate) {
-        messageToUpdate = new Message("AI").toJSON();
+        messageToUpdate = new Message("AI").obj();
         messageToUpdate.guid = action.payload.targetGuid;
-        state.history.push(messageToUpdate);
+        addMessage(state, messageToUpdate);
       }
 
       messageToUpdate.content[0].data += action.payload.data;

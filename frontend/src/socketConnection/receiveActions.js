@@ -30,13 +30,13 @@ function handlePromptStateChanged(data) {
   const prompt = state.prompts.find((prompt) => prompt.guid === data.guid);
   if (data.status === "processed" && prompt && prompt.type !== "image") {
     const msg = new Message("AI", null, data.guid);
-    store.dispatch(addMessage(msg.toJSON()));
+    store.dispatch(addMessage(msg.obj()));
   }
 }
 
 function handleMessageReceived(data) {
   const msg = new Message(data.username, data.content);
-  store.dispatch(addMessage(msg.toJSON()));
+  store.dispatch(addMessage(msg.obj()));
 }
 
 function handleMessageFragment(data) {

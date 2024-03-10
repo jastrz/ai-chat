@@ -39,8 +39,8 @@ const MessageInput = () => {
 
     sendPrompt(prompt);
 
-    dispatch(addMessage(userMessage.toJSON()));
-    dispatch(addPrompt(prompt.toJSON()));
+    dispatch(addMessage(userMessage.obj()));
+    dispatch(addPrompt(prompt.obj()));
     setCurrentMessage({ username: userData.username, content: [] });
   };
 

@@ -18,6 +18,11 @@ import {
 
 import { handleLogin, handleSignIn } from "./controllers/userController.js";
 
+import {
+  handleGetHistory,
+  handleGetHistoryList,
+} from "./controllers/historyController.js";
+
 const router = express.Router();
 
 // Llama routes
@@ -59,5 +64,10 @@ const validateRequest = (schema) => {
 
 router.post("/login", validateRequest(loginSchema), handleLogin);
 router.post("/signin", validateRequest(signInSchema), handleSignIn);
+
+// History routes
+
+router.post("/historyList", handleGetHistoryList);
+router.post("/history", handleGetHistory);
 
 export { router };

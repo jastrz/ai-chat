@@ -1,6 +1,6 @@
 import * as sessionManager from "../session/sessionManager.js";
 import { llamaService } from "../../services/llamaService.js";
-import { processPrompt } from "../requests/requestHandler.js";
+import { processPrompt } from "../promptRequests/requestHandler.js";
 import { SendActions } from "./sendActions.js";
 import * as validators from "./receiveActionsValidators.js";
 import * as dbManager from "../../dbManager.js";
@@ -37,14 +37,15 @@ const ReceiveActions = {
 };
 
 async function handleUserConnected(socketId, data) {
-  sessionManager.handleUserConnected(socketId, data);
-  const session = sessionManager.getSessionBySocketId(socketId);
+  await sessionManager.handleUserConnected(socketId, data);
+  // const session = sessionManager.getSessionBySocketId(socketId);
 
-  if (session.historyId === undefined) {
-    const id = await dbManager.getNewHistoryId();
-    session.historyId = id;
-    console.log(session.historyId);
-  }
+  // if (session.historyId === undefined) {
+  //   const user = await dbManager.getUser(session.username);
+  //   const id = await dbManager.getNewHistoryId(user._id);
+  //   session.historyId = id;
+  //   console.log(session.historyId);
+  // }
 }
 
 function handleUserDisconnected(socketId, data) {
@@ -64,9 +65,9 @@ async function handlePromptReceived(socketId, data) {
 
   console.log(session.historyId);
 
-  await dbManager.saveMessage(userMessage, session.historyId);
+  await dbManager.saveMessage(userMessage, session);
 
-  // send message to other sockets associated with current user
+  // send message to other sockets associated with currently processed request
   session.broadcast(SendActions.Message, userMessage, [socketId]);
   await processPrompt(session, data);
 }
@@ -106,7 +107,9 @@ function mapImageGenerationSettings(data) {
   };
 }
 
-function handleReset() {
+function handleReset(socketId, data) {
+  const session = sessionManager.getSessionBySocketId(socketId);
+  session.historyId = undefined;
   llamaService.reset();
 }
 

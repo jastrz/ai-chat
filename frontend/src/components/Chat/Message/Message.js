@@ -1,5 +1,5 @@
 import { IconButton } from "@material-tailwind/react";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { cancelPrompt } from "socketConnection/sendActions";
 import { useDispatch, useSelector } from "react-redux";
 import { removeMessage } from "store/chatSlice";
@@ -8,8 +8,6 @@ import { PromptStatus } from "data";
 import MessageContents from "./MessageContents";
 
 const Message = ({ message }) => {
-  const { history } = useSelector((state) => state.chat);
-  const [sameUserAsPrevious, setSameUserAsPrevious] = useState(false);
   const dispatch = useDispatch();
   const { prompts } = useSelector((state) => state.chat);
   const { userData } = useSelector((state) => state.auth);
@@ -25,15 +23,6 @@ const Message = ({ message }) => {
   const backgroundColor = isUser
     ? "bg-gradient-to-r from-red-900 to-red-700"
     : "bg-gradient-to-r from-blue-gray-900 to-blue-gray-600";
-
-  useEffect(() => {
-    const msgIndex = history.findIndex((msg) => msg === message);
-    if (msgIndex > 1) {
-      setSameUserAsPrevious(
-        history[msgIndex - 1].username === message.username
-      );
-    }
-  }, []);
 
   const getPromptStatus = () => {
     const prompt = prompts.find((prompt) => prompt.guid === message.promptGuid);
@@ -51,13 +40,13 @@ const Message = ({ message }) => {
     <Animation animationConfig={animationConfig}>
       <div
         className={`flex items-center ${isUser ? "justify-end" : ""} ${
-          sameUserAsPrevious ? "mt-1" : "mt-4"
+          message.concat ? "mt-1" : "mt-4"
         }`}
       >
         <MessageContents
           message={message}
           backgroundColor={backgroundColor}
-          sameUserAsPrevious={sameUserAsPrevious}
+          sameUserAsPrevious={message.concat}
         />
         {isUser &&
           message.promptGuid &&

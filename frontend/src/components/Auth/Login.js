@@ -18,11 +18,8 @@ const Login = () => {
       const response = await postLogin(username, password);
       dispatch(setUserData(response));
       navigate("/chat");
-
-      // Handle the response data as needed, e.g., store in state, redirect, etc.
     } catch (error) {
       console.error("Error occurred during login: ", error);
-      // Handle the error, e.g., display an error message to the user
     }
   };
 
