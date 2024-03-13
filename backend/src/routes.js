@@ -21,7 +21,10 @@ import { handleLogin, handleSignIn } from "./controllers/userController.js";
 import {
   handleGetHistory,
   handleGetHistoryList,
+  handleRemoveHistory,
 } from "./controllers/historyController.js";
+
+import verifyToken from "./middleware/auth.js";
 
 const router = express.Router();
 
@@ -67,7 +70,8 @@ router.post("/signin", validateRequest(signInSchema), handleSignIn);
 
 // History routes
 
-router.post("/historyList", handleGetHistoryList);
-router.post("/history", handleGetHistory);
+router.get("/historyList/:username", verifyToken, handleGetHistoryList);
+router.get("/history/:historyId", verifyToken, handleGetHistory);
+router.delete("/history/:historyId", verifyToken, handleRemoveHistory);
 
 export { router };

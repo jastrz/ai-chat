@@ -16,18 +16,18 @@ const MessageInput = () => {
   const [promptType, setPromptType] = useState("text");
   const { userData } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    const fetchImageGenProgress = async () => {
-      const progress = await getImageGenProgress();
-      setProgress(progress);
-    };
+  // useEffect(() => {
+  //   const fetchImageGenProgress = async () => {
+  //     const progress = await getImageGenProgress();
+  //     setProgress(progress);
+  //   };
 
-    const interval = setInterval(() => {
-      if (isImage || progress !== 0) fetchImageGenProgress();
-    }, 1000);
+  //   const interval = setInterval(() => {
+  //     if (isImage || progress !== 0) fetchImageGenProgress();
+  //   }, 1000);
 
-    return () => clearInterval(interval);
-  }, [isImage, progress]);
+  //   return () => clearInterval(interval);
+  // }, [isImage, progress]);
 
   const onClickSend = () => {
     if (currentMessage.length === 0) return;
@@ -37,6 +37,7 @@ const MessageInput = () => {
     const prompt = new Prompt(userMessage.content[0].data, promptType);
     userMessage.promptGuid = prompt.guid;
 
+    console.log(prompt);
     sendPrompt(prompt);
 
     dispatch(addMessage(userMessage.obj()));

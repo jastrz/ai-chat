@@ -2,7 +2,7 @@ import api from "api/axiosConfig";
 
 async function getHistoryList(username) {
   try {
-    const response = await api.post("/historyList", { username });
+    const response = await api.get(`/historyList/${username}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching history list: ", error);
@@ -12,7 +12,7 @@ async function getHistoryList(username) {
 
 async function getHistory(historyId) {
   try {
-    const response = await api.get("/history", { data: historyId });
+    const response = await api.get(`/history/${historyId}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching history: ", error);
@@ -20,4 +20,14 @@ async function getHistory(historyId) {
   }
 }
 
-export { getHistory, getHistoryList };
+async function removeHistory(historyId) {
+  try {
+    const response = await api.delete(`/history/${historyId}`);
+    return response.data;
+  } catch (error) {
+    console.log("Error deleting history");
+    return null;
+  }
+}
+
+export { getHistory, getHistoryList, removeHistory };

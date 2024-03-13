@@ -38,14 +38,6 @@ const ReceiveActions = {
 
 async function handleUserConnected(socketId, data) {
   await sessionManager.handleUserConnected(socketId, data);
-  // const session = sessionManager.getSessionBySocketId(socketId);
-
-  // if (session.historyId === undefined) {
-  //   const user = await dbManager.getUser(session.username);
-  //   const id = await dbManager.getNewHistoryId(user._id);
-  //   session.historyId = id;
-  //   console.log(session.historyId);
-  // }
 }
 
 function handleUserDisconnected(socketId, data) {
@@ -54,16 +46,17 @@ function handleUserDisconnected(socketId, data) {
 }
 
 async function handlePromptReceived(socketId, data) {
+  console.log(data);
   const { error } = validators.promptSchema.validate(data);
   if (error) throw new Error(error);
 
   const session = sessionManager.getSessionBySocketId(socketId);
+  session.historyId = data.historyId;
+
   const userMessage = {
     username: session.username,
     content: [{ data: data.message, type: "text" }],
   };
-
-  console.log(session.historyId);
 
   await dbManager.saveMessage(userMessage, session);
 
@@ -92,8 +85,8 @@ function handleImageGenerationSettings(socketId, data) {
   const imageGenSettings = mapImageGenerationSettings(data);
 
   session.imagePromptSettings = {
-    ...imageGenSettings,
     ...session.imagePromptSettings,
+    ...imageGenSettings,
   };
 }
 

@@ -37,12 +37,13 @@ export const PromptStatus = {
 };
 
 export class Prompt {
-  constructor(message, type, targetGuid = null) {
+  constructor( message, type, historyId = null, targetGuid = null) {
     this.message = message;
     this.type = type;
     this.guid = generateGUID();
     this.targetGuid = targetGuid === null ? this.guid : targetGuid;
     this.status = PromptStatus.Pending;
+    this.historyId = historyId;
   }
 
   obj() {
@@ -52,6 +53,7 @@ export class Prompt {
       guid: this.guid,
       targetGuid: this.targetGuid,
       status: this.status,
+      historyId: this.historyId,
     };
   }
 }

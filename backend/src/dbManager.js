@@ -39,7 +39,7 @@ export async function getHistory(historyId) {
     const history = await History.findById(historyId).populate("messages");
     return history;
   } catch (err) {
-    console.error("Error getting history", error);
+    console.error("Error getting history", err);
   }
 }
 
@@ -59,6 +59,22 @@ export async function saveMessage(message, session) {
     }
   } catch (err) {
     console.log(err.message);
+  }
+}
+
+export async function removeHistory(historyId) {
+  try {
+    const result = await History.findByIdAndDelete(historyId);
+    if (result) {
+      console.log("History deleted successfully");
+      return { success: true, message: "History deleted successfully" };
+    } else {
+      console.log("History not found");
+      return { success: false, message: "History not found" };
+    }
+  } catch (err) {
+    console.log("Error removing history", err);
+    return { success: false, message: "Error removing history" };
   }
 }
 

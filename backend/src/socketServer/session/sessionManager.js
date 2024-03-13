@@ -12,7 +12,7 @@ async function handleUserConnected(socketId, data) {
   }
 
   session.addConnection(socketId);
-  // console.log(sessions);
+  console.log(sessions);
 }
 
 async function addSession(username) {
@@ -35,8 +35,6 @@ function handleUserDisconnected(socketId) {
       session.removeConnection(socketId);
     }
   }
-
-  // console.log(sessions);
 }
 
 function getSessionBySocketId(socketId) {

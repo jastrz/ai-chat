@@ -17,8 +17,6 @@ const Message = ({ message }) => {
     from: { opacity: 0, x: -50 },
   };
 
-  console.log(message);
-
   const isUser = message.username === userData.username;
   const backgroundColor = isUser
     ? "bg-gradient-to-r from-red-900 to-red-700"

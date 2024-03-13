@@ -7,12 +7,14 @@ import { useEffect } from "react";
 import { connectWithSocketServer } from "socketConnection/socketConnection";
 import ChatHistory from "./ChatHistory";
 import { getHistoryList } from "api/historyApi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setHistoryList } from "store/chatSlice";
 
 const Chat = () => {
   useAuthGuard();
   const { username } = useSelector((state) => state.auth.userData);
-  const [history, setHistory] = useState([]);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     connectWithSocketServer();
@@ -21,11 +23,12 @@ const Chat = () => {
   useEffect(() => {
     console.log(username);
     const fetchHistoryIds = async () => {
-      const history = await getHistoryList(username);
-      console.log(history);
-      setHistory(history);
+      const historyList = await getHistoryList(username);
+      if (historyList && historyList.length > 0) {
+        dispatch(setHistoryList(historyList));
+      }
     };
-    console.log("fetchin");
+
     fetchHistoryIds(username);
   }, []);
 
@@ -33,7 +36,7 @@ const Chat = () => {
     <>
       <div className="flex flex-row">
         <div className="w-1/4">
-          <ChatHistory history={history} />
+          <ChatHistory />
         </div>
         <div className="w-3/4">
           <Card>

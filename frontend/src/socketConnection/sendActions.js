@@ -9,10 +9,19 @@ const SendActions = {
   ImageGenSettings: "imageGenSettings",
   TextGenSettings: "textGenSettings",
   Reset: "reset",
+  SetHistory: "setHistory",
 };
 
 function sendPrompt(data) {
-  console.log(`Sending data... ${socket.id}: ${data.message}`);
+  // data.historyId = store.getState().chat.historyId;
+  console.log(`Sending data... ${socket.id}: ${data}`);
+  const historyId = store.getState().chat.historyId;
+  if (historyId) {
+    data.historyId = historyId;
+  }
+
+  console.log(data);
+
   socket.emit(SendActions.Prompt, data);
 }
 
