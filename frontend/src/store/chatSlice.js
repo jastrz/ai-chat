@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Message } from "../data";
+import { Message } from "../data/message";
 
 export const chatSlice = createSlice({
   name: "chat",

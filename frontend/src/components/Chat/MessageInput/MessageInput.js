@@ -5,7 +5,8 @@ import { addMessage, addPrompt } from "store/chatSlice";
 import { sendPrompt, reset } from "socketConnection/sendActions";
 import MessageInputControls from "./MessageInputControls";
 import { getImageGenProgress } from "api/api";
-import { Message, Prompt } from "data";
+import { Prompt } from "data/prompt";
+import { Message } from "data/message";
 import { useSelector } from "react-redux";
 
 const MessageInput = () => {
@@ -66,20 +67,22 @@ const MessageInput = () => {
 
   return (
     <>
-      <Textarea
-        variant="outlined"
-        label="Message..."
-        value={currentMessage.length > 0 ? currentMessage[0].data : ""} // todo: add input that can handle images
-        onKeyDown={handleKeyDown}
-        onChange={onTextChanged}
-      />
-      {progress !== 0 && <Progress value={progress} />}
-      <MessageInputControls
-        promptType={promptType === "image"}
-        handleImagePromptCheckbox={handleImagePromptCheckbox}
-        onClickReset={onClickReset}
-        onClickSend={onClickSend}
-      />
+      <div className="px-2">
+        <Textarea
+          variant="outlined"
+          label="Message..."
+          value={currentMessage.length > 0 ? currentMessage[0].data : ""} // todo: add input that can handle images
+          onKeyDown={handleKeyDown}
+          onChange={onTextChanged}
+        />
+        {progress !== 0 && <Progress value={progress} />}
+        <MessageInputControls
+          promptType={promptType === "image"}
+          handleImagePromptCheckbox={handleImagePromptCheckbox}
+          onClickReset={onClickReset}
+          onClickSend={onClickSend}
+        />
+      </div>
     </>
   );
 };

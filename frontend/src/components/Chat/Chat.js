@@ -1,50 +1,43 @@
 import React, { useState } from "react";
-import { Card, CardBody } from "@material-tailwind/react";
+import { Button, Card, CardBody } from "@material-tailwind/react";
 import MessagesContainer from "./MessagesContainer";
 import MessageInput from "./MessageInput/MessageInput";
 import { useAuthGuard } from "common/useAuthGuard";
 import { useEffect } from "react";
 import { connectWithSocketServer } from "socketConnection/socketConnection";
-import ChatHistory from "./ChatHistory";
-import { getHistoryList } from "api/historyApi";
-import { useDispatch, useSelector } from "react-redux";
-import { setHistoryList } from "store/chatSlice";
+import ChatHistoryPanel from "./ChatHistoryPanel";
 
 const Chat = () => {
   useAuthGuard();
-  const { username } = useSelector((state) => state.auth.userData);
-
-  const dispatch = useDispatch();
+  const [isHistoryExpanded, setisHistoryExpanded] = useState(false);
 
   useEffect(() => {
     connectWithSocketServer();
   }, []);
 
-  useEffect(() => {
-    console.log(username);
-    const fetchHistoryIds = async () => {
-      const historyList = await getHistoryList(username);
-      if (historyList && historyList.length > 0) {
-        dispatch(setHistoryList(historyList));
-      }
-    };
-
-    fetchHistoryIds(username);
-  }, []);
+  const toggleHistory = () => {
+    setisHistoryExpanded(!isHistoryExpanded);
+  };
 
   return (
     <>
       <div className="flex flex-row">
-        <div className="w-1/4">
-          <ChatHistory />
-        </div>
-        <div className="w-3/4">
-          <Card>
-            <CardBody className="bg-gray-50">
-              <MessagesContainer />
-              <MessageInput />
-            </CardBody>
-          </Card>
+        <ChatHistoryPanel isExpanded={isHistoryExpanded} />
+        <div className="w-full relative">
+          <div className="absolute top-2 left-2">
+            <Button
+              size="sm"
+              className="drop-shadow-xl"
+              variant=""
+              onClick={toggleHistory}
+              style={{ zIndex: "1" }}
+            >
+              {isHistoryExpanded ? "<" : ">"}
+            </Button>
+          </div>
+
+          <MessagesContainer />
+          <MessageInput />
         </div>
       </div>
     </>

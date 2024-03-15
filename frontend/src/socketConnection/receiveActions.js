@@ -4,7 +4,7 @@ import {
   updateMessageContent,
   updatePromptStatus,
 } from "../store/chatSlice";
-import { Message } from "../data";
+import { Message } from "../data/message";
 
 export const ReceiveActions = {
   Message: {

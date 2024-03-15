@@ -4,7 +4,7 @@ import { cancelPrompt } from "socketConnection/sendActions";
 import { useDispatch, useSelector } from "react-redux";
 import { removeMessage } from "store/chatSlice";
 import Animation from "components/Common/Animation";
-import { PromptStatus } from "data";
+import { PromptStatus } from "data/prompt";
 import MessageContents from "./MessageContents";
 
 const Message = ({ message }) => {

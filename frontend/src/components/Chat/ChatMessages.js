@@ -4,14 +4,10 @@ const ChatMessages = ({ messages }) => {
   return (
     <div
       style={{
-        height: "calc(100vh - 290px)",
+        height: "calc(100vh - 280px)",
       }}
     >
-      <div
-        style={{
-          padding: "10px 10px",
-        }}
-      >
+      <div className="px-4">
         {messages.map((message, index) => (
           <>
             <div key={index}>

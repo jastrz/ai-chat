@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, IconButton, Typography } from "@material-tailwind/react";
+import { Button, Typography } from "@material-tailwind/react";
 import { Checkbox } from "@material-tailwind/react";
 
 const MessageInputControls = ({
@@ -11,9 +11,7 @@ const MessageInputControls = ({
   return (
     <div className="flex flex-row mt-2">
       <div className="basis-1/4 flex justify-start items-center">
-        <IconButton onClick={onClickReset}>
-          <i className="fas fa-trash-alt" />
-        </IconButton>
+        <Button onClick={onClickReset}>New chat</Button>
       </div>
       <div className="basis-3/4 flex justify-end items-center space-x-4">
         <Checkbox
