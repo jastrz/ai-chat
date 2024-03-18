@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Card, CardBody } from "@material-tailwind/react";
+import { Button } from "@material-tailwind/react";
 import MessagesContainer from "./MessagesContainer";
 import MessageInput from "./MessageInput/MessageInput";
 import { useAuthGuard } from "common/useAuthGuard";

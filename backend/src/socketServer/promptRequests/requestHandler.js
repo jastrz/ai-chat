@@ -70,11 +70,8 @@ async function getLlamaResponse(userPrompt, session) {
 
   const answer = await llamaService.prompt(prompt, true, onChunkReceived);
 
-  const message = {
-    username: "AI",
-    content: [{ type: "text", data: answer }],
-  };
-  await dbManager.saveMessage(message, session);
+  const content = [{ type: "text", data: answer }];
+  await saveAiMessage(content, session);
 
   return answer;
 }
@@ -101,5 +98,15 @@ async function getImageResponse(userPrompt, session) {
     response.content.push({ data: image, type: "image" });
   });
 
+  await saveAiMessage(response.content, session);
+
   session.broadcast(SendActions.Message, response);
+}
+
+async function saveAiMessage(content, session) {
+  const message = {
+    username: "AI",
+    content: content,
+  };
+  await dbManager.saveMessage(message, session);
 }
