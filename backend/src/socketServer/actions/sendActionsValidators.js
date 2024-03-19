@@ -25,3 +25,7 @@ export const updatePromptStateSchema = Joi.object({
     .valid(RequestStatus.Processed, RequestStatus.Completed)
     .required(),
 });
+
+export const createdHistorySchema = Joi.object({
+  guid: Joi.string().required(),
+});

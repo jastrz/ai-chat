@@ -10,4 +10,8 @@ export const SendActions = {
     name: "promptStateChanged",
     validator: validators.updatePromptStateSchema,
   },
+  SetCreatedHistory: {
+    name: "setCreatedHistory",
+    validator: validators.createdHistorySchema,
+  },
 };

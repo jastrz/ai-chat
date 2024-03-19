@@ -51,14 +51,22 @@ async function handlePromptReceived(socketId, data) {
   if (error) throw new Error(error);
 
   const session = sessionManager.getSessionBySocketId(socketId);
-  session.historyId = data.historyId;
+
+  if (data.historyId && data.historyId != "") {
+    session.historyId = data.historyId;
+  }
 
   const userMessage = {
     username: session.username,
     content: [{ data: data.message, type: "text" }],
   };
 
-  await dbManager.saveMessage(userMessage, session);
+  const history = await dbManager.saveMessage(userMessage, session);
+  if (history._id !== data.historyId) {
+    session.broadcast(SendActions.SetCreatedHistory, {
+      guid: history._id.toString(),
+    });
+  }
 
   // send message to other sockets associated with currently processed request
   session.broadcast(SendActions.Message, userMessage, [socketId]);

@@ -3,8 +3,10 @@ import {
   addMessage,
   updateMessageContent,
   updatePromptStatus,
+  setHistoryId,
 } from "../store/chatSlice";
 import { Message } from "../data/message";
+import { getHistoryIds } from "actions";
 
 export const ReceiveActions = {
   Message: {
@@ -19,19 +21,34 @@ export const ReceiveActions = {
     name: "promptStateChanged",
     handler: handlePromptStateChanged,
   },
+  SetCreatedHistory: {
+    name: "setCreatedHistory",
+    handler: handleCreatedHistory,
+  },
 };
 
 // Possible statuses: completed, pending, processed
-function handlePromptStateChanged(data) {
+async function handlePromptStateChanged(data) {
   store.dispatch(updatePromptStatus(data));
 
-  // temporarily not creating new messages for image prompts
   const state = store.getState().chat;
   const prompt = state.prompts.find((prompt) => prompt.guid === data.guid);
-  if (data.status === "processed" && prompt && prompt.type !== "image") {
-    const msg = new Message("AI", null, data.guid);
-    store.dispatch(addMessage(msg.obj()));
+
+  if (data.status === "processed") {
+    // temporarily not creating new messages for image prompts
+    if (prompt && prompt.type !== "image") {
+      const msg = new Message("AI", null, data.guid);
+      store.dispatch(addMessage(msg.obj()));
+    }
   }
+
+  if (data.status === "completed") {
+    await getHistoryIds();
+  }
+}
+
+function handleCreatedHistory(data) {
+  store.dispatch(setHistoryId(data.guid));
 }
 
 function handleMessageReceived(data) {

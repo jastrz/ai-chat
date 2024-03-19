@@ -2,17 +2,6 @@ import Message from "./models/message.js";
 import History from "./models/history.js";
 import User from "./models/user.js";
 
-export async function getNewHistoryId(userId) {
-  try {
-    const history = await History.create({ userId, messages: [] });
-    if (history) {
-      return history._id;
-    }
-  } catch (err) {
-    console.log(err.message);
-  }
-}
-
 export async function getUser(username) {
   try {
     let user = await User.findOne({ username });
@@ -55,8 +44,10 @@ export async function saveMessage(message, session) {
       history.messages.push(newMessage);
       await history.save();
     } else {
-      await createNewHistory(newMessage, session);
+      history = await createNewHistory(newMessage, session);
     }
+
+    return history;
   } catch (err) {
     console.log(err.message);
   }
@@ -64,8 +55,13 @@ export async function saveMessage(message, session) {
 
 export async function removeHistory(historyId) {
   try {
-    const result = await History.findByIdAndDelete(historyId);
-    if (result) {
+    const history = await History.findByIdAndDelete(historyId);
+    await Promise.all(
+      history.messages.map(async (msgId) => {
+        await Message.deleteOne(msgId);
+      })
+    );
+    if (history) {
       console.log("History deleted successfully");
       return { success: true, message: "History deleted successfully" };
     } else {
@@ -86,6 +82,7 @@ async function createNewHistory(newMessage, session) {
       messages: [newMessage],
     });
     session.historyId = history._id;
+    return history;
   } catch (err) {
     console.error("Error creating history:", err);
   }

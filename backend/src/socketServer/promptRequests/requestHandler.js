@@ -72,8 +72,6 @@ async function getLlamaResponse(userPrompt, session) {
 
   const content = [{ type: "text", data: answer }];
   await saveAiMessage(content, session);
-
-  return answer;
 }
 
 // Function to generate images based on the provided settings and send them to the specified socket
@@ -99,7 +97,6 @@ async function getImageResponse(userPrompt, session) {
   });
 
   await saveAiMessage(response.content, session);
-
   session.broadcast(SendActions.Message, response);
 }
 

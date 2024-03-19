@@ -9,14 +9,14 @@ import ChatHistoryPanel from "./ChatHistoryPanel";
 
 const Chat = () => {
   useAuthGuard();
-  const [isHistoryExpanded, setisHistoryExpanded] = useState(false);
+  const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
 
   useEffect(() => {
     connectWithSocketServer();
   }, []);
 
   const toggleHistory = () => {
-    setisHistoryExpanded(!isHistoryExpanded);
+    setIsHistoryExpanded(!isHistoryExpanded);
   };
 
   return (

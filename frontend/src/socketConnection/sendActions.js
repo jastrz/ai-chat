@@ -9,7 +9,6 @@ const SendActions = {
   ImageGenSettings: "imageGenSettings",
   TextGenSettings: "textGenSettings",
   Reset: "reset",
-  SetHistory: "setHistory",
 };
 
 function sendPrompt(data) {

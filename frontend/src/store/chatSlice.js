@@ -50,11 +50,14 @@ export const chatSlice = createSlice({
     },
     clearHistory: (state) => {
       state.messages = [];
+      state.historyId = undefined;
     },
     setCurrentHistory: (state, action) => {
-      clearHistory();
       state.historyId = action.payload._id;
       state.messages = action.payload.messages;
+    },
+    setHistoryId: (state, action) => {
+      state.historyId = action.payload;
     },
     removeHistory: (state, action) => {
       state.availableHistories = state.availableHistories.filter(
@@ -77,4 +80,5 @@ export const {
   setCurrentHistory,
   removeHistory,
   setHistoryList,
+  setHistoryId,
 } = chatSlice.actions;
