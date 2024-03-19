@@ -8,7 +8,7 @@ const UserGroup = {
 const userSchema = new mongoose.Schema({
   username: { type: String, unique: true },
   password: { type: String },
-  usergroup: { type: String, default: "user" },
+  usergroup: { type: String, default: UserGroup.User },
   histories: [
     {
       type: mongoose.Schema.Types.ObjectId,
