@@ -1,4 +1,4 @@
-import { generateGUID } from "./utils";
+import { generateGUID } from "../utils";
 
 export class Message {
   promptGuid;
@@ -19,7 +19,7 @@ export class Message {
     return now.toISOString().slice(0, 19).replace("T", " ");
   }
 
-  toJSON() {
+  obj() {
     return {
       username: this.username,
       content: this.content,
@@ -29,29 +29,3 @@ export class Message {
     };
   }
 }
-
-export class Prompt {
-  constructor(message, type, targetGuid = null) {
-    this.message = message;
-    this.type = type;
-    this.guid = generateGUID();
-    this.targetGuid = targetGuid === null ? this.guid : targetGuid;
-    this.status = "pending";
-  }
-
-  toJSON() {
-    return {
-      message: this.message,
-      type: this.type,
-      guid: this.guid,
-      targetGuid: this.targetGuid,
-      status: this.status,
-    };
-  }
-}
-
-export const PromptStatus = {
-  Pending: "pending",
-  Processed: "processed",
-  Completed: "completed",
-};

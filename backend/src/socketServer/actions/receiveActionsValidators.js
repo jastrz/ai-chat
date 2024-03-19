@@ -5,7 +5,8 @@ export const promptSchema = Joi.object({
   type: Joi.string().valid("text", "image").required(),
   guid: Joi.string().required(),
   targetGuid: Joi.string().required(),
-  status: Joi.string().valid("asd"),
+  status: Joi.string().valid("pending"),
+  historyId: Joi.string().optional().allow("", null),
 });
 
 export const textPromptSettingsSchema = Joi.object({
@@ -18,5 +19,5 @@ export const imageGenPromptSettingsSchema = Joi.object({
   height: Joi.number().integer().required().min(64),
   width: Joi.number().integer().required().min(64),
   numImages: Joi.number().integer().required().min(1).max(12),
-  negativePrompt: Joi.string().optional(),
+  negativePrompt: Joi.string().optional().allow(""),
 });

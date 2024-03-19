@@ -5,7 +5,8 @@ import { addMessage, addPrompt } from "store/chatSlice";
 import { sendPrompt, reset } from "socketConnection/sendActions";
 import MessageInputControls from "./MessageInputControls";
 import { getImageGenProgress } from "api/api";
-import { Message, Prompt } from "data";
+import { Prompt } from "data/prompt";
+import { Message } from "data/message";
 import { useSelector } from "react-redux";
 
 const MessageInput = () => {
@@ -16,18 +17,18 @@ const MessageInput = () => {
   const [promptType, setPromptType] = useState("text");
   const { userData } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    const fetchImageGenProgress = async () => {
-      const progress = await getImageGenProgress();
-      setProgress(progress);
-    };
+  // useEffect(() => {
+  //   const fetchImageGenProgress = async () => {
+  //     const progress = await getImageGenProgress();
+  //     setProgress(progress);
+  //   };
 
-    const interval = setInterval(() => {
-      if (isImage || progress !== 0) fetchImageGenProgress();
-    }, 1000);
+  //   const interval = setInterval(() => {
+  //     if (isImage || progress !== 0) fetchImageGenProgress();
+  //   }, 1000);
 
-    return () => clearInterval(interval);
-  }, [isImage, progress]);
+  //   return () => clearInterval(interval);
+  // }, [isImage, progress]);
 
   const onClickSend = () => {
     if (currentMessage.length === 0) return;
@@ -37,10 +38,11 @@ const MessageInput = () => {
     const prompt = new Prompt(userMessage.content[0].data, promptType);
     userMessage.promptGuid = prompt.guid;
 
+    console.log(prompt);
     sendPrompt(prompt);
 
-    dispatch(addMessage(userMessage.toJSON()));
-    dispatch(addPrompt(prompt.toJSON()));
+    dispatch(addMessage(userMessage.obj()));
+    dispatch(addPrompt(prompt.obj()));
     setCurrentMessage({ username: userData.username, content: [] });
   };
 
@@ -65,20 +67,22 @@ const MessageInput = () => {
 
   return (
     <>
-      <Textarea
-        variant="outlined"
-        label="Message..."
-        value={currentMessage.length > 0 ? currentMessage[0].data : ""} // todo: add input that can handle images
-        onKeyDown={handleKeyDown}
-        onChange={onTextChanged}
-      />
-      {progress !== 0 && <Progress value={progress} />}
-      <MessageInputControls
-        promptType={promptType === "image"}
-        handleImagePromptCheckbox={handleImagePromptCheckbox}
-        onClickReset={onClickReset}
-        onClickSend={onClickSend}
-      />
+      <div className="px-2">
+        <Textarea
+          variant="outlined"
+          label="Message..."
+          value={currentMessage.length > 0 ? currentMessage[0].data : ""} // todo: add input that can handle images
+          onKeyDown={handleKeyDown}
+          onChange={onTextChanged}
+        />
+        {progress !== 0 && <Progress value={progress} />}
+        <MessageInputControls
+          promptType={promptType === "image"}
+          handleImagePromptCheckbox={handleImagePromptCheckbox}
+          onClickReset={onClickReset}
+          onClickSend={onClickSend}
+        />
+      </div>
     </>
   );
 };

@@ -1,16 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Message } from "../data";
+import { Message } from "../data/message";
 
 export const chatSlice = createSlice({
   name: "chat",
   initialState: {
-    history: [],
+    historyId: undefined,
+    availableHistories: [],
+    messages: [],
     prompts: [],
   },
   reducers: {
     addMessage: (state, action) => {
       let message = action.payload;
-      state.history.push(message);
+      const length = state.messages.length;
+      message.concat =
+        length > 0 && state.messages[length - 1].username === message.username;
+      state.messages.push(message);
     },
     addPrompt: (state, action) => {
       let prompt = action.payload;
@@ -26,26 +31,38 @@ export const chatSlice = createSlice({
     },
     removeMessage: (state, action) => {
       const guidToRemove = action.payload;
-      state.history = state.history.filter(
+      state.messages = state.messages.filter(
         (message) => message.guid !== guidToRemove
       );
     },
     updateMessageContent: (state, action) => {
-      let messageToUpdate = state.history.find(
+      let messageToUpdate = state.messages.find(
         (msg) => msg.guid === action.payload.targetGuid
       );
 
       if (!messageToUpdate) {
-        messageToUpdate = new Message("AI").toJSON();
+        messageToUpdate = new Message("AI").obj();
         messageToUpdate.guid = action.payload.targetGuid;
-        state.history.push(messageToUpdate);
+        addMessage(state, messageToUpdate);
       }
 
       messageToUpdate.content[0].data += action.payload.data;
     },
     clearHistory: (state) => {
-      state.history = [];
-      state.message = [];
+      state.messages = [];
+    },
+    setCurrentHistory: (state, action) => {
+      clearHistory();
+      state.historyId = action.payload._id;
+      state.messages = action.payload.messages;
+    },
+    removeHistory: (state, action) => {
+      state.availableHistories = state.availableHistories.filter(
+        (history) => history._id !== action.payload
+      );
+    },
+    setHistoryList: (state, action) => {
+      state.availableHistories = action.payload;
     },
   },
 });
@@ -57,4 +74,7 @@ export const {
   removeMessage,
   addPrompt,
   updatePromptStatus,
+  setCurrentHistory,
+  removeHistory,
+  setHistoryList,
 } = chatSlice.actions;

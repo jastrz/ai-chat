@@ -17,9 +17,9 @@ function initSocketServer(server) {
     // subscribe all receive actions
     const receiveActions = Object.values(ReceiveActions);
     receiveActions.forEach((action) => {
-      socket.on(action.name, (data) => {
+      socket.on(action.name, async (data) => {
         try {
-          action.handler(socket.id, data);
+          await action.handler(socket.id, data);
         } catch (err) {
           console.error(
             `Error processing ${action.name}, socketId: ${socket.id}: ${err}`

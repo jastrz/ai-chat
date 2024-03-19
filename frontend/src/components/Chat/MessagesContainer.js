@@ -4,18 +4,18 @@ import ChatMessages from "./ChatMessages";
 
 const MessagesContainer = () => {
   const containerRef = useRef();
-  const history = useSelector((state) => state.chat.history);
+  const messages = useSelector((state) => state.chat.messages);
 
   useEffect(() => {
     containerRef.current.scrollTop = containerRef.current.scrollHeight;
-  }, [history]);
+  }, [messages]);
 
   return (
     <div
-      className="overflow-y-auto mb-4 rounded-md no-scrollbar"
+      className="overflow-y-auto mb-4 mt-4 rounded-md no-scrollbar"
       ref={containerRef}
     >
-      <ChatMessages messages={history} />
+      <ChatMessages messages={messages} />
     </div>
   );
 };

@@ -14,7 +14,7 @@ function App() {
   return (
     <div className="flex flex-col bg-gray-200">
       <NavBar />
-      <div className="2xl:w-1/2 w-full mx-auto">
+      <div className="w-full mx-auto">
         <Router>
           <Routes>
             <Route path="/" element={<Navigate to="/chat" />} />

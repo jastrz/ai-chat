@@ -1,9 +1,13 @@
-import Joi from "joi";
-import { RequestStatus } from "../requests/request.js";
+import * as validators from "./sendActionsValidators.js";
 
 export const SendActions = {
-  Message: "message",
-  MessageFragment: "messageFragment",
-  UpdatePromptState: "promptStateChanged",
+  Message: { name: "message", validator: validators.responseSchema },
+  MessageFragment: {
+    name: "messageFragment",
+    validator: validators.responseFragmentSchema,
+  },
+  UpdatePromptState: {
+    name: "promptStateChanged",
+    validator: validators.updatePromptStateSchema,
+  },
 };
-

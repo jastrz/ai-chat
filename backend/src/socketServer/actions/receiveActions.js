@@ -1,8 +1,9 @@
 import * as sessionManager from "../session/sessionManager.js";
 import { llamaService } from "../../services/llamaService.js";
-import { processPrompt } from "../requests/requestHandler.js";
+import { processPrompt } from "../promptRequests/requestHandler.js";
 import { SendActions } from "./sendActions.js";
 import * as validators from "./receiveActionsValidators.js";
+import * as dbManager from "../../dbManager.js";
 
 const ReceiveActions = {
   Initialize: {
@@ -35,8 +36,8 @@ const ReceiveActions = {
   },
 };
 
-function handleUserConnected(socketId, data) {
-  sessionManager.handleUserConnected(socketId, data);
+async function handleUserConnected(socketId, data) {
+  await sessionManager.handleUserConnected(socketId, data);
 }
 
 function handleUserDisconnected(socketId, data) {
@@ -44,19 +45,24 @@ function handleUserDisconnected(socketId, data) {
   sessionManager.handleUserDisconnected(socketId);
 }
 
-function handlePromptReceived(socketId, data) {
+async function handlePromptReceived(socketId, data) {
+  console.log(data);
   const { error } = validators.promptSchema.validate(data);
   if (error) throw new Error(error);
 
   const session = sessionManager.getSessionBySocketId(socketId);
+  session.historyId = data.historyId;
+
   const userMessage = {
     username: session.username,
     content: [{ data: data.message, type: "text" }],
   };
 
-  // send message to other sockets associated with current user
+  await dbManager.saveMessage(userMessage, session);
+
+  // send message to other sockets associated with currently processed request
   session.broadcast(SendActions.Message, userMessage, [socketId]);
-  processPrompt(session, data);
+  await processPrompt(session, data);
 }
 
 function handleCancelPrompt(socketId, data) {
@@ -79,8 +85,8 @@ function handleImageGenerationSettings(socketId, data) {
   const imageGenSettings = mapImageGenerationSettings(data);
 
   session.imagePromptSettings = {
-    ...imageGenSettings,
     ...session.imagePromptSettings,
+    ...imageGenSettings,
   };
 }
 
@@ -94,7 +100,9 @@ function mapImageGenerationSettings(data) {
   };
 }
 
-function handleReset() {
+function handleReset(socketId, data) {
+  const session = sessionManager.getSessionBySocketId(socketId);
+  session.historyId = undefined;
   llamaService.reset();
 }
 
