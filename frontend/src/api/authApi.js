@@ -39,4 +39,18 @@ async function postLogin(username, password) {
   }
 }
 
-export { postSignIn, postLogin };
+/**
+ * Get user data after login.
+ * @returns {Promise} - Resolves with the user data if successful.
+ * @throws {Error} - Throws an error if fetching user data fails.
+ */
+async function getUserData() {
+  try {
+    const response = await api.get("/user");
+    return response.data.user;
+  } catch (error) {
+    console.error("Error getting userData: ", error);
+    throw error;
+  }
+}
+export { postSignIn, postLogin, getUserData };

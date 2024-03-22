@@ -1,6 +1,5 @@
 import { Button } from "@material-tailwind/react";
-import { setHistory, removeHistory } from "actions";
-import { useSelector } from "react-redux";
+import { setHistory, removeHistory } from "historyActions";
 
 const ChatHistoryEntry = ({ historyId }) => {
   const onHistoryEntryClicked = async () => {
@@ -38,22 +37,4 @@ const ChatHistoryEntry = ({ historyId }) => {
   );
 };
 
-const ChatHistory = () => {
-  const availableHistories = useSelector(
-    (state) => state.chat.availableHistories
-  );
-  return (
-    <>
-      <div className="grid grid-flow-row auto-rows-max gap-y-2 mt-2 px-2">
-        {availableHistories &&
-          availableHistories.map((historyEntry, index) => {
-            return (
-              <ChatHistoryEntry key={index} historyId={historyEntry._id} />
-            );
-          })}
-      </div>
-    </>
-  );
-};
-
-export default ChatHistory;
+export default ChatHistoryEntry;

@@ -6,7 +6,7 @@ import {
   setHistoryId,
 } from "../store/chatSlice";
 import { Message } from "../data/message";
-import { getHistoryIds } from "actions";
+import { getHistoryIds } from "historyActions";
 
 export const ReceiveActions = {
   Message: {

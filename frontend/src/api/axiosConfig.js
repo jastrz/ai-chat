@@ -12,11 +12,13 @@ const api = axios.create({
 
 api.interceptors.request.use(
   async (config) => {
-    const token = getToken();
+    let token = getToken();
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    console.log(`token: ${token}`);
 
     return config;
   },
@@ -26,8 +28,11 @@ api.interceptors.request.use(
 );
 
 function getToken() {
-  const user = store.getState().auth.userData;
-  return user.token;
+  let token = store.getState().auth.userData.token;
+  if (!token) {
+    token = localStorage.getItem("userToken");
+  }
+  return token;
 }
 
 export default api;

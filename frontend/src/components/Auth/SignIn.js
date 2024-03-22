@@ -28,7 +28,7 @@ const SignIn = () => {
   return (
     <>
       <div className="flex justify-center items-center h-screen">
-        <div className="w-1/3 p-8 bg-white rounded-lg shadow-lg content-center">
+        <div className="p-8 bg-white rounded-lg shadow-lg content-center">
           <AuthHeader title="Sign In" nextTitle="Login >" nextRoute="/login" />
           <form>
             <div className="flex flex-col gap-4">

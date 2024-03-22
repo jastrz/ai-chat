@@ -4,8 +4,6 @@ import bcrypt from "bcrypt";
 
 /**
  * Handles login request.
- * @param {Object} req - The request object containing username and password in the body.
- * @param  {Object} res - The response object to send back the result.
  * @returns {Object} - Response object with user data and token if login is successful
  */
 export const handleLogin = async (req, res) => {
@@ -31,8 +29,6 @@ export const handleLogin = async (req, res) => {
 
 /**
  * Handle sign in request.
- * @param {Object } req - Request object
- * @param {Object} res - Response object
  * @returns {Object} - Response object with user data and token if sign in is successful
  */
 export const handleSignIn = async (req, res) => {
@@ -46,6 +42,24 @@ export const handleSignIn = async (req, res) => {
     return signIn(res, username, password);
   } catch (err) {
     console.log(err);
+  }
+};
+
+/**
+ * Handle sign in request.
+ * @returns {Object} - Response object with user data and token if sign in is successful
+ */
+export const handleGetUser = async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const user = jwt.decode(token);
+
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while getting the user" });
   }
 };
 

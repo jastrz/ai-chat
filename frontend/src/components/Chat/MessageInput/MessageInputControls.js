@@ -9,7 +9,7 @@ const MessageInputControls = ({
   imageCheckboxToggled,
 }) => {
   return (
-    <div className="flex flex-row mt-2">
+    <div className="flex flex-row mt-2 mb-2">
       <div className="basis-1/4 flex justify-start items-center">
         <Button onClick={onClickReset}>New chat</Button>
       </div>

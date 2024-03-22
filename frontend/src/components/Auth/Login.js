@@ -15,8 +15,10 @@ const Login = () => {
     try {
       const loginFormValues = getValues();
       const { username, password } = loginFormValues;
-      const response = await postLogin(username, password);
-      dispatch(setUserData(response));
+      const data = await postLogin(username, password);
+      dispatch(setUserData(data));
+      console.log(data);
+      localStorage.setItem("userToken", data.token);
       navigate("/chat");
     } catch (error) {
       console.error("Error occurred during login: ", error);
@@ -26,7 +28,7 @@ const Login = () => {
   return (
     <>
       <div className="flex justify-center items-center h-screen">
-        <div className="w-1/3 p-8 bg-white rounded-lg shadow-lg content-center">
+        <div className="p-8 bg-white rounded-lg shadow-lg content-center">
           <AuthHeader title="Login" nextTitle="Sign In >" nextRoute="/signin" />
           <form>
             <div className="flex flex-col gap-4">

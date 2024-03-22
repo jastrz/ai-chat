@@ -3,7 +3,6 @@ import * as dbManager from "../dbManager.js";
 export const handleGetHistoryList = async (req, res) => {
   try {
     const username = req.params.username;
-    console.log(`username: ${username}`);
     const user = await dbManager.getUser(username);
     if (user) {
       const histories = await dbManager.getHistoryList(user._id);
@@ -32,9 +31,7 @@ export const handleGetHistory = async (req, res) => {
 export const handleRemoveHistory = async (req, res) => {
   try {
     const historyId = req.params.historyId;
-    console.log(historyId);
     const result = await dbManager.removeHistory(historyId);
-    console.log(result);
     return res.json(result);
   } catch (err) {
     console.log(err);

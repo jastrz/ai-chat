@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Button } from "@material-tailwind/react";
 import MessagesContainer from "./MessagesContainer";
 import MessageInput from "./MessageInput/MessageInput";
 import { useAuthGuard } from "common/useAuthGuard";
 import { useEffect } from "react";
 import { connectWithSocketServer } from "socketConnection/socketConnection";
-import ChatHistoryPanel from "./ChatHistoryPanel";
+import ChatHistoryPanel from "./History/ChatHistoryPanel";
+import ChatHistoryPanelExpandControl from "./History/ChatHistoryPanelControl";
 
 const Chat = () => {
   useAuthGuard();
@@ -24,17 +24,10 @@ const Chat = () => {
       <div className="flex flex-row">
         <ChatHistoryPanel isExpanded={isHistoryExpanded} />
         <div className="w-full relative">
-          <div className="absolute top-2 left-2">
-            <Button
-              size="sm"
-              className="drop-shadow-xl"
-              variant=""
-              onClick={toggleHistory}
-              style={{ zIndex: "1" }}
-            >
-              {isHistoryExpanded ? "<" : ">"}
-            </Button>
-          </div>
+          <ChatHistoryPanelExpandControl
+            toggleHistory={toggleHistory}
+            isHistoryExpanded={isHistoryExpanded}
+          />
 
           <MessagesContainer />
           <MessageInput />

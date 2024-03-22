@@ -16,7 +16,11 @@ import {
   handleGetOptions,
 } from "./controllers/sdController.js";
 
-import { handleLogin, handleSignIn } from "./controllers/userController.js";
+import {
+  handleLogin,
+  handleSignIn,
+  handleGetUser,
+} from "./controllers/userController.js";
 
 import {
   handleGetHistory,
@@ -57,6 +61,7 @@ const validateRequest = (schema) => {
   return (req, res, next) => {
     const result = schema.validate(req.body);
     if (result.error) {
+      console.log(result.error.details[0].message);
       return res.status(400).json({
         error: result.error.details[0].message,
       });
@@ -67,6 +72,7 @@ const validateRequest = (schema) => {
 
 router.post("/login", validateRequest(loginSchema), handleLogin);
 router.post("/signin", validateRequest(signInSchema), handleSignIn);
+router.get("/user", verifyToken, handleGetUser);
 
 // History routes
 
