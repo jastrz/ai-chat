@@ -72,7 +72,7 @@ export const handleGetUser = async (req, res) => {
 const login = (res, user) => {
   const token = getToken(user.username, user._id);
   return res.status(200).json({
-    _id: user._id,
+    userId: user._id,
     username: user.username,
     token: token,
   });
@@ -93,7 +93,7 @@ const signIn = async (res, username, password) => {
   });
   const token = getToken(username, user._id);
   return res.status(201).json({
-    _id: user._id,
+    userId: user._id,
     username: username,
     token: token,
   });

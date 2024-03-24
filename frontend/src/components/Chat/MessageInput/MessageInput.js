@@ -38,7 +38,6 @@ const MessageInput = () => {
     const prompt = new Prompt(userMessage.content[0].data, promptType);
     userMessage.promptGuid = prompt.guid;
 
-    console.log(prompt);
     sendPrompt(prompt);
 
     dispatch(addMessage(userMessage.obj()));

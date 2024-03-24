@@ -55,6 +55,12 @@ export const chatSlice = createSlice({
     setCurrentHistory: (state, action) => {
       state.historyId = action.payload._id;
       state.messages = action.payload.messages;
+      state.messages.forEach((message) => {
+        const id = state.messages.indexOf(message);
+        if (id > 1) {
+          message.concat = state.messages[id - 1].username === message.username;
+        }
+      });
     },
     setHistoryId: (state, action) => {
       state.historyId = action.payload;

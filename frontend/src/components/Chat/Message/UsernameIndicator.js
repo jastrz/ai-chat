@@ -8,7 +8,7 @@ const UsernameIndicator = ({ username, timestamp }) => {
         {username}
       </Typography>
       <Typography color="white" style={{ fontSize: "0.6rem" }}>
-        {timestamp.slice(11)}
+        {timestamp.slice(11, 16)}
       </Typography>
     </div>
   );

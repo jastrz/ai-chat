@@ -1,15 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SettingsDialog from "./Settings/SettingsDialog";
-
 import { IconButton, Navbar, Typography } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { reset } from "store/authSlice";
 
 const NavBar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const userData = useSelector((state) => state.auth.userData);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setLoggedIn(userData && !!userData.userId);
+  }, [userData]);
 
   const onClickLogout = () => {
     localStorage.clear("userToken");
     navigate("/login");
+    dispatch(reset());
   };
 
   return (
@@ -29,12 +38,14 @@ const NavBar = () => {
         >
           HeHe-adder
         </Typography>
-        <div className="ml-auto flex gap-1 md:mr-4">
-          <SettingsDialog />
-          <IconButton onClick={onClickLogout}>
-            <i className="fa-solid fa-sign-out"></i>
-          </IconButton>
-        </div>
+        {loggedIn && (
+          <div className="ml-auto flex gap-1 md:mr-4">
+            <SettingsDialog />
+            <IconButton onClick={onClickLogout}>
+              <i className="fa-solid fa-sign-out"></i>
+            </IconButton>
+          </div>
+        )}
       </div>
     </Navbar>
   );

@@ -15,9 +15,7 @@ const ChatHistory = () => {
     getHistory();
   }, []);
 
-  const availableHistories = useSelector(
-    (state) => state.chat.availableHistories
-  );
+  const { availableHistories, historyId } = useSelector((state) => state.chat);
 
   return (
     <>
@@ -25,7 +23,11 @@ const ChatHistory = () => {
         <div className="grid grid-flow-row auto-rows-max gap-y-2 mt-2 px-2">
           {availableHistories.map((historyEntry, index) => {
             return (
-              <ChatHistoryEntry key={index} historyId={historyEntry._id} />
+              <ChatHistoryEntry
+                key={index}
+                historyId={historyEntry._id}
+                active={historyEntry._id === historyId}
+              />
             );
           })}
         </div>
