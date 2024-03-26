@@ -1,5 +1,5 @@
 import { IconButton } from "@material-tailwind/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { cancelPrompt } from "socketConnection/sendActions";
 import { useDispatch, useSelector } from "react-redux";
 import { removeMessage } from "store/chatSlice";
@@ -12,6 +12,8 @@ const Message = ({ message }) => {
   const { prompts } = useSelector((state) => state.chat);
   const { userData } = useSelector((state) => state.auth);
 
+  const [relatedPrompt, setRelatedPrompt] = useState(null);
+
   const animationConfig = {
     to: { opacity: 1, x: 0 },
     from: { opacity: 0, x: -50 },
@@ -22,16 +24,16 @@ const Message = ({ message }) => {
     ? "bg-gradient-to-r from-red-900 to-red-700"
     : "bg-gradient-to-r from-blue-gray-900 to-blue-gray-600";
 
-  const getPromptStatus = () => {
+  useEffect(() => {
     const prompt = prompts.find((prompt) => prompt.guid === message.promptGuid);
-    if (prompt) {
-      return prompt.status;
-    }
-  };
+    setRelatedPrompt(prompt);
+  }, [relatedPrompt, setRelatedPrompt]);
 
   const handleInterrupt = () => {
     cancelPrompt(message.promptGuid);
-    dispatch(removeMessage(message.guid));
+    if (relatedPrompt.status === PromptStatus.Pending) {
+      dispatch(removeMessage(message.guid));
+    }
   };
 
   return (
@@ -48,14 +50,15 @@ const Message = ({ message }) => {
         />
         {isUser &&
           message.promptGuid &&
-          getPromptStatus() !== PromptStatus.Completed && (
+          relatedPrompt &&
+          relatedPrompt.status !== PromptStatus.Completed && (
             <IconButton
               onClick={handleInterrupt}
               size="sm"
               variant="outlined"
               className="ml-2 rounded-2xl"
             >
-              {getPromptStatus() === PromptStatus.Pending ? (
+              {relatedPrompt.status === PromptStatus.Pending ? (
                 <i className="fas fa-xmark" />
               ) : (
                 <i className="fas fa-square" />

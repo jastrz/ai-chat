@@ -1,10 +1,11 @@
 import { llamaService } from "../../services/llamaService.js";
 import { getImage } from "../../services/sdService.js";
-import { addRequest, eventEmitter } from "./requestProcessor.js";
+import { addRequest, stateChangeEventEmitter } from "./requestProcessor.js";
 import { Request, RequestStatus } from "./request.js";
 import { getSessionById } from "../session/sessionManager.js";
 import { SendActions } from "../actions/sendActions.js";
-import * as dbManager from "../../dbManager.js";
+import * as db from "../../db.js";
+import { handleInterrupt } from "../../controllers/sdController.js";
 
 // Processes a prompt based on its type
 // Probably should process only text prompts
@@ -13,14 +14,23 @@ export async function processPrompt(session, data) {
 
   switch (data.type) {
     case "text":
-      request = new Request(data.guid, session.id, async () =>
-        getLlamaResponse(data, session)
+      const controller = new AbortController();
+      const signal = controller.signal;
+
+      request = new Request(
+        data.guid,
+        session.id,
+        async () => getLlamaResponse(data, session, signal),
+        async () => onLlamaRequestStopped(controller)
       );
       break;
 
     case "image":
-      request = new Request(data.guid, session.id, async () =>
-        getImageResponse(data, session)
+      request = new Request(
+        data.guid,
+        session.id,
+        async () => getImageResponse(data, session),
+        async () => onImageRequestStopped()
       );
       break;
 
@@ -32,7 +42,7 @@ export async function processPrompt(session, data) {
 }
 
 // Listens for changes in request state and updates the prompt state
-eventEmitter.on("onRequestStateChange", (request) => {
+stateChangeEventEmitter.on("onRequestStateChange", (request) => {
   console.log(`Request: ${request.id} state changed: ${request.status}`);
 
   if (
@@ -52,7 +62,7 @@ eventEmitter.on("onRequestStateChange", (request) => {
 });
 
 // Function to retrieve response from llamaService and send it to the specified socket
-async function getLlamaResponse(userPrompt, session) {
+async function getLlamaResponse(userPrompt, session, abortSignal) {
   const onChunkReceived = (decodedChunk) => {
     const messageFragment = {
       promptGuid: userPrompt.guid,
@@ -68,10 +78,21 @@ async function getLlamaResponse(userPrompt, session) {
     settings: session.textPromptSettings,
   };
 
-  const answer = await llamaService.prompt(prompt, true, onChunkReceived);
+  const answer = await llamaService.prompt(
+    prompt,
+    true,
+    onChunkReceived,
+    abortSignal
+  );
 
-  const content = [{ type: "text", data: answer }];
-  await saveAiMessage(content, session);
+  if (answer) {
+    const content = [{ type: "text", data: answer }];
+    await saveAiMessage(content, session);
+  }
+}
+
+async function onLlamaRequestStopped(controller) {
+  controller.abort();
 }
 
 // Function to generate images based on the provided settings and send them to the specified socket
@@ -100,10 +121,14 @@ async function getImageResponse(userPrompt, session) {
   session.broadcast(SendActions.Message, response);
 }
 
+async function onImageRequestStopped() {
+  await handleInterrupt();
+}
+
 async function saveAiMessage(content, session) {
   const message = {
     username: "AI",
     content: content,
   };
-  await dbManager.saveMessage(message, session);
+  await db.saveMessage(message, session);
 }

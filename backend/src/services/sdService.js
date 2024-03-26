@@ -78,6 +78,17 @@ async function getOptions() {
   }
 }
 
+async function interruptCurrentRequest() {
+  try {
+    const result = await apiClient.post("/interrupt");
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.error("Error interrupting sd request:", error);
+    throw error;
+  }
+}
+
 async function saveImageToFile(imageData, filename, finalPath) {
   try {
     const base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
@@ -87,9 +98,9 @@ async function saveImageToFile(imageData, filename, finalPath) {
     await fsp.writeFile(filepath, buffer);
 
     console.log("Image saved successfully:", filename);
-  } catch (err) {
+  } catch (error) {
     console.error("Error saving image:", err.message);
-    throw err;
+    throw error;
   }
 }
 
@@ -113,5 +124,6 @@ export {
   getModelList,
   postOptions,
   getOptions,
+  interruptCurrentRequest,
   defaultImagePrompt,
 };

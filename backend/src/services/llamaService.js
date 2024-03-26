@@ -1,6 +1,11 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import { LlamaModel, LlamaContext, LlamaChatSession } from "node-llama-cpp";
+import {
+  LlamaModel,
+  LlamaContext,
+  LlamaChatSession,
+  AbortError,
+} from "node-llama-cpp";
 import fs from "fs";
 
 /* Handles llama model loading and inference, with methods
@@ -76,9 +81,13 @@ class LlamaService {
           },
         });
       } catch (error) {
-        console.log(error);
-        console.log("Error getting answer");
-        this.initialized = false;
+        if (error instanceof AbortError) {
+          console.log("Prompt aborted");
+        } else {
+          console.log(error);
+          console.log("Error getting answer");
+          this.initialized = false;
+        }
       }
     } else {
       answer = await this.getSession().prompt(input);

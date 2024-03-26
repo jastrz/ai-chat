@@ -1,4 +1,4 @@
-import * as dbManager from "../../dbManager.js";
+import * as db from "../../db.js";
 import { Session } from "./session.js";
 
 let sessions = [];
@@ -16,7 +16,7 @@ async function handleUserConnected(socketId, data) {
 }
 
 async function addSession(username) {
-  const user = await dbManager.getUser(username);
+  const user = await db.getUser(username);
   console.log(user);
   const session = new Session(username, user._id);
   sessions.push(session);

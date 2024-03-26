@@ -4,12 +4,19 @@ import {
   getModelList,
   postOptions,
   getOptions,
+  interruptCurrentRequest,
 } from "../services/sdService.js";
 import { removeFileExtension } from "../utils/utils.js";
 
-// sends back the images as an array of base64 encoded strings
-// doesnt use request handler, not involved in backend's queue
-// sd has it's own queue though... probably shouldn't be accessible to user
+/**
+ * Handle generating images based on the provided request body.
+ * Sends back the images as an array of base64 encoded strings.
+ * Doesnt use request handler, not involved in backend's queue.
+ * SD has it's own queue though... probably shouldn't be accessible to user
+ * @param {Object} req - The request object containing the image data.
+ * @param {Object} res - The response object to send back the generated images.
+ * @note
+ */
 const handleImagePrompt = async (req, res) => {
   try {
     if (!req.body) {
@@ -27,8 +34,13 @@ const handleImagePrompt = async (req, res) => {
   }
 };
 
-// same as above
-// todo: handle progress using socket server or sth else
+//
+/**
+ * Retrieve image generation progress information.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object to send back the image generation progress.
+ * @note todo: handle progress using socket server or sth else
+ */
 const handleGetImageGenProgress = async (req, res) => {
   try {
     const result = await getProgress();
@@ -39,6 +51,11 @@ const handleGetImageGenProgress = async (req, res) => {
   }
 };
 
+/**
+ * Handle the retrieval of available SD models.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object to send back the list of available SD models.
+ */
 const handleGetSDModels = async (req, res) => {
   try {
     const result = await getModelList();
@@ -50,18 +67,28 @@ const handleGetSDModels = async (req, res) => {
   }
 };
 
+/**
+ * Handle posting options for SD model.
+ * @param {Object} req - The request object containing the options data.
+ * @param {Object} res - The response object to send back the status of options posting.
+ */
 const handlePostOptions = async (req, res) => {
   try {
     const options = req.body.data;
     await postOptions(options);
-    console.log(req.body);
+    console.log(options);
     res.status(200);
   } catch (err) {
-    console.log(error);
+    console.log(err);
     res.status(err.status);
   }
 };
 
+/**
+ * Handle the retrieval of SD model options.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object to send back the SD model options.
+ */
 const handleGetOptions = async (req, res) => {
   try {
     const options = await getOptions();
@@ -74,10 +101,24 @@ const handleGetOptions = async (req, res) => {
   }
 };
 
+/**
+ * Handle interrupting current SD request.
+ * @param {Object} req - The request object.
+ */
+const handleInterrupt = async (req, res) => {
+  try {
+    await interruptCurrentRequest();
+  } catch (err) {
+    console.log(err);
+    res.status(err.status);
+  }
+};
+
 export {
   handleImagePrompt,
   handleGetImageGenProgress,
   handleGetSDModels,
   handlePostOptions,
   handleGetOptions,
+  handleInterrupt,
 };

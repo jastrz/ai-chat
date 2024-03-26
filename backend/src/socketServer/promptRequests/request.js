@@ -5,10 +5,11 @@ export const RequestStatus = {
 };
 
 export class Request {
-  constructor(id, sessionId, func) {
+  constructor(id, sessionId, execFunction, onRequestStopped) {
     this.sessionId = sessionId;
     this.status = RequestStatus.Pending;
     this.id = id;
-    this.func = func;
+    this.execFunction = execFunction;
+    this.onRequestStopped = onRequestStopped;
   }
 }

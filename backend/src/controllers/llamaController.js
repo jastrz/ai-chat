@@ -1,6 +1,11 @@
 import { llamaService } from "../services/llamaService.js";
 
-// shouldn't be accessible to user
+/**
+ * Handle chat prompts and generate answers based on the provided prompt.
+ * @param {Object} req - The request object containing the prompt in the request body.
+ * @param {Object} res - The response object to send back the generated answer.
+ * @note - shouldn't be accessible to user
+ */
 const handleChatPrompt = async (req, res) => {
   try {
     const { prompt } = req.body;
@@ -20,6 +25,11 @@ const handleChatPrompt = async (req, res) => {
   }
 };
 
+/**
+ * Handle the retrieval of available llama models.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object to send back the list of available models.
+ */
 const handleGetLlamaModels = async (req, res) => {
   try {
     const models = await llamaService.getAvailableModels();
@@ -31,6 +41,11 @@ const handleGetLlamaModels = async (req, res) => {
   }
 };
 
+/**
+ * Handle the retrieval of llama context settings.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object to send back the current llama context settings.
+ */
 const handleGetLlamaSettings = async (req, res) => {
   try {
     const currentSettings = llamaService.contextSettings;
@@ -46,6 +61,11 @@ const handleGetLlamaSettings = async (req, res) => {
   }
 };
 
+/**
+ * Handle updating llama context settings.
+ * @param {Object} req - The request object containing the updated settings data in the request body.
+ * @param {Object} res - The response object to send back the status of the settings update.
+ */
 const handleUpdateLlamaSettings = async (req, res) => {
   try {
     const settings = req.body.data;
@@ -57,6 +77,11 @@ const handleUpdateLlamaSettings = async (req, res) => {
   }
 };
 
+/**
+ * Handle resetting llama service.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
 const handleReset = async (req, res) => {
   await llamaService.reset();
 };
