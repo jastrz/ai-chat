@@ -15,16 +15,21 @@ const ChatHistoryEntry = ({ historyId, active }) => {
       <div className="flex">
         <div className="grow ">
           <Button
-            variant="outlined"
             size="sm"
-            className={`w-full ${active ? "bg-gray-400" : ""}`}
+            className={`w-full ${active ? "" : "bg-gray-700"} shadow-md`}
             onClick={onHistoryEntryClicked}
           >
             {historyId}
           </Button>
         </div>
-        <div className="flex-end">
-          <Button variant="outlined" size="sm" onClick={onRemoveHistoryEntry}>
+        <div className="flex-end px-1">
+          <Button
+            variant="outlined"
+            className="shadow-md"
+            size="sm"
+            style={{ scale: "0.85" }}
+            onClick={onRemoveHistoryEntry}
+          >
             <i className="fas fa-trash-alt" />
           </Button>
         </div>

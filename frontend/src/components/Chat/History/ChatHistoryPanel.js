@@ -1,3 +1,4 @@
+import { Typography } from "@material-tailwind/react";
 import ChatHistory from "./ChatHistory";
 
 const expandingPanel = {
@@ -27,6 +28,14 @@ const ChatHistoryPanel = ({ isExpanded }) => {
         ...(isExpanded ? panelExpanded : panelCollapsed),
       }}
     >
+      <div className="flex py-2">
+        <Typography
+          className="w-full text-center text-lg font-medium"
+          style={{ minWidth: "275px" }}
+        >
+          History
+        </Typography>
+      </div>
       <ChatHistory />
     </div>
   );

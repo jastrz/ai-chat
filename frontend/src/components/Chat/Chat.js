@@ -28,7 +28,6 @@ const Chat = () => {
             toggleHistory={toggleHistory}
             isHistoryExpanded={isHistoryExpanded}
           />
-
           <MessagesContainer />
           <MessageInput />
         </div>
