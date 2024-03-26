@@ -3,7 +3,7 @@ import ChatHistory from "./ChatHistory";
 const expandingPanel = {
   width: 0,
   overflow: "hidden",
-  transition: "width 0.35s, min-width 0.35s, max-width 0.35s",
+  transition: "width 0.25s, min-width 0.25s, max-width 0.25s",
 };
 
 const panelExpanded = {

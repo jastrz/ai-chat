@@ -31,7 +31,7 @@ const SignIn = () => {
         <div className="p-8 bg-white rounded-lg shadow-lg content-center">
           <AuthHeader title="Sign In" nextTitle="Login >" nextRoute="/login" />
           <form>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 w-80">
               <Input
                 label="Username"
                 type="text"

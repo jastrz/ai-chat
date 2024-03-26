@@ -27,7 +27,7 @@ const Message = ({ message }) => {
   useEffect(() => {
     const prompt = prompts.find((prompt) => prompt.guid === message.promptGuid);
     setRelatedPrompt(prompt);
-  }, [relatedPrompt, setRelatedPrompt]);
+  }, [relatedPrompt, setRelatedPrompt, prompts]);
 
   const handleInterrupt = () => {
     cancelPrompt(message.promptGuid);

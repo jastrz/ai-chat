@@ -32,6 +32,7 @@ const ImageContent = ({ index, data }) => {
         <img
           className={"max-h-64 shadow-lg rounded-md"}
           src={`data:image/png;base64, ${data}`}
+          style={{ cursor: "pointer" }}
           alt=""
         />
         {showHiddenItem && (

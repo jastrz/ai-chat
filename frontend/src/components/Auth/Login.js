@@ -27,11 +27,11 @@ const Login = () => {
 
   return (
     <>
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen ">
         <div className="p-8 bg-white rounded-lg shadow-lg content-center">
           <AuthHeader title="Login" nextTitle="Sign In >" nextRoute="/signin" />
           <form>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 w-80">
               <Input
                 label="Username"
                 type="text"
