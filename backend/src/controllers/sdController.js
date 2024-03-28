@@ -1,3 +1,8 @@
+/**
+ * SD module
+ * @module SD
+ */
+
 import {
   getImage,
   getProgress,

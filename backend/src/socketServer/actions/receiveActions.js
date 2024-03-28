@@ -1,3 +1,8 @@
+/**
+ * Handles actions received from client through socket
+ * @module ReceiveActions
+ */
+
 import * as sessionManager from "../session/sessionManager.js";
 import { llamaService } from "../../services/llamaService.js";
 import { processPrompt } from "../promptRequests/requestHandler.js";

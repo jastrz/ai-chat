@@ -1,3 +1,8 @@
+/**
+ * History module for handling history-related operations.
+ * @module History
+ */
+
 import * as db from "../db.js";
 
 /**

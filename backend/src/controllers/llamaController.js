@@ -1,3 +1,8 @@
+/**
+ * Llama module
+ * @module Llama
+ */
+
 import { llamaService } from "../services/llamaService.js";
 
 /**
