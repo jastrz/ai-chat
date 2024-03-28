@@ -45,10 +45,7 @@ export async function processPrompt(session, data) {
 stateChangeEventEmitter.on("onRequestStateChange", (request) => {
   console.log(`Request: ${request.id} state changed: ${request.status}`);
 
-  if (
-    request.status === RequestStatus.Processed ||
-    request.status === RequestStatus.Completed
-  ) {
+  if (request.status !== RequestStatus.Pending) {
     try {
       const session = getSessionById(request.sessionId);
       session.broadcast(SendActions.UpdatePromptState, {
