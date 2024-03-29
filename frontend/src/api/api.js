@@ -6,7 +6,7 @@ import api from "api/axiosConfig";
  */
 async function getSDModelList() {
   try {
-    const response = await api.get("/sdModelList");
+    const response = await api.get("/sd/modelList");
     return response.data;
   } catch (error) {
     console.error("Error getting sd model list: ", error);
@@ -20,7 +20,7 @@ async function getSDModelList() {
  */
 async function getLlamaModelList() {
   try {
-    const response = await api.get("/llamaModelList");
+    const response = await api.get("/llama/modelList");
     return response.data;
   } catch (error) {
     console.error("Error getting llama model list: ", error);
@@ -34,7 +34,7 @@ async function getLlamaModelList() {
  */
 async function getCurrentLlamaSettings() {
   try {
-    const response = await api.get("/llamaSettings");
+    const response = await api.get("/llama/settings");
     return response.data;
   } catch (error) {
     console.error("Error getting llama model list: ", error);
@@ -49,7 +49,9 @@ async function getCurrentLlamaSettings() {
  */
 async function updateLlamaSettings(settings) {
   try {
-    const response = await api.post("/updateLlamaSettings", { data: settings });
+    const response = await api.post("/llama/updateSettings", {
+      data: settings,
+    });
     return response;
   } catch (error) {
     console.error("Error posting llama settings");
@@ -64,7 +66,7 @@ async function updateLlamaSettings(settings) {
  */
 async function updateSdSettings(settings) {
   try {
-    const response = await api.post("/sdOptions", { data: settings });
+    const response = await api.post("/sd/options", { data: settings });
     console.log(settings);
     return response;
   } catch (error) {
@@ -79,7 +81,7 @@ async function updateSdSettings(settings) {
  */
 async function getSDSettings() {
   try {
-    const response = await api.get("/sdOptions");
+    const response = await api.get("/sd/options");
     return response.data;
   } catch (error) {
     console.log("Error getting SD options");
@@ -95,7 +97,7 @@ async function getSDSettings() {
  */
 async function getImageGenProgress() {
   try {
-    const response = await api.get("/imageGenProgress");
+    const response = await api.get("/sd/imageGenProgress");
     return response.data.progress * 100;
   } catch (error) {
     console.error("Error getting progress: ", error);
@@ -111,7 +113,7 @@ async function getImageGenProgress() {
  */
 async function prompt(prompt) {
   try {
-    const response = await api.post("/ask", { prompt });
+    const response = await api.post("/llama/ask", { prompt });
     return response.data.answer;
   } catch (error) {
     console.error("Error asking question:", error);
@@ -127,7 +129,7 @@ async function prompt(prompt) {
  */
 async function askForImage(requestData) {
   try {
-    const response = await api.post("/getImage", requestData);
+    const response = await api.post("/sd/getImage", requestData);
     return response.data;
   } catch (error) {
     console.error("Error asking for image: ", error);

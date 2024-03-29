@@ -10,7 +10,7 @@ import api from "api/axiosConfig";
  */
 async function postSignIn(username, password, repeatPassword) {
   try {
-    const response = await api.post("/signin", {
+    const response = await api.post("/auth/signin", {
       username,
       password,
       repeatPassword,
@@ -31,7 +31,7 @@ async function postSignIn(username, password, repeatPassword) {
  */
 async function postLogin(username, password) {
   try {
-    const response = await api.post("/login", { username, password });
+    const response = await api.post("/auth/login", { username, password });
     return response.data;
   } catch (error) {
     console.error("Error logging in: ", error);
@@ -46,7 +46,7 @@ async function postLogin(username, password) {
  */
 async function getUserData() {
   try {
-    const response = await api.get("/user");
+    const response = await api.get("/auth/user");
     return response.data.user;
   } catch (error) {
     console.error("Error getting userData: ", error);

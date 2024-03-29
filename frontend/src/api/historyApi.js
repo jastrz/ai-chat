@@ -2,7 +2,7 @@ import api from "api/axiosConfig";
 
 async function getHistoryList(username) {
   try {
-    const response = await api.get(`/historyList/${username}`);
+    const response = await api.get(`/history/list/${username}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching history list: ", error);
