@@ -11,5 +11,4 @@ const swaggerOptions = {
   apis: ["./src/routes/*.js"],
 };
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
-console.log(swaggerSpec);
 export default swaggerSpec;

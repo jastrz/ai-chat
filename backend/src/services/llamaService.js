@@ -160,7 +160,6 @@ class LlamaService {
   }
 
   reset() {
-    console.log("resetting");
     this.initialized = false;
   }
 }
