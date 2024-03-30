@@ -91,6 +91,7 @@ async function handlePromptReceived(socketId, data) {
 
   // send message to other sockets associated with currently processed request
   session.broadcast(SendActions.Message, userMessage, [socketId]);
+  session.broadcast(SendActions.Prompt, data, [socketId]);
   await processPrompt(session, data);
 }
 

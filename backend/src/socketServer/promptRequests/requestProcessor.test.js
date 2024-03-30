@@ -1,5 +1,5 @@
 import { generateGUID } from "../../utils/utils";
-import { Request } from "../requests/request";
+import { Request } from "./request";
 import { addRequest, requests } from "./requestProcessor";
 
 describe("Request Processor", () => {

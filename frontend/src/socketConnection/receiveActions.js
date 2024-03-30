@@ -5,6 +5,7 @@ import {
   updatePromptStatus,
   setHistoryId,
   removeMessage,
+  addPrompt,
 } from "../store/chatSlice";
 import { Message } from "../data/message";
 import { getHistoryIds } from "historyActions";
@@ -14,6 +15,10 @@ export const ReceiveActions = {
   Message: {
     name: "message",
     handler: handleMessageReceived,
+  },
+  Prompt: {
+    name: "prompt",
+    handler: handlePromptReceived,
   },
   MessageFragment: {
     name: "messageFragment",
@@ -36,12 +41,11 @@ async function handlePromptStateChanged(data) {
   const state = store.getState().chat;
   const prompt = state.prompts.find((prompt) => prompt.guid === data.guid);
 
+  if (!prompt) return;
+
   if (data.status === PromptStatus.Processed) {
-    // temporarily not creating new messages for image prompts
-    if (prompt) {
-      const msg = new Message("AI", null, data.guid);
-      store.dispatch(addMessage(msg.obj()));
-    }
+    const msg = new Message("AI", null, data.guid);
+    store.dispatch(addMessage(msg.obj()));
   }
 
   if (data.status === PromptStatus.Completed) {
@@ -51,6 +55,10 @@ async function handlePromptStateChanged(data) {
     }
     await getHistoryIds();
   }
+}
+
+function handlePromptReceived(data) {
+  store.dispatch(addPrompt(data));
 }
 
 function handleCreatedHistory(data) {

@@ -29,8 +29,10 @@ class Session {
   }
 
   broadcast(action, data, excludes = []) {
-    const { error } = action.validator.validate(data);
-    if (error) throw new Error(error);
+    if (action.validator) {
+      const { error } = action.validator.validate(data);
+      if (error) throw new Error(error);
+    }
 
     this.activeConnections.forEach((socketId) => {
       if (!excludes.includes(socketId)) {

@@ -16,6 +16,7 @@ import * as validators from "./sendActionsValidators.js";
  */
 export const SendActions = {
   Message: { name: "message", validator: validators.responseSchema },
+  Prompt: { name: "prompt" },
   MessageFragment: {
     name: "messageFragment",
     validator: validators.responseFragmentSchema,
