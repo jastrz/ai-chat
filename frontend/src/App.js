@@ -7,6 +7,7 @@ import Login from "components/Auth/Login";
 import { getUserData } from "api/authApi";
 import { useDispatch } from "react-redux";
 import { setUserData } from "store/authSlice";
+import LoadingIndicator from "LoadingIndicator";
 
 function App() {
   const dispatch = useDispatch();
@@ -32,6 +33,7 @@ function App() {
     <div className="flex flex-col bg-gray-200">
       <NavBar />
       <div className="w-full mx-auto">
+        <LoadingIndicator />
         <Routes>
           <Route path="/" element={<div>Loading...</div>} />
           <Route path="/chat" element={<Chat />} />

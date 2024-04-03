@@ -27,6 +27,16 @@ api.interceptors.request.use(
   }
 );
 
+api.interceptors.request.use(
+  async (config) => {
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 function getToken() {
   let token = store.getState().auth.userData.token;
   if (!token) {

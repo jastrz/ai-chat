@@ -1,5 +1,5 @@
 import { IconButton } from "@material-tailwind/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { cancelPrompt } from "socketConnection/sendActions";
 import { useDispatch, useSelector } from "react-redux";
 import { removeMessage } from "store/chatSlice";
@@ -14,15 +14,28 @@ const Message = ({ message }) => {
 
   const [relatedPrompt, setRelatedPrompt] = useState(null);
 
-  const animationConfig = {
-    to: { opacity: 1, x: 0 },
-    from: { opacity: 0, x: -50 },
-  };
+  const isUser = useMemo(() => {
+    const isUserValue = message.username === userData.username;
 
-  const isUser = message.username === userData.username;
-  const backgroundColor = isUser
-    ? "bg-gradient-to-r from-red-900 to-red-700"
-    : "bg-gradient-to-r from-blue-gray-900 to-blue-gray-600";
+    return isUserValue;
+  }, [message.username, userData]);
+
+  const animationConfig = useMemo(() => {
+    const startXPos = isUser ? 50 : -50;
+
+    const animationConfigValue = {
+      to: { opacity: 1, x: 0 },
+      from: { opacity: 0, x: startXPos },
+    };
+
+    return animationConfigValue;
+  }, [isUser]);
+
+  const backgroundColor = useMemo(() => {
+    return isUser
+      ? "bg-gradient-to-r from-red-900 to-red-700"
+      : "bg-gradient-to-r from-blue-gray-900 to-blue-gray-600";
+  }, [isUser]);
 
   useEffect(() => {
     const prompt = prompts.find((prompt) => prompt.guid === message.promptGuid);

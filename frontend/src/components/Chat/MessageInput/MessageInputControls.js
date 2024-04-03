@@ -29,7 +29,7 @@ const MessageInputControls = ({
             </Typography>
           }
           onChange={handleImagePromptCheckbox}
-          className="h-4 w-4 hover:scale-105 hover:before:opacity-0"
+          className="h-4 w-4"
         />
         <Button onClick={onClickSend}>Send</Button>
       </div>
