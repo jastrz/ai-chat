@@ -1,5 +1,5 @@
 /**
- * Module containing different types of actions for sending messages, updates, and history.
+ * Module containing data types/schemas for actions sent from backend
  * @module SendActionsData
  */
 
@@ -42,7 +42,7 @@ export const responseFragmentSchema = Joi.object({
 /**
  * Schema for validating update prompt state data.
  * @typedef {Joi.ObjectSchema} UpdatePromptStateSchema
- * @property {Joi.StringSchema} guid - The GUID of the prompt state update (required).
+ * @property {Joi.StringSchema} guid - The GUID of the prompt (required).
  * @property {Joi.StringSchema} status - The status of the prompt state update (Processed or Completed, required).
  */
 export const updatePromptStateSchema = Joi.object({
@@ -58,5 +58,6 @@ export const updatePromptStateSchema = Joi.object({
  * @property {Joi.StringSchema} guid - The GUID of the created history (required).
  */
 export const createdHistorySchema = Joi.object({
-  guid: Joi.string().required(),
+  _id: Joi.string().required(),
+  timestamp: Joi.date().required(),
 });

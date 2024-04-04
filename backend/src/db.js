@@ -14,7 +14,7 @@ export async function getUser(username) {
 
 export async function getHistoryList(userId) {
   try {
-    const histories = await History.find({ userId }).select("_id");
+    const histories = await History.find({ userId }, { _id: 1, timestamp: 1 });
 
     return histories;
   } catch (error) {

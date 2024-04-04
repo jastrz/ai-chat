@@ -8,6 +8,11 @@ const historySchema = new mongoose.Schema({
       ref: "Message",
     },
   ],
+  timestamp: {
+    type: Date,
+    default: Date.now,
+    required: true,
+  },
 });
 
 const History = mongoose.model("History", historySchema);

@@ -3,12 +3,11 @@ import {
   addMessage,
   updateMessageContent,
   updatePromptStatus,
-  setHistoryId,
+  setHistory,
   removeMessage,
   addPrompt,
 } from "../store/chatSlice";
 import { Message } from "../data/message";
-import { getHistoryIds } from "historyActions";
 import { PromptStatus } from "data/prompt";
 
 export const ReceiveActions = {
@@ -34,8 +33,7 @@ export const ReceiveActions = {
   },
 };
 
-// Possible statuses: completed, pending, processed
-async function handlePromptStateChanged(data) {
+function handlePromptStateChanged(data) {
   store.dispatch(updatePromptStatus(data));
 
   const state = store.getState().chat;
@@ -53,7 +51,6 @@ async function handlePromptStateChanged(data) {
     if (msg && msg.content[0] && msg.content[0].data.length === 0) {
       store.dispatch(removeMessage(msg.guid));
     }
-    await getHistoryIds();
   }
 }
 
@@ -62,12 +59,11 @@ function handlePromptReceived(data) {
 }
 
 function handleCreatedHistory(data) {
-  store.dispatch(setHistoryId(data.guid));
+  store.dispatch(setHistory(data));
 }
 
 function handleMessageReceived(data) {
   const msg = new Message(data.username, data.content);
-  console.log(data);
   store.dispatch(addMessage(msg.obj()));
 }
 

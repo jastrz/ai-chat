@@ -15,8 +15,8 @@ export class Message {
   }
 
   getTimestamp() {
-    const now = new Date();
-    return now.toISOString().slice(0, 19).replace("T", " ");
+    const time = new Date();
+    return time.toISOString().slice(0, 19).replace("T", " ");
   }
 
   obj() {

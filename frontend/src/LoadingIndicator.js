@@ -29,13 +29,11 @@ const LoadingIndicator = () => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           <Oval
             visible={true}
-            height="80"
-            width="80"
+            height="30"
+            width="30"
             color="red"
             secondaryColor="red"
             ariaLabel="oval-loading"
-            wrapperStyle={{}}
-            wrapperClass=""
           />
         </div>
       </div>

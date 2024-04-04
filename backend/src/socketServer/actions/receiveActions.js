@@ -85,7 +85,8 @@ async function handlePromptReceived(socketId, data) {
   const history = await db.saveMessage(userMessage, session);
   if (history._id !== data.historyId) {
     session.broadcast(SendActions.SetCreatedHistory, {
-      guid: history._id.toString(),
+      _id: history._id.toString(),
+      timestamp: history.timestamp,
     });
   }
 

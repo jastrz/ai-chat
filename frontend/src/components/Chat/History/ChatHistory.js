@@ -26,6 +26,7 @@ const ChatHistory = () => {
               <ChatHistoryEntry
                 key={index}
                 historyId={historyEntry._id}
+                timestamp={historyEntry.timestamp}
                 active={historyEntry._id === historyId}
               />
             );

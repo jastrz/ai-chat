@@ -1,7 +1,7 @@
-import { Button } from "@material-tailwind/react";
+import { Button, Typography } from "@material-tailwind/react";
 import { setHistory, removeHistory } from "historyActions";
 
-const ChatHistoryEntry = ({ historyId, active }) => {
+const ChatHistoryEntry = ({ historyId, timestamp, active }) => {
   const onHistoryEntryClicked = async () => {
     await setHistory(historyId);
   };
@@ -13,13 +13,17 @@ const ChatHistoryEntry = ({ historyId, active }) => {
   return (
     <>
       <div className="flex">
-        <div className="grow ">
+        <div className="grow min-w-48">
           <Button
             size="sm"
-            className={`w-full ${active ? "" : "bg-gray-700"} shadow-md`}
+            className={`w-full ${active ? "" : "bg-gray-600"} shadow-md ${
+              active ? "" : "hover:bg-gray-700"
+            }`}
             onClick={onHistoryEntryClicked}
           >
-            {historyId}
+            <Typography className="tracking-wider text-xs">
+              {timestamp.slice(0, 10) + " " + timestamp.slice(11, 19)}
+            </Typography>
           </Button>
         </div>
         <div className="flex-end px-1">
@@ -27,7 +31,7 @@ const ChatHistoryEntry = ({ historyId, active }) => {
             variant="outlined"
             className="shadow-md"
             size="sm"
-            style={{ scale: "0.85" }}
+            style={{ scale: "0.75" }}
             onClick={onRemoveHistoryEntry}
           >
             <i className="fas fa-trash-alt" />
