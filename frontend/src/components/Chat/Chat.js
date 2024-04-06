@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { connectWithSocketServer } from "socketConnection/socketConnection";
 import ChatHistoryPanel from "./History/ChatHistoryPanel";
 import ChatHistoryPanelExpandControl from "./History/ChatHistoryPanelControl";
+import Gallery from "components/Gallery";
 
 const Chat = () => {
   useAuthGuard();
@@ -21,6 +22,7 @@ const Chat = () => {
 
   return (
     <>
+      <Gallery />
       <div className="flex flex-row">
         <ChatHistoryPanel isExpanded={isHistoryExpanded} />
         <div className="w-full relative">
@@ -28,6 +30,7 @@ const Chat = () => {
             toggleHistory={toggleHistory}
             isHistoryExpanded={isHistoryExpanded}
           />
+
           <MessagesContainer />
           <MessageInput />
         </div>

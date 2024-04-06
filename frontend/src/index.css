@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "~react-image-gallery/styles/css/image-gallery.css";
+
 @font-face {
   font-family: "Poppins Regular";
   src: url("../public/Poppins-Regular.ttf");
@@ -18,4 +20,3 @@
     scrollbar-width: none; /* Firefox */
   }
 }
-

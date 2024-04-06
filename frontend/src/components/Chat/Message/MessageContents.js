@@ -2,15 +2,34 @@ import React from "react";
 import UsernameIndicator from "./UsernameIndicator";
 import ImageContent from "./ImageContent";
 import TextContent from "./TextContent";
+import { useDispatch } from "react-redux";
+import * as galleryActions from "../../../store/gallerySlice";
 
 const MessageContents = ({ message, backgroundColor, sameUserAsPrevious }) => {
   const TextContents = message.content
     .filter(({ type }) => type !== "image")
     .map(({ data }, index) => <TextContent key={index} data={data} />);
 
-  const ImageContents = message.content
-    .filter(({ type }) => type === "image")
-    .map(({ data }, index) => <ImageContent key={index} data={data} />);
+  const dispatch = useDispatch();
+
+  const imageData = message.content.filter(({ type }) => type === "image");
+
+  const onImageClicked = () => {
+    const images = [];
+
+    imageData.forEach((img) => {
+      const image = `data:image/png;base64, ${img.data}`;
+      images.push({
+        original: image,
+        thumbnail: image,
+      });
+    });
+    dispatch(galleryActions.open(images));
+  };
+
+  const ImageContents = imageData.map(({ data }, index) => (
+    <ImageContent key={index} data={data} onImageClicked={onImageClicked} />
+  ));
 
   return (
     <>

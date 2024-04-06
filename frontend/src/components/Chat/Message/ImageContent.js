@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import SaveButton from "./SaveButton";
 import { ImageDialog } from "./ImageDialog";
 
-const ImageContent = ({ index, data }) => {
+const ImageContent = ({ index, data, onImageClicked }) => {
   const [showHiddenItem, setShowHiddenItem] = useState(false);
   const [open, setOpen] = React.useState(false);
 
@@ -15,12 +15,13 @@ const ImageContent = ({ index, data }) => {
   };
 
   const toggle = () => {
-    setOpen(!open);
+    onImageClicked();
+    // setOpen(!open);
   };
 
   return (
     <>
-      <ImageDialog data={data} open={open} toggle={toggle} />
+      {/* <ImageDialog data={data} open={open} toggle={toggle} /> */}
       <div
         key={index}
         className="relative py-2"
