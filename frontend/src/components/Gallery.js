@@ -19,7 +19,9 @@ const Overlay = styled.div`
 `;
 
 const Gallery = () => {
-  const { images, isOpen } = useSelector((state) => state.gallery);
+  const { images, isOpen, currentIndex } = useSelector(
+    (state) => state.gallery
+  );
   const overlayRef = useRef();
   const dispatch = useDispatch();
 
@@ -33,12 +35,16 @@ const Gallery = () => {
     <>
       {isOpen && (
         <Overlay onClick={close} ref={overlayRef}>
-          <div style={{ height: 512, width: 512 }}>
+          <div className={`$mx-auto max-w-2xl w-full`}>
             <ReactImageGallery
               items={images}
               showPlayButton={false}
-              slideDuration={200}
+              slideDuration={150}
               stopPropagation={true}
+              startIndex={currentIndex}
+              showThumbnails={images.length > 1}
+              showFullscreenButton={false}
+              useBrowserFullscreen={false}
             />
           </div>
         </Overlay>

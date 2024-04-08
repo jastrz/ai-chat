@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import SaveButton from "./SaveButton";
-import { ImageDialog } from "./ImageDialog";
 
 const ImageContent = ({ index, data, onImageClicked }) => {
   const [showHiddenItem, setShowHiddenItem] = useState(false);
-  const [open, setOpen] = React.useState(false);
 
   const showHidden = () => {
     setShowHiddenItem(true);
@@ -14,24 +12,22 @@ const ImageContent = ({ index, data, onImageClicked }) => {
     setShowHiddenItem(false);
   };
 
-  const toggle = () => {
-    onImageClicked();
-    // setOpen(!open);
+  const onClick = (imageIndex) => {
+    onImageClicked(imageIndex);
   };
 
   return (
     <>
-      {/* <ImageDialog data={data} open={open} toggle={toggle} /> */}
       <div
         key={index}
         className="relative py-2"
         onFocus={showHidden}
         onMouseOver={showHidden}
         onMouseOut={hide}
-        onClick={toggle}
+        onClick={() => onClick(index)}
       >
         <img
-          className={"max-h-64 shadow-lg rounded-md"}
+          className={"max-h-32 xl:max-h-64 shadow-lg rounded-md"}
           src={`data:image/png;base64, ${data}`}
           style={{ cursor: "pointer" }}
           alt=""

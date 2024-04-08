@@ -14,7 +14,7 @@ const MessageContents = ({ message, backgroundColor, sameUserAsPrevious }) => {
 
   const imageData = message.content.filter(({ type }) => type === "image");
 
-  const onImageClicked = () => {
+  const onImageClicked = (imageIndex) => {
     const images = [];
 
     imageData.forEach((img) => {
@@ -24,11 +24,11 @@ const MessageContents = ({ message, backgroundColor, sameUserAsPrevious }) => {
         thumbnail: image,
       });
     });
-    dispatch(galleryActions.open(images));
+    dispatch(galleryActions.open({ images: images, currentIndex: imageIndex }));
   };
 
   const ImageContents = imageData.map(({ data }, index) => (
-    <ImageContent key={index} data={data} onImageClicked={onImageClicked} />
+    <ImageContent index={index} data={data} onImageClicked={onImageClicked} />
   ));
 
   return (
