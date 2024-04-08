@@ -16,9 +16,9 @@ const ChatHistoryEntry = ({ historyId, timestamp, active }) => {
         <div className="grow min-w-48">
           <Button
             size="sm"
-            className={`w-full ${active ? "" : "bg-gray-600"} shadow-md ${
-              active ? "" : "hover:bg-gray-700"
-            }`}
+            className={`w-full ${
+              active ? "" : "bg-gradient-to-r from-gray-500 to-gray-600"
+            } shadow-md ${active ? "" : "hover:to-gray-700"}`}
             onClick={onHistoryEntryClicked}
           >
             <Typography className="tracking-wider text-xs">

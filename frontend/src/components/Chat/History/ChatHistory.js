@@ -20,7 +20,7 @@ const ChatHistory = () => {
   return (
     <>
       {dataLoaded && (
-        <div className="grid grid-flow-row auto-rows-max gap-y-2 mt-2 px-2">
+        <div className="grid grid-flow-row auto-rows-max gap-y-2 mt-2 px-2 mb-2">
           {availableHistories.map((historyEntry, index) => {
             return (
               <ChatHistoryEntry

@@ -1,5 +1,7 @@
 import { Typography } from "@material-tailwind/react";
 import ChatHistory from "./ChatHistory";
+import ChatHistoryPanelExpandControl from "./ChatHistoryPanelControl";
+import { useState } from "react";
 
 const expandingPanel = {
   width: 0,
@@ -20,24 +22,38 @@ const panelCollapsed = {
 };
 
 const ChatHistoryPanel = ({ isExpanded }) => {
+  const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
+  const toggleHistory = () => {
+    setIsHistoryExpanded(!isHistoryExpanded);
+  };
+
   return (
-    <div
-      className="bg-gray-100"
-      style={{
-        ...expandingPanel,
-        ...(isExpanded ? panelExpanded : panelCollapsed),
-      }}
-    >
-      <div className="flex py-2">
-        <Typography
-          className="w-full text-center text-lg font-medium"
-          style={{ minWidth: "275px" }}
-        >
-          History
-        </Typography>
+    <>
+      <div className="absolute top-20 left-2 z-20 ">
+        <ChatHistoryPanelExpandControl
+          toggleHistory={toggleHistory}
+          isHistoryExpanded={isHistoryExpanded}
+        />
       </div>
-      <ChatHistory />
-    </div>
+
+      <div
+        className="bg-white z-10 absolute md:static max-h-fit shadow-xl rounded-md"
+        style={{
+          ...expandingPanel,
+          ...(isHistoryExpanded ? panelExpanded : panelCollapsed),
+        }}
+      >
+        <div className="flex py-2">
+          <Typography
+            className="w-full text-center text-lg font-medium"
+            style={{ minWidth: "275px" }}
+          >
+            History
+          </Typography>
+        </div>
+        <ChatHistory />
+      </div>
+    </>
   );
 };
 

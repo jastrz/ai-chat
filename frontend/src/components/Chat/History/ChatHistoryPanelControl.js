@@ -1,11 +1,17 @@
 import { Button } from "@material-tailwind/react";
+import { HoverableAnimation } from "components/Common/Animation";
 
 const ChatHistoryPanelExpandControl = ({
   toggleHistory,
   isHistoryExpanded,
 }) => {
+  const animationConfig = {
+    from: { opacity: 1, scale: 1.0 },
+    to: { opacity: 0.75, scale: 0.95 },
+  };
+
   return (
-    <div className="absolute top-2 left-2">
+    <HoverableAnimation animationConfig={animationConfig}>
       <Button
         size="sm"
         className="drop-shadow-xl"
@@ -14,7 +20,7 @@ const ChatHistoryPanelExpandControl = ({
       >
         {isHistoryExpanded ? "<" : ">"}
       </Button>
-    </div>
+    </HoverableAnimation>
   );
 };
 
