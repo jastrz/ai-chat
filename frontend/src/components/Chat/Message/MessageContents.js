@@ -28,7 +28,7 @@ const MessageContents = ({ message, backgroundColor, sameUserAsPrevious }) => {
   };
 
   const ImageContents = imageData.map(({ data }, index) => (
-    <ImageContent index={index} data={data} onImageClicked={onImageClicked} />
+    <ImageContent key={index} data={data} onImageClicked={onImageClicked} />
   ));
 
   return (
@@ -42,7 +42,7 @@ const MessageContents = ({ message, backgroundColor, sameUserAsPrevious }) => {
             />
           )}
         </div>
-        <div>{TextContents}</div>
+        {TextContents}
         <div className="flex flex-wrap gap-x-4">{ImageContents}</div>
       </div>
     </>

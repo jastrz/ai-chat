@@ -31,9 +31,16 @@ export const chatSlice = createSlice({
     },
     removeMessage: (state, action) => {
       const guidToRemove = action.payload;
-      state.messages = state.messages.filter(
-        (message) => message.guid !== guidToRemove
+      const msgId = state.messages.findIndex(
+        (msg) => msg.guid === guidToRemove
       );
+      const username = state.messages[msgId].username;
+      state.messages.splice(msgId, 1);
+
+      // fix possible incorrect 'message merges'
+      for (let i = msgId; i < state.messages.length; i++) {
+        state.messages[i].concat = state.messages[i - 1].username === username;
+      }
     },
     updateMessageContent: (state, action) => {
       let messageToUpdate = state.messages.find(
@@ -73,8 +80,9 @@ export const chatSlice = createSlice({
       state.historyId = action.payload._id;
     },
     removeHistory: (state, action) => {
+      const id = action.payload;
       state.availableHistories = state.availableHistories.filter(
-        (history) => history._id !== action.payload
+        (history) => history._id !== id
       );
     },
     setHistoryList: (state, action) => {

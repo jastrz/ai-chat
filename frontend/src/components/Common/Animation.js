@@ -11,7 +11,6 @@ export const HoverableAnimation = ({ children, animationConfig }) => {
   const [currentConfig, setCurrentConfig] = useState(animationConfig);
 
   const handleMouseEnter = () => {
-    console.log("mouse enter");
     setCurrentConfig({
       to: animationConfig.from,
       from: animationConfig.to,
