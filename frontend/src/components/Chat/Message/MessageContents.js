@@ -28,7 +28,12 @@ const MessageContents = ({ message, backgroundColor, sameUserAsPrevious }) => {
   };
 
   const ImageContents = imageData.map(({ data }, index) => (
-    <ImageContent key={index} data={data} onImageClicked={onImageClicked} />
+    <ImageContent
+      index={index}
+      key={index}
+      data={data}
+      onImageClicked={onImageClicked}
+    />
   ));
 
   return (

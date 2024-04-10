@@ -11,7 +11,8 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const onLogin = async () => {
+  const onLogin = async (event) => {
+    event.preventDefault();
     try {
       const loginFormValues = getValues();
       const { username, password } = loginFormValues;
@@ -27,10 +28,10 @@ const Login = () => {
 
   return (
     <>
-      <div className="flex justify-center items-center h-screen ">
+      <div className="flex justify-center items-center h-full">
         <div className="p-8 bg-white rounded-lg shadow-lg content-center">
           <AuthHeader title="Login" nextTitle="Sign In >" nextRoute="/signin" />
-          <form>
+          <form onSubmit={onLogin}>
             <div className="flex flex-col gap-4 w-80">
               <Input
                 label="Username"
@@ -50,7 +51,7 @@ const Login = () => {
                 autoComplete="current-password"
               />
 
-              <Button onClick={onLogin}>Login</Button>
+              <Button type="submit">Login</Button>
             </div>
           </form>
         </div>

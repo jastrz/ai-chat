@@ -88,6 +88,11 @@ export const chatSlice = createSlice({
     setHistoryList: (state, action) => {
       state.availableHistories = action.payload;
     },
+    reset: (state, action) => {
+      clearHistory();
+      state.availableHistories = [];
+      state.prompts = [];
+    },
   },
 });
 
@@ -102,4 +107,5 @@ export const {
   removeHistory,
   setHistoryList,
   setHistory,
+  reset
 } = chatSlice.actions;

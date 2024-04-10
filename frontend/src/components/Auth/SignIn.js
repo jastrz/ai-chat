@@ -12,7 +12,8 @@ const SignIn = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const onSignIn = async () => {
+  const onSignIn = async (event) => {
+    event.preventDefault();
     try {
       const { username, password, repeatPassword } = getValues();
       if (password !== repeatPassword) {
@@ -27,10 +28,10 @@ const SignIn = () => {
   };
   return (
     <>
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-full">
         <div className="p-8 bg-white rounded-lg shadow-lg content-center">
           <AuthHeader title="Sign In" nextTitle="Login >" nextRoute="/login" />
-          <form>
+          <form onSubmit={onSignIn}>
             <div className="flex flex-col gap-4 w-80">
               <Input
                 label="Username"
@@ -59,7 +60,7 @@ const SignIn = () => {
                 autoComplete="new-password"
               />
 
-              <Button onClick={onSignIn}>Sign In</Button>
+              <Button type="submit">Sign In</Button>
             </div>
           </form>
         </div>

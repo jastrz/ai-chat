@@ -30,9 +30,9 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-col bg-gray-200">
+    <div className="flex flex-col bg-gray-200 h-screen">
       <NavBar />
-      <div className="w-full mx-auto">
+      <div className="w-full mx-auto h-full">
         <LoadingIndicator />
         <Routes>
           <Route path="/" element={<div>Loading...</div>} />

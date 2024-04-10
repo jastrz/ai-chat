@@ -3,7 +3,9 @@ import SettingsDialog from "./Settings/SettingsDialog";
 import { IconButton, Navbar, Typography } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { reset } from "store/authSlice";
+import { reset as resetAuth } from "store/authSlice";
+import { reset as resetChat } from "store/chatSlice";
+import { disconnectFromSocketServer } from "socketConnection/socketConnection";
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -18,7 +20,9 @@ const NavBar = () => {
   const onClickLogout = () => {
     localStorage.clear("userToken");
     navigate("/login");
-    dispatch(reset());
+    disconnectFromSocketServer();
+    dispatch(resetAuth());
+    dispatch(resetChat());
   };
 
   return (

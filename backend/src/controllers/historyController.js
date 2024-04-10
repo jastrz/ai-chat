@@ -22,7 +22,7 @@ export const handleGetHistoryList = async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    res.status(500);
+    res.sendStatus(500);
   }
 };
 
@@ -38,7 +38,7 @@ export const handleGetHistory = async (req, res) => {
     return res.json(history);
   } catch (err) {
     console.log(err);
-    res.status(500);
+    res.sendStatus(500);
   }
 };
 
@@ -54,6 +54,6 @@ export const handleRemoveHistory = async (req, res) => {
     return res.json(result);
   } catch (err) {
     console.log(err);
-    res.status(500);
+    res.sendStatus(500);
   }
 };

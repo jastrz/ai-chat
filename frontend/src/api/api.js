@@ -67,7 +67,6 @@ async function updateLlamaSettings(settings) {
 async function updateSdSettings(settings) {
   try {
     const response = await api.post("/sd/options", { data: settings });
-    console.log(settings);
     return response;
   } catch (error) {
     console.error("Error posting SD Settings");

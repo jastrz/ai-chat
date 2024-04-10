@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import SaveButton from "./SaveButton";
 
 const ImageContent = ({ index, data, onImageClicked }) => {
-  const [showHiddenItem, setShowHiddenItem] = useState(false);
+  const [showSaveButton, setShowSaveButton] = useState(false);
 
   const showHidden = () => {
-    setShowHiddenItem(true);
+    setShowSaveButton(true);
   };
 
   const hide = () => {
-    setShowHiddenItem(false);
+    setShowSaveButton(false);
   };
 
   const onClick = (imageIndex) => {
@@ -27,12 +27,12 @@ const ImageContent = ({ index, data, onImageClicked }) => {
         onClick={() => onClick(index)}
       >
         <img
-          className={"max-h-32 xl:max-h-64 shadow-lg rounded-md"}
+          className={"max-h-32 2xl:max-h-64 shadow-lg rounded-md"}
           src={`data:image/png;base64, ${data}`}
           style={{ cursor: "pointer" }}
           alt=""
         />
-        {showHiddenItem && (
+        {showSaveButton && (
           <div
             data-testid="hidden"
             className="absolute right-0 bottom-2 shadow-lg"

@@ -21,7 +21,7 @@ const panelCollapsed = {
   maxWidth: 0,
 };
 
-const ChatHistoryPanel = ({ isExpanded }) => {
+const ChatHistoryPanel = () => {
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
   const toggleHistory = () => {
     setIsHistoryExpanded(!isHistoryExpanded);

@@ -25,9 +25,7 @@ import { removeFileExtension } from "../utils/utils.js";
 const handleImagePrompt = async (req, res) => {
   try {
     if (!req.body) {
-      return res
-        .status(400)
-        .json({ error: "Missing or invalid request body!" });
+      res.status(400).json({ error: "Missing or invalid request body!" });
     }
 
     const images = await getImage(req.body);
@@ -81,11 +79,10 @@ const handlePostOptions = async (req, res) => {
   try {
     const options = req.body.data;
     await postOptions(options);
-    console.log(options);
-    res.status(200);
+    res.sendStatus(200);
   } catch (err) {
     console.log(err);
-    res.status(err.status);
+    res.sendStatus(err.status);
   }
 };
 
@@ -102,7 +99,7 @@ const handleGetOptions = async (req, res) => {
     res.send({ modelName: modelName });
   } catch (err) {
     console.log(err);
-    res.status(err.status);
+    res.sendStatus(err.status);
   }
 };
 
@@ -115,7 +112,7 @@ const handleInterrupt = async (req, res) => {
     await interruptCurrentRequest();
   } catch (err) {
     console.log(err);
-    res.status(err.status);
+    res.sendStatus(err.status);
   }
 };
 

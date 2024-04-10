@@ -25,7 +25,10 @@ const LoadingIndicator = () => {
 
   return (
     isLoading && (
-      <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div
+        className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50"
+        style={{ zIndex: "99999" }}
+      >
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           <Oval
             visible={true}

@@ -21,4 +21,10 @@ function connectWithSocketServer() {
   });
 }
 
-export { connectWithSocketServer, socket };
+function disconnectFromSocketServer() {
+  if (socket) {
+    socket.disconnect();
+  }
+}
+
+export { connectWithSocketServer, disconnectFromSocketServer, socket };

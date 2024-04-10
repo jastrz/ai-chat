@@ -18,8 +18,6 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    // console.log(`token: ${token}`);
-
     return config;
   },
   (error) => {
@@ -27,15 +25,15 @@ api.interceptors.request.use(
   }
 );
 
-api.interceptors.request.use(
-  async (config) => {
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+// api.interceptors.request.use(
+//   async (config) => {
+//     await new Promise((resolve) => setTimeout(resolve, 1200));
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
 
 function getToken() {
   let token = store.getState().auth.userData.token;
