@@ -37,6 +37,8 @@ export const responseFragmentSchema = Joi.object({
   promptGuid: Joi.string().required(),
   targetGuid: Joi.string().required(),
   data: Joi.string().required(),
+  type: Joi.string().required(),
+  updateType: Joi.string().required(),
 });
 
 /**

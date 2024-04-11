@@ -38,7 +38,7 @@ async function getImage(prompt) {
 async function getProgress() {
   try {
     const result = await apiClient.get("/progress");
-    return result.data.progress;
+    return result.data;
   } catch (error) {
     console.error("Error getting progress:", error);
     throw error;

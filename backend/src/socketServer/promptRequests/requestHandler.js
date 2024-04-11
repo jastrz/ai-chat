@@ -6,6 +6,7 @@ import { getSessionById } from "../session/sessionManager.js";
 import { SendActions } from "../actions/sendActions.js";
 import * as db from "../../db.js";
 import { handleInterrupt } from "../../controllers/sdController.js";
+import { getProgress } from "../../services/sdService.js";
 
 // Processes a prompt based on its type
 // Probably should process only text prompts
@@ -65,6 +66,8 @@ async function getLlamaResponse(userPrompt, session, abortSignal) {
       promptGuid: userPrompt.guid,
       targetGuid: userPrompt.targetGuid,
       data: decodedChunk,
+      type: "text",
+      updateType: "aggregate",
     };
 
     session.broadcast(SendActions.MessageFragment, messageFragment);
@@ -94,8 +97,6 @@ async function onLlamaRequestStopped(controller) {
 
 // Function to generate images based on the provided settings and send them to the specified socket
 async function getImageResponse(userPrompt, session) {
-  let response = { username: "AI", content: [] };
-
   console.log(userPrompt);
 
   const imagePrompt = {
@@ -103,8 +104,41 @@ async function getImageResponse(userPrompt, session) {
     ...session.imagePromptSettings,
   };
 
-  const images = await getImage(imagePrompt);
+  // const images = await getImage(imagePrompt);
 
+  let images, progress;
+  let intervalId;
+
+  const repeatedProgressCall = new Promise((resolve, reject) => {
+    intervalId = setInterval(async () => {
+      progress = await getProgress();
+      console.log(progress);
+
+      if (progress.current_image) {
+        const messageFragment = {
+          promptGuid: userPrompt.guid,
+          targetGuid: userPrompt.targetGuid,
+          data: progress.current_image,
+          type: "image",
+          updateType: "replace",
+        };
+
+        session.broadcast(SendActions.MessageFragment, messageFragment);
+      }
+    }, 1000);
+  });
+
+  images = await Promise.race([getImage(imagePrompt), repeatedProgressCall]);
+
+  clearInterval(intervalId);
+
+  const response = getImageMessage(images);
+  await saveAiMessage(response.content, session);
+  session.broadcast(SendActions.Message, response);
+}
+
+function getImageMessage(images) {
+  let response = { username: "AI", content: [] };
   response.content.push({
     data: "here's generated content: ",
     type: "text",
@@ -113,9 +147,7 @@ async function getImageResponse(userPrompt, session) {
   images.forEach((image) => {
     response.content.push({ data: image, type: "image" });
   });
-
-  await saveAiMessage(response.content, session);
-  session.broadcast(SendActions.Message, response);
+  return response;
 }
 
 async function onImageRequestStopped() {

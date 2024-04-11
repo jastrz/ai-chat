@@ -12,6 +12,9 @@ export const chatSlice = createSlice({
   reducers: {
     addMessage: (state, action) => {
       let message = action.payload;
+      state.messages = state.messages.filter(
+        (msg) => msg.guid !== message.guid
+      );
       const length = state.messages.length;
       message.concat =
         length > 0 && state.messages[length - 1].username === message.username;
@@ -43,17 +46,24 @@ export const chatSlice = createSlice({
       }
     },
     updateMessageContent: (state, action) => {
+      const { targetGuid, data, type, updateType } = action.payload;
       let messageToUpdate = state.messages.find(
-        (msg) => msg.guid === action.payload.targetGuid
+        (msg) => msg.guid === targetGuid
       );
 
       if (!messageToUpdate) {
         messageToUpdate = new Message("AI").obj();
-        messageToUpdate.guid = action.payload.targetGuid;
+        messageToUpdate.guid = targetGuid;
         addMessage(state, messageToUpdate);
       }
 
-      messageToUpdate.content[0].data += action.payload.data;
+      messageToUpdate.content[0].type = type;
+
+      if (updateType === "replace") {
+        messageToUpdate.content[0].data = data;
+      } else if (updateType === "aggregate") {
+        messageToUpdate.content[0].data += data;
+      }
     },
     clearHistory: (state) => {
       state.messages = [];
@@ -107,5 +117,5 @@ export const {
   removeHistory,
   setHistoryList,
   setHistory,
-  reset
+  reset,
 } = chatSlice.actions;
