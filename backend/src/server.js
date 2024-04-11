@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, "../public")));
 
 const server = createServer(app);
 initSocketServer(server);
-sdService.initialize();
+await sdService.initialize();
 
 app.use(router);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

@@ -7,6 +7,26 @@ import Joi from "joi";
 import { RequestStatus } from "../promptRequests/request.js";
 
 /**
+ * Schema for validating content data.
+ * @typedef {Joi.ArraySchema} ContentSchema
+ * @property {Joi.ObjectSchema[]} items - An array of objects, each with a 'data' and 'type' property.
+ * @property {Joi.StringSchema} items.data - The data of the content item, required.
+ * @property {Joi.StringSchema} items.type - The type of the content item, must be either 'text' or 'image', required.
+ */
+const contentSchema = Joi.array()
+  .items(
+    Joi.object({
+      data: Joi.string().required(),
+      type: Joi.string().valid("text", "image").required(),
+      updateType: Joi.string()
+        .valid("replace", "aggregate")
+        .optional()
+        .allow(null),
+    })
+  )
+  .required();
+
+/**
  * Schema for validating message data.
  * @typedef {Joi.ObjectSchema} ResponseSchema
  * @property {Joi.StringSchema} username - The username of the message sender (required).
@@ -16,14 +36,7 @@ import { RequestStatus } from "../promptRequests/request.js";
  */
 export const responseSchema = Joi.object({
   username: Joi.string().required(),
-  content: Joi.array()
-    .items(
-      Joi.object({
-        data: Joi.string().required(),
-        type: Joi.string().valid("text", "image").required(),
-      })
-    )
-    .required(),
+  content: contentSchema,
 });
 
 /**
@@ -36,9 +49,7 @@ export const responseSchema = Joi.object({
 export const responseFragmentSchema = Joi.object({
   promptGuid: Joi.string().required(),
   targetGuid: Joi.string().required(),
-  data: Joi.string().required(),
-  type: Joi.string().required(),
-  updateType: Joi.string().required(),
+  content: contentSchema,
 });
 
 /**

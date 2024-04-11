@@ -65,9 +65,7 @@ async function getLlamaResponse(userPrompt, session, abortSignal) {
     const messageFragment = {
       promptGuid: userPrompt.guid,
       targetGuid: userPrompt.targetGuid,
-      data: decodedChunk,
-      type: "text",
-      updateType: "aggregate",
+      content: [{ data: decodedChunk, type: "text", updateType: "aggregate" }],
     };
 
     session.broadcast(SendActions.MessageFragment, messageFragment);
@@ -104,28 +102,42 @@ async function getImageResponse(userPrompt, session) {
     ...session.imagePromptSettings,
   };
 
-  // const images = await getImage(imagePrompt);
-
-  let images, progress;
-  let intervalId;
+  let images, progress, currentPreview, intervalId;
 
   const repeatedProgressCall = new Promise((resolve, reject) => {
     intervalId = setInterval(async () => {
       progress = await getProgress();
       console.log(progress);
 
-      if (progress.current_image) {
+      if (progress.current_image && progress.current_image !== currentPreview) {
+        currentPreview = progress.current_image;
+
+        let completed = Math.round(progress.progress * 10);
+        let remaining = 10 - completed;
+        let progressBar = `[${"|".repeat(completed)}${" ".repeat(remaining)}]`;
+
+        const content = [
+          {
+            data: `${progressBar} ${[parseInt(progress.progress * 100)]}%`,
+            type: "text",
+            updateType: "replace",
+          },
+          {
+            data: currentPreview,
+            type: "image",
+            updateType: "replace",
+          },
+        ];
+
         const messageFragment = {
           promptGuid: userPrompt.guid,
           targetGuid: userPrompt.targetGuid,
-          data: progress.current_image,
-          type: "image",
-          updateType: "replace",
+          content: content,
         };
 
         session.broadcast(SendActions.MessageFragment, messageFragment);
       }
-    }, 1000);
+    }, 500);
   });
 
   images = await Promise.race([getImage(imagePrompt), repeatedProgressCall]);

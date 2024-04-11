@@ -46,7 +46,7 @@ export const chatSlice = createSlice({
       }
     },
     updateMessageContent: (state, action) => {
-      const { targetGuid, data, type, updateType } = action.payload;
+      const { targetGuid, content } = action.payload;
       let messageToUpdate = state.messages.find(
         (msg) => msg.guid === targetGuid
       );
@@ -57,13 +57,19 @@ export const chatSlice = createSlice({
         addMessage(state, messageToUpdate);
       }
 
-      messageToUpdate.content[0].type = type;
-
-      if (updateType === "replace") {
-        messageToUpdate.content[0].data = data;
-      } else if (updateType === "aggregate") {
-        messageToUpdate.content[0].data += data;
-      }
+      messageToUpdate.content = content.map((entry, i) => {
+        const existingContent = messageToUpdate.content[i] || {
+          data: "",
+          type: "text",
+        };
+        return {
+          type: entry.type,
+          data:
+            entry.updateType === "aggregate"
+              ? existingContent.data + entry.data
+              : entry.data,
+        };
+      });
     },
     clearHistory: (state) => {
       state.messages = [];

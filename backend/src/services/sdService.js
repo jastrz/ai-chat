@@ -1,6 +1,7 @@
 import axios from "axios";
 import path from "path";
 import fsp from "fs/promises";
+import net from "net";
 
 // const sdAddress = "http://127.0.0.1:7861/sdapi/v1";
 
@@ -11,13 +12,43 @@ const defaultImagePrompt = {
   batch_size: 1,
 };
 
-export function initialize() {
+const defaultOptions = {
+  show_progress_every_n_steps: 1,
+};
+
+const waitForPort = async (host, port) => {
+  let connected = false;
+  while (!connected) {
+    const client = new net.Socket();
+
+    client.connect({ port: port, host: host }, () => {
+      console.log("SD available!");
+      connected = true;
+      client.destroy();
+    });
+
+    client.on("error", function (ex) {
+      client.destroy();
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+};
+
+export async function initialize() {
   const sdAddress = process.env.SD_SERVER_ADDRESS;
+  const sdPort = process.env.SD_SERVER_PORT;
+  const sdApiAddress = `http://${sdAddress}:${sdPort}${process.env.SD_SERVER_API}`;
 
   apiClient = axios.create({
-    baseURL: sdAddress,
+    baseURL: sdApiAddress,
     timeout: 0,
   });
+
+  await waitForPort(sdAddress, sdPort);
+  await apiClient.post("/options", defaultOptions);
+  const options = await apiClient.get("/options");
+  console.log(options);
 }
 
 async function getImage(prompt) {

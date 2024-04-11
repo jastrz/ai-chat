@@ -48,9 +48,10 @@ function handlePromptStateChanged(data) {
 
   if (data.status === PromptStatus.Completed) {
     const msg = state.messages.find((msg) => msg.guid === prompt.targetGuid);
+    if (!msg) return;
 
     if (prompt.type === "text") {
-      if (msg && msg.content[0] && msg.content[0].data.length === 0) {
+      if (msg.content[0] && msg.content[0].data.length === 0) {
         store.dispatch(removeMessage(msg.guid));
       }
     }
