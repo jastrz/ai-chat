@@ -33,10 +33,7 @@ export async function getHistory(historyId) {
 }
 
 export async function saveMessage(message, session) {
-  const newMessage = await Message.create({
-    username: message.username,
-    content: message.content,
-  });
+  const newMessage = await Message.create(message);
 
   try {
     let history = await History.findById(session.historyId);

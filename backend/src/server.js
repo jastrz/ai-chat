@@ -30,7 +30,6 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const port = process.env.PORT || 3001;
 const ipAddress = process.env.IP_ADDRESS || "0.0.0.0";
-
 const useDb = process.env.USE_DB.toLowerCase() === "true";
 
 if (useDb) {

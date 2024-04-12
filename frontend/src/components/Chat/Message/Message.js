@@ -6,6 +6,7 @@ import { removeMessage } from "store/chatSlice";
 import Animation from "components/Common/Animation";
 import { PromptStatus } from "data/prompt";
 import MessageContents from "./MessageContents";
+import { sendPrompt } from "socketConnection/sendActions";
 
 const Message = ({ message }) => {
   const dispatch = useDispatch();
@@ -22,7 +23,6 @@ const Message = ({ message }) => {
 
   const animationConfig = useMemo(() => {
     const startXPos = isUser ? 50 : -50;
-
     const animationConfigValue = {
       to: { opacity: 1, x: 0 },
       from: { opacity: 0, x: startXPos },
@@ -39,7 +39,9 @@ const Message = ({ message }) => {
 
   useEffect(() => {
     const prompt = prompts.find((prompt) => prompt.guid === message.promptGuid);
-    setRelatedPrompt(prompt);
+    if (prompt) {
+      setRelatedPrompt(prompt);
+    }
   }, [relatedPrompt, setRelatedPrompt, prompts]);
 
   const handleInterrupt = () => {
@@ -49,6 +51,11 @@ const Message = ({ message }) => {
     }
   };
 
+  const onClickResendPrompt = () => {
+    const prompt = { ...relatedPrompt, status: PromptStatus.Pending };
+    sendPrompt({ ...prompt });
+  };
+
   return (
     <Animation animationConfig={animationConfig}>
       <div
@@ -56,6 +63,16 @@ const Message = ({ message }) => {
           message.concat ? "mt-1" : "mt-4"
         }`}
       >
+        {relatedPrompt && relatedPrompt.status === PromptStatus.Completed && (
+          <IconButton
+            size="sm"
+            variant="outlined"
+            style={{ scale: "0.75" }}
+            onClick={onClickResendPrompt}
+          >
+            <i className="fas fa-rotate-right" />
+          </IconButton>
+        )}
         <MessageContents
           message={message}
           backgroundColor={backgroundColor}
@@ -65,18 +82,20 @@ const Message = ({ message }) => {
           message.promptGuid &&
           relatedPrompt &&
           relatedPrompt.status !== PromptStatus.Completed && (
-            <IconButton
-              onClick={handleInterrupt}
-              size="sm"
-              variant="outlined"
-              className="ml-2 rounded-2xl"
-            >
-              {relatedPrompt.status === PromptStatus.Pending ? (
-                <i className="fas fa-xmark" />
-              ) : (
-                <i className="fas fa-square" />
-              )}
-            </IconButton>
+            <Animation animationConfig={animationConfig}>
+              <IconButton
+                onClick={handleInterrupt}
+                size="sm"
+                variant="outlined"
+                className="ml-2 rounded-2xl"
+              >
+                {relatedPrompt.status === PromptStatus.Pending ? (
+                  <i className="fas fa-xmark" />
+                ) : (
+                  <i className="fas fa-square" />
+                )}
+              </IconButton>
+            </Animation>
           )}
       </div>
     </Animation>
