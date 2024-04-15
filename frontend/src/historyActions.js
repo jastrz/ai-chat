@@ -3,9 +3,12 @@ import { store } from "store/store";
 import * as chatActions from "store/chatSlice";
 
 export async function setHistory(historyId) {
-  const history = await historyApi.getHistory(historyId);
-  if (history) {
-    store.dispatch(chatActions.setCurrentHistory(history));
+  const currentHistoryId = store.getState().chat.historyId;
+  if (currentHistoryId !== historyId) {
+    const history = await historyApi.getHistory(historyId);
+    if (history) {
+      store.dispatch(chatActions.setCurrentHistory(history));
+    }
   }
 }
 

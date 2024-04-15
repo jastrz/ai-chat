@@ -139,8 +139,8 @@ async function saveImages(imageData) {
   const promises = imageData.map(async (image) => {
     try {
       const filename = new Date().toISOString().replace(/[:.]/g, "-") + ".png";
-      const finalPath = "C:\\projects\\llamatest\\backend\\public";
-      await saveImageToFile(image, filename, finalPath);
+      const savePath = process.env.IMAGE_SAVE_PATH;
+      await saveImageToFile(image, filename, savePath);
     } catch (error) {
       console.log("Error processing image:", error);
     }

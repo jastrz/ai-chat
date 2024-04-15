@@ -107,14 +107,10 @@ async function getImageResponse(userPrompt, session) {
   const repeatedProgressCall = new Promise((resolve, reject) => {
     intervalId = setInterval(async () => {
       progress = await getProgress();
-      console.log(progress);
 
       if (progress.current_image && progress.current_image !== currentPreview) {
         currentPreview = progress.current_image;
-
-        let completed = Math.round(progress.progress * 10);
-        let remaining = 10 - completed;
-        let progressBar = `[${"|".repeat(completed)}${" ".repeat(remaining)}]`;
+        const progressBar = getProgressBarString(progress.progress);
 
         const content = [
           {
@@ -147,6 +143,12 @@ async function getImageResponse(userPrompt, session) {
   const response = getImageMessage(images);
   await saveAiMessage(response.content, session);
   session.broadcast(SendActions.Message, response);
+}
+
+function getProgressBarString(progress) {
+  let completed = Math.round(progress * 10);
+  let remaining = 10 - completed;
+  return `[${"|".repeat(completed)}${" ".repeat(remaining)}]`;
 }
 
 function getImageMessage(images) {
