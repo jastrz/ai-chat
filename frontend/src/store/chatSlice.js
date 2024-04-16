@@ -69,6 +69,7 @@ export const chatSlice = createSlice({
     setCurrentHistory: (state, action) => {
       state.historyId = action.payload._id;
       state.messages = action.payload.messages;
+      state.prompts = [];
     },
     setHistory: (state, action) => {
       const history = state.availableHistories.find(

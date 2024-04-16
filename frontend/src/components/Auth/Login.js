@@ -5,6 +5,7 @@ import { postLogin } from "api/authApi";
 import { useDispatch } from "react-redux";
 import { setUserData } from "store/authSlice";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const { register, getValues } = useForm();
@@ -18,11 +19,12 @@ const Login = () => {
       const { username, password } = loginFormValues;
       const data = await postLogin(username, password);
       dispatch(setUserData(data));
-      console.log(data);
       localStorage.setItem("userToken", data.token);
       navigate("/chat");
     } catch (error) {
-      console.error("Error occurred during login: ", error);
+      const errorMessage = error.response.data.message;
+      console.error("Error occurred during login: ", errorMessage);
+      toast.error(errorMessage);
     }
   };
 

@@ -8,6 +8,8 @@ import { getUserData } from "api/authApi";
 import { useDispatch } from "react-redux";
 import { setUserData } from "store/authSlice";
 import LoadingIndicator from "LoadingIndicator";
+import { Slide, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const dispatch = useDispatch();
@@ -30,26 +32,41 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-col bg-gray-200 h-screen">
-      <NavBar />
-      <div className="w-full mx-auto h-full">
-        <LoadingIndicator />
-        <Routes>
-          <Route path="/" element={<div>Loading...</div>} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="*"
-            element={
-              <div>
-                <h2>404 Page not found</h2>
-              </div>
-            }
-          />
-        </Routes>
+    <>
+      <div className="flex flex-col bg-gray-200 h-screen">
+        <NavBar />
+        <div className="w-full mx-auto h-full">
+          <LoadingIndicator />
+          <Routes>
+            <Route path="/" element={<div>Loading...</div>} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="*"
+              element={
+                <div>
+                  <h2>404 Page not found</h2>
+                </div>
+              }
+            />
+          </Routes>
+        </div>
       </div>
-    </div>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition={Slide}
+      />
+    </>
   );
 }
 

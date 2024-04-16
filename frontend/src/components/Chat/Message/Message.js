@@ -13,7 +13,7 @@ const Message = ({ message }) => {
   const { prompts } = useSelector((state) => state.chat);
   const { userData } = useSelector((state) => state.auth);
 
-  const [relatedPrompt, setRelatedPrompt] = useState(null);
+  const [relatedPrompt, setRelatedPrompt] = useState(undefined);
 
   const isUser = useMemo(() => {
     const isUserValue = message.username === userData.username;
@@ -41,6 +41,8 @@ const Message = ({ message }) => {
     const prompt = prompts.find((prompt) => prompt.guid === message.promptGuid);
     if (prompt) {
       setRelatedPrompt(prompt);
+    } else {
+      setRelatedPrompt(undefined);
     }
   }, [relatedPrompt, setRelatedPrompt, prompts]);
 

@@ -6,6 +6,7 @@ import { postSignIn } from "api/authApi";
 import { useDispatch } from "react-redux";
 import { setUserData } from "store/authSlice";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const SignIn = () => {
   const { register, getValues } = useForm();
@@ -17,13 +18,17 @@ const SignIn = () => {
     try {
       const { username, password, repeatPassword } = getValues();
       if (password !== repeatPassword) {
-        throw new Error("Passwords do not match.");
+        toast.error("Passwords do not match.");
+        return;
       }
       const data = await postSignIn(username, password, repeatPassword);
       dispatch(setUserData(data));
       navigate("/chat");
     } catch (error) {
+      const errorMessage =
+        error.response.data.error || error.response.data.message;
       console.error("Error signing in: ", error.message);
+      toast.error(errorMessage);
     }
   };
   return (
