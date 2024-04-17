@@ -1,5 +1,6 @@
 import { Server } from "socket.io";
 import ReceiveActions from "./actions/receiveActions.js";
+import verifyTokenSocket from "../middleware/authSocket.js";
 
 let io = null;
 
@@ -9,6 +10,10 @@ function initSocketServer(server) {
       origin: "*",
       methods: ["GET", "POST"],
     },
+  });
+
+  io.use((socket, next) => {
+    verifyTokenSocket(socket, next);
   });
 
   io.on("connection", (socket) => {

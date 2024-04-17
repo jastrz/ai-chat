@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 const config = process.env;
 
@@ -9,11 +9,11 @@ const verifyTokenSocket = (socket, next) => {
     const decoded = jwt.verify(token, config.TOKEN_KEY);
     socket.user = decoded;
   } catch (err) {
-    const socketError = new Error("NOT_AUTHORIZED");
+    const socketError = new Error("not_authorized");
     return next(socketError);
   }
 
   next();
 };
 
-module.exports = verifyTokenSocket;
+export default verifyTokenSocket;

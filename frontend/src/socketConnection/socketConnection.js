@@ -6,8 +6,13 @@ import { SendActions } from "./sendActions";
 
 let socket = null;
 
-function connectWithSocketServer() {
-  socket = io(env.SERVER_ADDRESS);
+function connectWithSocketServer(token) {
+  socket = io(env.SERVER_ADDRESS, {
+    auth: {
+      token: token,
+    },
+  });
+
   socket.on("connect", () => {
     console.log(`successfully connected using socket: ${socket.id}`);
     const data = { username: store.getState().auth.userData.username };

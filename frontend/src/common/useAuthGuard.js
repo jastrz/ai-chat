@@ -7,7 +7,7 @@ export const useAuthGuard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (userData.username === "User") {
+    if (userData.username === "User" || !userData.token) {
       navigate("/login");
     }
   }, [userData]);

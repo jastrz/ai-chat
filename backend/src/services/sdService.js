@@ -28,6 +28,7 @@ const waitForPort = async (host, port) => {
     });
 
     client.on("error", function (ex) {
+      console.log("Waiting for SD server...");
       client.destroy();
     });
 

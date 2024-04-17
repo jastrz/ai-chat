@@ -6,13 +6,18 @@ import { useEffect } from "react";
 import { connectWithSocketServer } from "socketConnection/socketConnection";
 import ChatHistoryPanel from "./History/ChatHistoryPanel";
 import Gallery from "components/Gallery";
+import { useSelector } from "react-redux";
 
 const Chat = () => {
   useAuthGuard();
 
+  const { userData } = useSelector((state) => state.auth);
+
   useEffect(() => {
-    connectWithSocketServer();
-  }, []);
+    if (userData.token) {
+      connectWithSocketServer(userData.token);
+    }
+  }, [userData]);
 
   return (
     <>
