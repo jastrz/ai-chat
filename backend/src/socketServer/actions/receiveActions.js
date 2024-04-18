@@ -83,12 +83,10 @@ async function handlePromptReceived(socketId, data) {
   };
 
   const history = await db.saveMessage(userMessage, session);
-  if (history._id !== data.historyId) {
-    session.broadcast(SendActions.SetCreatedHistory, {
-      _id: history._id.toString(),
-      timestamp: history.timestamp,
-    });
-  }
+  session.broadcast(SendActions.SetHistory, {
+    _id: history._id.toString(),
+    timestamp: history.timestamp,
+  });
 
   // send message to other sockets associated with currently processed request
   session.broadcast(SendActions.Message, userMessage, [socketId]);

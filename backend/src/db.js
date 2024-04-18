@@ -39,6 +39,7 @@ export async function saveMessage(message, session) {
     let history = await History.findById(session.historyId);
     if (history) {
       history.messages.push(newMessage);
+      history.timestamp = new Date();
       await history.save();
     } else {
       history = await createNewHistory(newMessage, session);

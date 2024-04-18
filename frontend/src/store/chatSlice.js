@@ -78,6 +78,8 @@ export const chatSlice = createSlice({
 
       if (!history) {
         state.availableHistories.push(action.payload);
+      } else {
+        history.timestamp = action.payload.timestamp;
       }
       state.historyId = action.payload._id;
     },

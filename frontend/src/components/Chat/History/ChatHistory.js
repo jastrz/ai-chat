@@ -4,24 +4,31 @@ import { useEffect, useState } from "react";
 import ChatHistoryEntry from "./ChatHistoryEntry";
 
 const ChatHistory = () => {
-  const [dataLoaded, setDataLoaded] = useState(false);
+  const { availableHistories, historyId } = useSelector((state) => state.chat);
+  const [histories, setHistories] = useState([]);
 
   useEffect(() => {
     const getHistory = async () => {
       await getHistoryIds();
-      setDataLoaded(true);
     };
 
     getHistory();
   }, []);
 
-  const { availableHistories, historyId } = useSelector((state) => state.chat);
+  useEffect(() => {
+    if (availableHistories && availableHistories.length > 0) {
+      const sortedHistories = [...availableHistories].sort((a, b) => {
+        return new Date(b.timestamp) - new Date(a.timestamp);
+      });
+      setHistories(sortedHistories);
+    }
+  }, [availableHistories]);
 
   return (
     <>
-      {dataLoaded && (
+      {histories.length > 0 && (
         <div className="grid grid-flow-row auto-rows-max gap-y-2 mt-2 px-2 mb-2">
-          {availableHistories.map((historyEntry, index) => {
+          {histories.map((historyEntry, index) => {
             return (
               <ChatHistoryEntry
                 key={index}

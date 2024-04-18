@@ -29,7 +29,7 @@ export const ReceiveActions = {
   },
   SetCreatedHistory: {
     name: "setCreatedHistory",
-    handler: handleCreatedHistory,
+    handler: handleSetHistory,
   },
 };
 
@@ -66,7 +66,7 @@ function handlePromptReceived(data) {
   store.dispatch(addPrompt(data));
 }
 
-function handleCreatedHistory(data) {
+function handleSetHistory(data) {
   store.dispatch(setHistory(data));
 }
 

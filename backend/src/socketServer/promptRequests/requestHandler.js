@@ -174,4 +174,9 @@ async function saveAiMessage(content, session) {
     content: content,
   };
   await db.saveMessage(message, session);
+  const history = await db.getHistory(session.historyId);
+  session.broadcast(SendActions.SetHistory, {
+    _id: history._id.toString(),
+    timestamp: history.timestamp,
+  });
 }
