@@ -37,6 +37,16 @@ const contentSchema = Joi.array()
 export const responseSchema = Joi.object({
   username: Joi.string().required(),
   content: contentSchema,
+  guid: Joi.string().required(),
+  promptGuid: Joi.string().optional().allow(null),
+  messageTarget: Joi.string().optional().allow(null),
+  prompt: Joi.object({
+    status: Joi.string().required(),
+    type: Joi.string().required(),
+    targetGuid: Joi.string(),
+  })
+    .optional()
+    .allow(null),
 });
 
 /**

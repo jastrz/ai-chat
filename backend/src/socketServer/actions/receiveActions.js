@@ -10,6 +10,7 @@ import { SendActions } from "./sendActions.js";
 import * as validators from "./receiveActionsValidators.js";
 import * as db from "../../db.js";
 import { cancelRequest } from "../promptRequests/requestProcessor.js";
+import { generateGUID } from "../../utils/utils.js";
 
 const ReceiveActions = {
   Initialize: {
@@ -67,31 +68,44 @@ function handleUserDisconnected(socketId, data) {
  * @param {Object} data - The prompt data received from the user.
  */
 async function handlePromptReceived(socketId, data) {
-  console.log(data);
-  const { error } = validators.promptSchema.validate(data);
+  const prompt = data;
+  console.log(prompt);
+
+  const { error } = validators.promptSchema.validate(prompt);
   if (error) throw new Error(error);
 
   const session = sessionManager.getSessionBySocketId(socketId);
 
-  if (data.historyId && data.historyId != "") {
-    session.historyId = data.historyId;
+  if (prompt.historyId && prompt.historyId != "") {
+    session.historyId = prompt.historyId;
   }
 
-  const userMessage = {
-    username: session.username,
-    content: [{ data: data.message, type: "text" }],
-  };
+  let existingMessage = await db.getMessage(prompt.guid);
+  if (!existingMessage) {
+    const userMessage = {
+      username: session.username,
+      content: [{ data: prompt.message, type: "text" }],
+      prompt: {
+        status: prompt.status,
+        type: prompt.type,
+        targetGuid: prompt.targetGuid || generateGUID(),
+      },
+    };
 
-  const history = await db.saveMessage(userMessage, session);
-  session.broadcast(SendActions.SetHistory, {
-    _id: history._id.toString(),
-    timestamp: history.timestamp,
-  });
+    const { history, message } = await db.saveMessage(userMessage, session);
 
-  // send message to other sockets associated with currently processed request
-  session.broadcast(SendActions.Message, userMessage, [socketId]);
-  session.broadcast(SendActions.Prompt, data, [socketId]);
-  await processPrompt(session, data);
+    prompt.guid = message._id.toString();
+    userMessage.guid = prompt.guid;
+    userMessage.promptGuid = prompt.guid;
+
+    session.broadcast(SendActions.Message, userMessage);
+    session.broadcast(SendActions.SetHistory, {
+      _id: history._id.toString(),
+      timestamp: history.timestamp,
+    });
+  }
+
+  await processPrompt(session, prompt);
 }
 
 /**

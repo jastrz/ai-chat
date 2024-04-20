@@ -15,10 +15,6 @@ export const ReceiveActions = {
     name: "message",
     handler: handleMessageReceived,
   },
-  Prompt: {
-    name: "prompt",
-    handler: handlePromptReceived,
-  },
   MessageFragment: {
     name: "messageFragment",
     handler: handleMessageFragment,
@@ -37,13 +33,23 @@ function handlePromptStateChanged(data) {
   store.dispatch(updatePromptStatus(data));
 
   const state = store.getState().chat;
-  const prompt = state.prompts.find((prompt) => prompt.guid === data.guid);
+  const message = state.messages.find((msg) => msg.guid === data.guid);
+  const prompt = message.prompt;
 
   if (!prompt) return;
 
   if (data.status === PromptStatus.Processed) {
-    const msg = new Message("AI", null, data.guid);
-    store.dispatch(addMessage(msg.obj()));
+    // const msg = new Message("AI", null, prompt.targetGuid);
+
+    const msg = {
+      username: "AI",
+      content: [{ type: "text", data: "" }],
+      guid: prompt.targetGuid,
+      messageTarget: message.guid || null,
+      timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
+    };
+
+    store.dispatch(addMessage(msg));
   }
 
   if (data.status === PromptStatus.Completed) {
@@ -62,17 +68,28 @@ function handlePromptStateChanged(data) {
   }
 }
 
-function handlePromptReceived(data) {
-  store.dispatch(addPrompt(data));
-}
-
 function handleSetHistory(data) {
   store.dispatch(setHistory(data));
 }
 
 function handleMessageReceived(data) {
-  const msg = new Message(data.username, data.content);
-  store.dispatch(addMessage(msg.obj()));
+  const msg = new Message(
+    data.username,
+    data.content,
+    data.guid,
+    data.promptGuid
+  );
+
+  const message = {
+    username: data.username,
+    content: data.content,
+    guid: data.guid,
+    prompt: data.prompt,
+    messageTarget: data.messageTarget || null,
+    timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
+  };
+
+  store.dispatch(addMessage(message));
 }
 
 function handleMessageFragment(data) {

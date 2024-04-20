@@ -37,11 +37,11 @@ const MessageInput = () => {
     const userMessage = new Message(username, currentMessage);
     const prompt = new Prompt(userMessage.content[0].data, promptType);
     userMessage.promptGuid = prompt.guid;
-
+    console.log(prompt);
     sendPrompt(prompt);
 
-    dispatch(addMessage(userMessage.obj()));
-    dispatch(addPrompt(prompt.obj()));
+    // dispatch(addMessage(userMessage.obj()));
+    //dispatch(addPrompt(prompt.obj()));
     setCurrentMessage({ username: userData.username, content: [] });
   };
 

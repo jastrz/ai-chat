@@ -6,10 +6,12 @@ import ChatHistoryEntry from "./ChatHistoryEntry";
 const ChatHistory = () => {
   const { availableHistories, historyId } = useSelector((state) => state.chat);
   const [histories, setHistories] = useState([]);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const getHistory = async () => {
       await getHistoryIds();
+      setLoaded(true);
     };
 
     getHistory();
@@ -26,7 +28,7 @@ const ChatHistory = () => {
 
   return (
     <>
-      {histories.length > 0 && (
+      {loaded && histories.length > 0 && (
         <div className="grid grid-flow-row auto-rows-max gap-y-2 mt-2 px-2 mb-2">
           {histories.map((historyEntry, index) => {
             return (

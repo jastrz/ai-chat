@@ -26,6 +26,12 @@ const messageSchema = new mongoose.Schema({
     default: Date.now,
     required: true,
   },
+  prompt: {
+    type: {
+      status: String,
+      type: String,
+    },
+  },
 });
 
 const Message = mongoose.model("Message", messageSchema);

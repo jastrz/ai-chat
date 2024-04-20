@@ -3,11 +3,12 @@ import { generateGUID } from "../utils";
 export class Message {
   promptGuid;
 
-  constructor(username, content = null, guid = null) {
+  constructor(username, content = null, guid = null, promptGuid = null) {
     this.username = username;
     this.content = content === null ? this.createContent() : content;
     this.guid = guid === null ? generateGUID() : guid;
     this.timestamp = this.getTimestamp();
+    this.promptGuid = promptGuid;
   }
 
   createContent() {

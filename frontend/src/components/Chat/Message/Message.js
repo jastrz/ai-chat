@@ -38,7 +38,7 @@ const Message = ({ message }) => {
   }, [isUser]);
 
   useEffect(() => {
-    const prompt = prompts.find((prompt) => prompt.guid === message.promptGuid);
+    const prompt = message.prompt;
     if (prompt) {
       setRelatedPrompt(prompt);
     } else {
@@ -47,14 +47,19 @@ const Message = ({ message }) => {
   }, [relatedPrompt, setRelatedPrompt, prompts]);
 
   const handleInterrupt = () => {
-    cancelPrompt(message.promptGuid);
-    if (relatedPrompt.status === PromptStatus.Pending) {
+    cancelPrompt(message.guid);
+    if (message.prompt.status === PromptStatus.Pending) {
       dispatch(removeMessage(message.guid));
     }
   };
 
   const onClickResendPrompt = () => {
-    const prompt = { ...relatedPrompt, status: PromptStatus.Pending };
+    const prompt = {
+      ...message.prompt,
+      guid: message.guid,
+      message: message.content[0].data,
+      status: PromptStatus.Pending,
+    };
     sendPrompt({ ...prompt });
   };
 
@@ -65,7 +70,7 @@ const Message = ({ message }) => {
           message.concat ? "mt-1" : "mt-4"
         }`}
       >
-        {relatedPrompt && relatedPrompt.status === PromptStatus.Completed && (
+        {message.prompt && message.prompt.status === PromptStatus.Completed && (
           <IconButton
             size="sm"
             variant="outlined"
@@ -82,8 +87,8 @@ const Message = ({ message }) => {
         />
         {isUser &&
           message.promptGuid &&
-          relatedPrompt &&
-          relatedPrompt.status !== PromptStatus.Completed && (
+          message.prompt &&
+          message.prompt.status !== PromptStatus.Completed && (
             <Animation animationConfig={animationConfig}>
               <IconButton
                 onClick={handleInterrupt}
@@ -91,7 +96,7 @@ const Message = ({ message }) => {
                 variant="outlined"
                 className="ml-2 rounded-2xl"
               >
-                {relatedPrompt.status === PromptStatus.Pending ? (
+                {message.prompt.status === PromptStatus.Pending ? (
                   <i className="fas fa-xmark" />
                 ) : (
                   <i className="fas fa-square" />

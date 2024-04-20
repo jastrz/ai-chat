@@ -10,27 +10,27 @@ import { getProgress } from "../../services/sdService.js";
 
 // Processes a prompt based on its type
 // Probably should process only text prompts
-export async function processPrompt(session, data) {
+export async function processPrompt(session, prompt) {
   let request;
 
-  switch (data.type) {
+  switch (prompt.type) {
     case "text":
       const controller = new AbortController();
       const signal = controller.signal;
 
       request = new Request(
-        data.guid,
+        prompt.guid,
         session.id,
-        async () => getLlamaResponse(data, session, signal),
+        async () => getLlamaResponse(prompt, session, signal),
         async () => onLlamaRequestStopped(controller)
       );
       break;
 
     case "image":
       request = new Request(
-        data.guid,
+        prompt.guid,
         session.id,
-        async () => getImageResponse(data, session),
+        async () => getImageResponse(prompt, session),
         async () => onImageRequestStopped()
       );
       break;
@@ -141,7 +141,9 @@ async function getImageResponse(userPrompt, session) {
   clearInterval(intervalId);
 
   const response = getImageMessage(images);
-  await saveAiMessage(response.content, session);
+  response.messageTarget = userPrompt.guid;
+  const message = await saveAiMessage(response.content, session);
+  response.guid = message._id.toString();
   session.broadcast(SendActions.Message, response);
 }
 
@@ -169,14 +171,15 @@ async function onImageRequestStopped() {
 }
 
 async function saveAiMessage(content, session) {
-  const message = {
+  const messageToSave = {
     username: "AI",
     content: content,
   };
-  await db.saveMessage(message, session);
-  const history = await db.getHistory(session.historyId);
+  const { history, message } = await db.saveMessage(messageToSave, session);
   session.broadcast(SendActions.SetHistory, {
     _id: history._id.toString(),
     timestamp: history.timestamp,
   });
+
+  return message;
 }

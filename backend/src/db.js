@@ -32,6 +32,16 @@ export async function getHistory(historyId) {
   }
 }
 
+export async function getMessage(messageId) {
+  try {
+    const message = await Message.findById(messageId);
+    return message;
+  } catch (err) {
+    console.error("Error getting message", err);
+    return undefined;
+  }
+}
+
 export async function saveMessage(message, session) {
   const newMessage = await Message.create(message);
 
@@ -45,7 +55,7 @@ export async function saveMessage(message, session) {
       history = await createNewHistory(newMessage, session);
     }
 
-    return history;
+    return { history, message: newMessage };
   } catch (err) {
     console.log(err.message);
   }

@@ -12,19 +12,22 @@ export const chatSlice = createSlice({
   reducers: {
     addMessage: (state, action) => {
       let message = action.payload;
-      state.messages = state.messages.filter(
-        (msg) => msg.guid !== message.guid
-      );
-      state.messages.push(message);
-    },
-    addPrompt: (state, action) => {
-      let prompt = action.payload;
-      state.prompts.push(prompt);
+      // state.messages = state.messages.filter(
+      //   (msg) => msg.guid !== message.guid
+      // );
+      if (message.messageTarget) {
+        const messageTargetIndex = state.messages.findIndex(
+          (msg) => msg.guid === message.messageTarget
+        );
+        state.messages.splice(messageTargetIndex + 1, 0, message);
+      } else {
+        state.messages.push(message);
+      }
     },
     updatePromptStatus: (state, action) => {
-      const prompt = state.prompts.find(
-        (prompt) => prompt.guid === action.payload.guid
-      );
+      const prompt = state.messages.find(
+        (msg) => msg.guid === action.payload.guid
+      ).prompt;
       if (prompt) {
         prompt.status = action.payload.status;
       }
@@ -105,7 +108,6 @@ export const {
   clearHistory,
   updateMessageContent,
   removeMessage,
-  addPrompt,
   updatePromptStatus,
   setCurrentHistory,
   removeHistory,
