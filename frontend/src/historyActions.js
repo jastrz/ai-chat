@@ -1,11 +1,26 @@
 import * as historyApi from "api/historyApi";
 import { store } from "store/store";
 import * as chatActions from "store/chatSlice";
+import { PromptStatus } from "data/prompt";
 
 export async function setHistory(historyId) {
   const currentHistoryId = store.getState().chat.historyId;
   if (currentHistoryId !== historyId) {
     const history = await historyApi.getHistory(historyId);
+    history.messages = history.messages.map(({ _id, prompt, ...rest }) => {
+      return {
+        ...rest,
+        guid: _id,
+        ...(prompt
+          ? {
+              prompt: {
+                type: prompt.type,
+                status: PromptStatus.Completed,
+              },
+            }
+          : {}),
+      };
+    });
     if (history) {
       store.dispatch(chatActions.setCurrentHistory(history));
     }
