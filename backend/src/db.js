@@ -2,6 +2,8 @@ import Message from "./models/message.js";
 import History from "./models/history.js";
 import User from "./models/user.js";
 
+import mongoose from "mongoose";
+
 export async function getUser(username) {
   try {
     let user = await User.findOne({ username });
@@ -33,12 +35,33 @@ export async function getHistory(historyId) {
 }
 
 export async function getMessage(messageId) {
+  const isValidMessageId = mongoose.Types.ObjectId.isValid(messageId);
+  if (!isValidMessageId) return undefined;
+
   try {
     const message = await Message.findById(messageId);
     return message;
   } catch (err) {
     console.error("Error getting message", err);
     return undefined;
+  }
+}
+
+export async function updateMessage(message) {
+  try {
+    const messageToUpdate = await Message.findById(message._id);
+
+    if (!messageToUpdate) {
+      console.error("Message not found");
+      return null;
+    }
+
+    Object.assign(messageToUpdate, message);
+    const updatedMessage = await messageToUpdate.save();
+    return updatedMessage;
+  } catch (err) {
+    console.error("Error updating message:", err);
+    throw err;
   }
 }
 

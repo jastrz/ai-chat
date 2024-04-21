@@ -65,6 +65,12 @@ export const chatSlice = createSlice({
         };
       });
     },
+    setPromptTarget: (state, action) => {
+      const { id, targetGuid } = action.payload;
+      const msg = state.messages.find((msg) => msg.guid === id);
+      console.log(id, targetGuid, msg);
+      msg.prompt.targetGuid = targetGuid;
+    },
     clearHistory: (state) => {
       state.messages = [];
       state.historyId = undefined;
@@ -114,4 +120,5 @@ export const {
   setHistoryList,
   setHistory,
   reset,
+  setPromptTarget,
 } = chatSlice.actions;

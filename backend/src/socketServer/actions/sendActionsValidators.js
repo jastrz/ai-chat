@@ -38,7 +38,6 @@ export const responseSchema = Joi.object({
   username: Joi.string().required(),
   content: contentSchema,
   guid: Joi.string().required(),
-  promptGuid: Joi.string().optional().allow(null),
   messageTarget: Joi.string().optional().allow(null),
   prompt: Joi.object({
     status: Joi.string().required(),
@@ -57,7 +56,6 @@ export const responseSchema = Joi.object({
  * @property {Joi.StringSchema} data - The data of the message fragment (required).
  */
 export const responseFragmentSchema = Joi.object({
-  promptGuid: Joi.string().required(),
   targetGuid: Joi.string().required(),
   content: contentSchema,
 });

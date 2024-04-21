@@ -2,11 +2,12 @@ import { IconButton } from "@material-tailwind/react";
 import React, { useEffect, useState, useMemo } from "react";
 import { cancelPrompt } from "socketConnection/sendActions";
 import { useDispatch, useSelector } from "react-redux";
-import { removeMessage } from "store/chatSlice";
+import { removeMessage, setPromptTarget } from "store/chatSlice";
 import Animation from "components/Common/Animation";
 import { PromptStatus } from "data/prompt";
 import MessageContents from "./MessageContents";
 import { sendPrompt } from "socketConnection/sendActions";
+import { generateGUID } from "utils";
 
 const Message = ({ message }) => {
   const dispatch = useDispatch();
@@ -59,7 +60,11 @@ const Message = ({ message }) => {
       guid: message.guid,
       message: message.content[0].data,
       status: PromptStatus.Pending,
+      targetGuid: generateGUID(),
     };
+    dispatch(
+      setPromptTarget({ id: message.guid, targetGuid: prompt.targetGuid })
+    );
     sendPrompt({ ...prompt });
   };
 
@@ -86,8 +91,8 @@ const Message = ({ message }) => {
           sameUserAsPrevious={message.concat}
         />
         {isUser &&
-          message.promptGuid &&
           message.prompt &&
+          message.prompt.status &&
           message.prompt.status !== PromptStatus.Completed && (
             <Animation animationConfig={animationConfig}>
               <IconButton

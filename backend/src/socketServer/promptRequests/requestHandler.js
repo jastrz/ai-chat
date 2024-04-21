@@ -63,7 +63,6 @@ stateChangeEventEmitter.on("onRequestStateChange", (request) => {
 async function getLlamaResponse(userPrompt, session, abortSignal) {
   const onChunkReceived = (decodedChunk) => {
     const messageFragment = {
-      promptGuid: userPrompt.guid,
       targetGuid: userPrompt.targetGuid,
       content: [{ data: decodedChunk, type: "text", updateType: "aggregate" }],
     };
@@ -85,7 +84,7 @@ async function getLlamaResponse(userPrompt, session, abortSignal) {
 
   if (answer) {
     const content = [{ type: "text", data: answer }];
-    await saveAiMessage(content, session);
+    await saveAiMessage(content, session, userPrompt.guid);
   }
 }
 
@@ -126,7 +125,6 @@ async function getImageResponse(userPrompt, session) {
         ];
 
         const messageFragment = {
-          promptGuid: userPrompt.guid,
           targetGuid: userPrompt.targetGuid,
           content: content,
         };
@@ -142,7 +140,11 @@ async function getImageResponse(userPrompt, session) {
 
   const response = getImageMessage(images);
   response.messageTarget = userPrompt.guid;
-  const message = await saveAiMessage(response.content, session);
+  const message = await saveAiMessage(
+    response.content,
+    session,
+    userPrompt.guid
+  );
   response.guid = message._id.toString();
   session.broadcast(SendActions.Message, response);
 }
@@ -170,12 +172,20 @@ async function onImageRequestStopped() {
   await handleInterrupt();
 }
 
-async function saveAiMessage(content, session) {
+async function saveAiMessage(content, session, target = null) {
   const messageToSave = {
     username: "AI",
     content: content,
   };
+
   const { history, message } = await db.saveMessage(messageToSave, session);
+  if (target) {
+    const targetMessage = await db.getMessage(target);
+    if (targetMessage) {
+      targetMessage.responses.push(message._id);
+      await db.updateMessage(targetMessage);
+    }
+  }
   session.broadcast(SendActions.SetHistory, {
     _id: history._id.toString(),
     timestamp: history.timestamp,

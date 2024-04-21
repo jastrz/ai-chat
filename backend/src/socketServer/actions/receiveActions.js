@@ -96,7 +96,6 @@ async function handlePromptReceived(socketId, data) {
 
     prompt.guid = message._id.toString();
     userMessage.guid = prompt.guid;
-    userMessage.promptGuid = prompt.guid;
 
     session.broadcast(SendActions.Message, userMessage);
     session.broadcast(SendActions.SetHistory, {

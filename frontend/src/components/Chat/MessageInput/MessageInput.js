@@ -36,7 +36,6 @@ const MessageInput = () => {
     const username = userData.username;
     const userMessage = new Message(username, currentMessage);
     const prompt = new Prompt(userMessage.content[0].data, promptType);
-    userMessage.promptGuid = prompt.guid;
     console.log(prompt);
     sendPrompt(prompt);
 
