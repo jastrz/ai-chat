@@ -17,6 +17,7 @@ const ChatMessages = ({ messages }) => {
     setUpdatedMessages(msgs);
   }, [messages]);
 
+  // todo: probably move to backend or perhaps enable display modes for frontend
   function insertAndSortResponses(msgs) {
     // Create a map for quick ID to message lookup
     const idToMessageMap = new Map(msgs.map((msg) => [msg.guid, msg]));

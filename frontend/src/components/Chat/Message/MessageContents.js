@@ -4,6 +4,7 @@ import ImageContent from "./ImageContent";
 import TextContent from "./TextContent";
 import { useDispatch } from "react-redux";
 import * as galleryActions from "../../../store/gallerySlice";
+import { TimeStamp } from "./Timestamp";
 
 const MessageContents = ({ message, backgroundColor, sameUserAsPrevious }) => {
   const TextContents = message.content
@@ -41,12 +42,10 @@ const MessageContents = ({ message, backgroundColor, sameUserAsPrevious }) => {
       <div className={`${backgroundColor} shadow-xl rounded-2xl px-4 py-2`}>
         <div className="flex items-center">
           {!sameUserAsPrevious && (
-            <UsernameIndicator
-              username={message.username}
-              timestamp={message.timestamp}
-            />
+            <UsernameIndicator username={message.username} />
           )}
         </div>
+        <TimeStamp timestamp={message.timestamp} />
         {TextContents}
         <div className="flex flex-wrap gap-x-4">{ImageContents}</div>
       </div>

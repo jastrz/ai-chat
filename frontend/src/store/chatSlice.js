@@ -7,7 +7,6 @@ export const chatSlice = createSlice({
     historyId: undefined,
     availableHistories: [],
     messages: [],
-    prompts: [],
   },
   reducers: {
     addMessage: (state, action) => {
@@ -46,9 +45,8 @@ export const chatSlice = createSlice({
       );
 
       if (!messageToUpdate) {
-        messageToUpdate = new Message("AI").obj();
-        messageToUpdate.guid = targetGuid;
-        addMessage(state, messageToUpdate);
+        messageToUpdate = new Message({ username: "AI", guid: targetGuid });
+        addMessage(state, messageToUpdate.obj());
       }
 
       messageToUpdate.content = content.map((entry, i) => {

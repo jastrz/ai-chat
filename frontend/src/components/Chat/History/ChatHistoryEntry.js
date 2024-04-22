@@ -22,7 +22,13 @@ const ChatHistoryEntry = ({ historyId, timestamp, active }) => {
             onClick={onHistoryEntryClicked}
           >
             <Typography className="tracking-wider text-xs">
-              {timestamp.slice(0, 10) + " " + timestamp.slice(11, 19)}
+              {new Date(timestamp).toLocaleString("en-GB", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </Typography>
           </Button>
         </div>

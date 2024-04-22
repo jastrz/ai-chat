@@ -5,7 +5,6 @@ import {
   updatePromptStatus,
   setHistory,
   removeMessage,
-  addPrompt,
 } from "../store/chatSlice";
 import { Message } from "../data/message";
 import { PromptStatus } from "data/prompt";
@@ -39,15 +38,11 @@ function handlePromptStateChanged(data) {
   if (!prompt) return;
 
   if (data.status === PromptStatus.Processed) {
-    // const msg = new Message("AI", null, prompt.targetGuid);
-
-    const msg = {
+    const msg = new Message({
       username: "AI",
-      content: [{ type: "text", data: "" }],
-      guid: prompt.targetGuid,
       messageTarget: message.guid || null,
-      timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
-    };
+      guid: prompt.targetGuid,
+    }).obj();
 
     store.dispatch(addMessage(msg));
   }
@@ -73,22 +68,7 @@ function handleSetHistory(data) {
 }
 
 function handleMessageReceived(data) {
-  const msg = new Message(
-    data.username,
-    data.content,
-    data.guid,
-    data.promptGuid
-  );
-
-  const message = {
-    username: data.username,
-    content: data.content,
-    guid: data.guid,
-    prompt: data.prompt,
-    messageTarget: data.messageTarget || null,
-    timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
-  };
-
+  const message = new Message(data).obj();
   store.dispatch(addMessage(message));
 }
 

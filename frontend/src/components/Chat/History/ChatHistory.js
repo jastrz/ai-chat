@@ -23,6 +23,8 @@ const ChatHistory = () => {
         return new Date(b.timestamp) - new Date(a.timestamp);
       });
       setHistories(sortedHistories);
+    } else {
+      setHistories([]);
     }
   }, [availableHistories]);
 
