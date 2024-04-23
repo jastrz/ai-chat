@@ -10,6 +10,7 @@ import mongoose from "mongoose";
 import * as sdService from "./services/sdService.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "../swaggerSpec.js";
+import { requestProcessor } from "./socketServer/promptRequests/requestProcessor.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,6 +25,7 @@ app.use(express.static(path.join(__dirname, "../public")));
 const server = createServer(app);
 initSocketServer(server);
 await sdService.initialize();
+requestProcessor.start();
 
 app.use(router);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

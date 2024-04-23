@@ -2,11 +2,6 @@ import Joi from "joi";
 import EventEmitter from "events";
 import { RequestStatus } from "./request.js";
 
-export const stateChangeEventEmitter = new EventEmitter();
-
-let isProcessing = false;
-export const requests = [];
-
 const requestSchema = Joi.object({
   status: Joi.string().valid(RequestStatus.Pending).required(),
   id: Joi.string().required(),
@@ -15,51 +10,85 @@ const requestSchema = Joi.object({
   sessionId: Joi.string().required(),
 });
 
-export function addRequest(request) {
-  const { error } = requestSchema.validate(request);
-  if (error) {
-    console.error("Invalid request format:", error.message);
-  } else {
-    requests.push(request);
-  }
-}
+export const RequestProcessorEvents = {
+  RequestStateChanged: "requestStateChanged",
+};
 
-export async function cancelRequest(id) {
-  const index = requests.findIndex((request) => request.id === id);
-  if (index !== -1 && requests[index]) {
-    if (requests[index].status === RequestStatus.Pending) {
-      requests.splice(index, 1);
-      console.log(`Request with guid ${id} removed successfully`);
-    } else if (requests[index].status === RequestStatus.Processed) {
-      console.log("Stopping request ");
-      await requests[index].onRequestStopped();
+class RequestProcessor {
+  static instance = null;
+  stateChangeEventEmitter = new EventEmitter();
+
+  isProcessing = false;
+  requests = [];
+  requestProcessingInterval = null;
+
+  start() {
+    if (!this.requestProcessingInterval) {
+      this.requestProcessingInterval = setInterval(() => {
+        this.processNextRequest();
+      }, process.env.REQUEST_PROC_TICK || 1000);
     }
-  } else {
-    console.error(`Request with guid ${id} not found`);
   }
-}
 
-async function processNextRequest() {
-  if (!isProcessing && requests.length > 0) {
-    isProcessing = true;
-    console.log(`requests: ${requests.length}`);
-    const request = requests[0];
-    try {
-      request.status = RequestStatus.Processed;
-      stateChangeEventEmitter.emit("onRequestStateChange", request);
-      await request.execFunction();
-      isProcessing = false;
-      request.status = RequestStatus.Completed;
-      stateChangeEventEmitter.emit("onRequestStateChange", request);
-      requests.shift();
-    } catch (error) {
-      console.error(`Error processing request ${request.id}, error: ${error}`);
+  stop() {
+    if (this.requestProcessingInterval) {
+      clearInterval(this.requestProcessingInterval);
+      this.requestProcessingInterval = null;
     }
+  }
 
-    processNextRequest();
+  addRequest(request) {
+    const { error } = requestSchema.validate(request);
+    if (error) {
+      console.error("Invalid request format:", error.message);
+    } else {
+      this.requests.push(request);
+    }
+  }
+
+  async cancelRequest(id) {
+    const index = this.requests.findIndex((request) => request.id === id);
+    if (index !== -1 && this.requests[index]) {
+      if (this.requests[index].status === RequestStatus.Pending) {
+        this.requests.splice(index, 1);
+        console.log(`Request with guid ${id} removed successfully`);
+      } else if (this.requests[index].status === RequestStatus.Processed) {
+        console.log("Stopping request ");
+        await this.requests[index].onRequestStopped();
+      }
+    } else {
+      console.error(`Request with guid ${id} not found`);
+    }
+  }
+
+  async processNextRequest() {
+    if (!this.isProcessing && this.requests.length > 0) {
+      this.isProcessing = true;
+      console.log(`requests: ${this.requests.length}`);
+      const request = this.requests[0];
+      try {
+        request.status = RequestStatus.Processed;
+        this.stateChangeEventEmitter.emit(
+          RequestProcessorEvents.RequestStateChanged,
+          request
+        );
+        await request.execFunction();
+        this.isProcessing = false;
+        request.status = RequestStatus.Completed;
+        this.stateChangeEventEmitter.emit(
+          RequestProcessorEvents.RequestStateChanged,
+          request
+        );
+        this.requests.shift();
+      } catch (error) {
+        console.error(
+          `Error processing request ${request.id}, error: ${error}`
+        );
+      }
+
+      this.processNextRequest();
+    }
   }
 }
 
-const requestProcessor = setInterval(() => {
-  processNextRequest();
-}, process.env.REQUEST_PROC_TICK || 1000);
+export const requestProcessor = new RequestProcessor();

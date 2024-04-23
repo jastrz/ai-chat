@@ -1,6 +1,9 @@
 import { llamaService } from "../../services/llamaService.js";
 import { getImage } from "../../services/sdService.js";
-import { addRequest, stateChangeEventEmitter } from "./requestProcessor.js";
+import {
+  RequestProcessorEvents,
+  requestProcessor,
+} from "./requestProcessor.js";
 import { Request, RequestStatus } from "./request.js";
 import { getSessionById } from "../session/sessionManager.js";
 import { SendActions } from "../actions/sendActions.js";
@@ -39,25 +42,28 @@ export async function processPrompt(session, prompt) {
       break;
   }
 
-  addRequest(request);
+  requestProcessor.addRequest(request);
 }
 
 // Listens for changes in request state and updates the prompt state
-stateChangeEventEmitter.on("onRequestStateChange", (request) => {
-  console.log(`Request: ${request.id} state changed: ${request.status}`);
+requestProcessor.stateChangeEventEmitter.on(
+  RequestProcessorEvents.RequestStateChanged,
+  (request) => {
+    console.log(`Request: ${request.id} state changed: ${request.status}`);
 
-  if (request.status !== RequestStatus.Pending) {
-    try {
-      const session = getSessionById(request.sessionId);
-      session.broadcast(SendActions.UpdatePromptState, {
-        guid: request.id,
-        status: request.status,
-      });
-    } catch (error) {
-      console.log(error);
+    if (request.status !== RequestStatus.Pending) {
+      try {
+        const session = getSessionById(request.sessionId);
+        session.broadcast(SendActions.UpdatePromptState, {
+          guid: request.id,
+          status: request.status,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
-});
+);
 
 // Function to retrieve response from llamaService and send it to the specified socket
 async function getLlamaResponse(userPrompt, session, abortSignal) {

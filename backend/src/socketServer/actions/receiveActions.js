@@ -9,7 +9,7 @@ import { processPrompt } from "../promptRequests/requestHandler.js";
 import { SendActions } from "./sendActions.js";
 import * as validators from "./receiveActionsValidators.js";
 import * as db from "../../db.js";
-import { cancelRequest } from "../promptRequests/requestProcessor.js";
+import { requestProcessor } from "../promptRequests/requestProcessor.js";
 import { generateGUID } from "../../utils/utils.js";
 
 const ReceiveActions = {
@@ -113,7 +113,7 @@ async function handlePromptReceived(socketId, data) {
  * @param {Object} data - id of prompt to be cancelled
  */
 async function handleCancelPrompt(socketId, data) {
-  await cancelRequest(data);
+  await requestProcessor.cancelRequest(data);
 }
 
 /**
