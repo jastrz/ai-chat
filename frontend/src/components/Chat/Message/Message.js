@@ -2,7 +2,11 @@ import { IconButton } from "@material-tailwind/react";
 import React, { useEffect, useState, useMemo } from "react";
 import { cancelPrompt } from "socketConnection/sendActions";
 import { useDispatch, useSelector } from "react-redux";
-import { removeMessage, setPromptTarget } from "store/chatSlice";
+import {
+  removeMessage,
+  setPromptTarget,
+  updatePromptStatus,
+} from "store/chatSlice";
 import Animation from "components/Common/Animation";
 import { PromptStatus } from "data/prompt";
 import MessageContents from "./MessageContents";
@@ -62,8 +66,14 @@ const Message = ({ message }) => {
       status: PromptStatus.Pending,
       targetGuid: generateGUID(),
     };
+
     dispatch(
       setPromptTarget({ id: message.guid, targetGuid: prompt.targetGuid })
+    );
+
+    // temporarily optimistically updating status here - should get acknowlegment from backend that prompt has been received
+    dispatch(
+      updatePromptStatus({ guid: message.guid, status: PromptStatus.Pending })
     );
     sendPrompt({ ...prompt });
   };

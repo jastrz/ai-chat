@@ -49,6 +49,7 @@ export const chatSlice = createSlice({
         addMessage(state, messageToUpdate.obj());
       }
 
+      messageToUpdate.timestamp = new Date().toString();
       messageToUpdate.content = content.map((entry, i) => {
         const existingContent = messageToUpdate.content[i] || {
           data: "",
