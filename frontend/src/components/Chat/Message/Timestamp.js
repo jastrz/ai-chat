@@ -9,7 +9,7 @@ export const TimeStamp = ({ timestamp }) => {
     const msgDate = new Date(timestamp);
     const diff = now - msgDate;
     const diffInHours = diff / 1000 / 60 / 60;
-    if (diffInHours >= 1) {
+    if (diffInHours >= 24) {
       const dateString = msgDate.toLocaleDateString("en-GB", {
         year: "numeric",
         month: "long",
@@ -29,7 +29,7 @@ export const TimeStamp = ({ timestamp }) => {
         })
       );
     }
-  }, []);
+  }, [timestamp]);
 
   return (
     <>
